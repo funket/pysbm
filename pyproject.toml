@@ -1,0 +1,33 @@
+# SPDX-FileCopyrightText: Copyright (C) 2026 Thorben Funke
+# SPDX-License-Identifier: CC-BY-SA-4.0
+
+[project]
+name = "pysbm"
+version = "0.0.1"
+description = ""
+authors = [{ name = "Thorben Funke" }]
+readme = "README.md"
+license = "CC-BY-SA-4.0"
+requires-python = ">=3.14"
+keywords = ["sbm"]
+dependencies = []
+
+[project.urls]
+homepage = "https://github.com/fabriciofx/pysbm"
+bug-tracker = "https://github.com/fabriciofx/pysbm/issues"
+
+[dependency-groups]
+dev = []
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"pysbm" = ["py.typed"]
