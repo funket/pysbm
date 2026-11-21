@@ -1,0 +1,43 @@
+# SPDX-FileCopyrightText: Copyright (C) 2026 Fabrício Barros Cabral
+# SPDX-License-Identifier: MIT
+---
+name: python-release
+'on':
+  push:
+    tags:
+      - '[0-9]*.[0-9]*.[0-9]*'
+defaults:
+  run:
+    shell: bash -xeuo pipefail {0}
+permissions:
+  id-token: write
+  contents: read
+jobs:
+  python-release:
+    runs-on: ubuntu-24.04
+    environment:
+      name: release
+      url: https://pypi.org/p/arana
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+      - name: Install uv
+        run: curl -LsSf https://astral.sh/uv/install.sh | sh
+      - name: Build package
+        run: |
+          if [[ -s uv.lock ]]; then
+            uv build
+          else
+            python -m build
+          fi
+      - name: Release to PyPI
+        # yamllint disable-line rule:line-length
+        uses: pypa/gh-action-pypi-publish@3317ede93a4981d0fc490510c6fcf8bf0e92ed05
+        with:
+          verbose: true

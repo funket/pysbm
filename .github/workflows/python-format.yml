@@ -1,0 +1,19 @@
+# SPDX-FileCopyrightText: Copyright (C) 2026 Fabrício Barros Cabral
+# SPDX-License-Identifier: MIT
+---
+name: python-format
+'on':
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+    branches:
+      - main
+      - master
+permissions:
+  contents: read
+jobs:
+  python-format:
+    # yamllint disable-line rule:line-length
+    uses: fabriciofx/github-workflows/.github/workflows/python-format-template.yml@main
