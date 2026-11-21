@@ -26,10 +26,10 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Mathematics",
 ]
 dependencies = [
-    "networkx",
-    "numpy",
-    "scikit-learn",
-    "scipy",
+    "networkx>=3.4",
+    "numpy>=2.2",
+    "scikit-learn>=1.7",
+    "scipy>=1.15",
 ]
 
 [project.urls]
