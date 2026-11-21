@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (C) 2026 Thorben Funke
+# SPDX-License-Identifier: CC-BY-SA-4.0
+
 """
 Likelihood function ICLex like described in
 Model selection and clustering in stochastic block models with the exact integrated complete data likelihood

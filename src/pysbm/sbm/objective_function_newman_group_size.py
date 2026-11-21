@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (C) 2026 Thorben Funke
+# SPDX-License-Identifier: CC-BY-SA-4.0
+
 """
 Based on
 ﻿Estimating the Number of Communities in a Network

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (C) 2026 Thorben Funke
+# SPDX-License-Identifier: CC-BY-SA-4.0
+
 """ Partition of NetworkX Graphs based on internal representation as NetworkX Graph"""
 
 import random as rd

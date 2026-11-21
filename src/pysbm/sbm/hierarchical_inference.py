@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (C) 2026 Thorben Funke
+# SPDX-License-Identifier: CC-BY-SA-4.0
+
 from .inference import Inference
 from .inference import KarrerInferenceNoNegativeMove
 from .inference import PeixotoInference

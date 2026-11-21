@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (C) 2026 Thorben Funke
+# SPDX-License-Identifier: CC-BY-SA-4.0
+
 import unittest as ut
 from pysbm.sbm.model_selection import ModelSelectionByObjectiveFunctionValueOnly
 from pysbm.sbm.model_selection import minimum_description_length_peixoto_first

@@ -1,3 +1,6 @@
+# SPDX-FileCopyrightText: Copyright (C) 2026 Thorben Funke
+# SPDX-License-Identifier: CC-BY-SA-4.0
+
 # Flat versions of objective functions described in Tiago P. Peixoto
 # Nonparametric Bayesian inference of the microcanonical stochastic block model
 # for more see in peixotos_hierarchical_sbm.py
