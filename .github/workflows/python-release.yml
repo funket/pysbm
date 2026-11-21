@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-24.04
     environment:
       name: release
-      url: https://pypi.org/p/arana
+      url: https://pypi.org/project/pysbm/
     steps:
       - name: Checkout repository
         uses: actions/checkout@v6
