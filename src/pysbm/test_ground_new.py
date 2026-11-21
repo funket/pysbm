@@ -1269,7 +1269,7 @@ class SingleNetworkSupplier:
         karate_club = nx.karate_club_graph()
         true_partition = {}
         for node in karate_club:
-            if karate_club.node[node]['club'] == 'Mr. Hi':
+            if karate_club.nodes[node]['club'] == 'Mr. Hi':
                 true_partition[node] = 1
             else:
                 true_partition[node] = 0

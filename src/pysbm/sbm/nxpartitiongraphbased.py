@@ -628,8 +628,8 @@ class NxPartitionGraphBased(Partition):
 
     def get_graph_matrix_representation(self, with_weights=True):
         if with_weights:
-            return nx.to_numpy_matrix(self._graph, weight=self._WA)
-        return nx.to_numpy_matrix(self._graph)
+            return np.asmatrix(nx.to_numpy_array(self._graph, weight=self._WA))
+        return np.asmatrix(nx.to_numpy_array(self._graph))
 
     @staticmethod
     def _degree_iter(node_and_degree_iter):

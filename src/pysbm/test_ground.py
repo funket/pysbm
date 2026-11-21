@@ -43,7 +43,7 @@ class NetworkSuppplier(object):
         # the information is saved in a node attribute named club
         meta_data_partition = [0 for _ in range(len(graph))]
         for node in graph.nodes_iter():
-            if graph.node[node]['club'] == 'Mr. Hi':
+            if graph.nodes[node]['club'] == 'Mr. Hi':
                 meta_data_partition[node] = 1
         return [(partition, 2, meta_data_partition)]
 

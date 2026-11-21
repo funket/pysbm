@@ -1,6 +1,20 @@
 # pysbm
 A Python Package for Stochastic Block Model Inference
 
+## Installation
+
+```
+pip install pysbm
+```
+
+## Development
+
+```
+uv sync
+uv run pytest
+uv build
+```
+
 If you use this code, please cite
 
 Funke T, Becker T (2019) Stochastic block models: A comparison of variants and inference methods. 

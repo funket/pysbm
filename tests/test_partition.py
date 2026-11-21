@@ -1113,3 +1113,42 @@ class TestNxPartitionWithMoveCounter(ut.TestCase):
 
         with self.assertRaises(NotImplementedError):
             partition.get_sum_of_covariates(0, 1)
+
+
+class TestNxPartitionWithUnusedWeights(ut.TestCase):
+    """ Test that NxPartition ignores weight attributes of an unweighted graph """
+
+    def test_moves_dont_corrupt_edge_counts_of_undirected_graph_with_weight_attributes(self):
+        graph = nx.gnm_random_graph(rd.randint(20, 40), rd.randint(60, 120), seed=rd.randint(0, 9999))
+        nx.set_edge_attributes(graph, {edge: rd.randint(2, 9) for edge in graph.edges}, 'weight')
+        partition = sbm.NxPartition(graph=graph, number_of_blocks=3)
+        for node in rd.choices(list(graph.nodes), k=rd.randint(50, 150)):
+            partition.move_node(node, rd.randrange(3))
+        self.assertEqual(
+            partition.block_edges.tolist(),
+            sbm.NxPartition(graph=graph, number_of_blocks=3,
+                            representation=partition.get_representation()).block_edges.tolist(),
+            "Moving nodes corrupted block edge counts of an undirected graph carrying unused weights"
+        )
+
+    def test_moves_dont_corrupt_edge_counts_of_directed_graph_with_weight_attributes(self):
+        graph = nx.gnm_random_graph(rd.randint(20, 40), rd.randint(60, 120), seed=rd.randint(0, 9999), directed=True)
+        nx.set_edge_attributes(graph, {edge: rd.randint(2, 9) for edge in graph.edges}, 'weight')
+        partition = sbm.NxPartition(graph=graph, number_of_blocks=3)
+        for node in rd.choices(list(graph.nodes), k=rd.randint(50, 150)):
+            partition.move_node(node, rd.randrange(3))
+        self.assertEqual(
+            partition.block_edges.tolist(),
+            sbm.NxPartition(graph=graph, number_of_blocks=3,
+                            representation=partition.get_representation()).block_edges.tolist(),
+            "Moving nodes corrupted block edge counts of a directed graph carrying unused weights"
+        )
+
+    def test_block_degree_ignores_weight_attributes_of_unweighted_graph(self):
+        graph = nx.gnm_random_graph(rd.randint(20, 40), rd.randint(60, 120), seed=rd.randint(0, 9999))
+        nx.set_edge_attributes(graph, {edge: rd.randint(2, 9) for edge in graph.edges}, 'weight')
+        self.assertEqual(
+            sum(sbm.NxPartition(graph=graph, number_of_blocks=3).block_degrees),
+            2 * graph.number_of_edges(),
+            "Block degrees summed edge weights although the graph was declared unweighted"
+        )

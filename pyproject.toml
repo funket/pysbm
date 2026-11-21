@@ -4,30 +4,52 @@
 [project]
 name = "pysbm"
 version = "0.0.1"
-description = ""
+description = "A Python package for stochastic block model inference"
 authors = [{ name = "Thorben Funke" }]
 readme = "README.md"
 license = "CC-BY-SA-4.0"
-requires-python = ">=3.14"
-keywords = ["sbm"]
-dependencies = []
+license-files = ["LICENSE.txt"]
+requires-python = ">=3.10"
+keywords = ["sbm", "stochastic block model", "community detection", "network", "graph", "inference"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Scientific/Engineering :: Mathematics",
+]
+dependencies = [
+    "networkx",
+    "numpy",
+    "scikit-learn",
+    "scipy",
+]
 
 [project.urls]
 homepage = "https://github.com/fabriciofx/pysbm"
 bug-tracker = "https://github.com/fabriciofx/pysbm/issues"
 
 [dependency-groups]
-dev = []
+dev = [
+    "build",
+    "pytest",
+    "six",
+    "twine",
+]
 
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
-
-[tool.setuptools]
-include-package-data = true
 
 [tool.setuptools.packages.find]
 where = ["src"]
 
-[tool.setuptools.package-data]
-"pysbm" = ["py.typed"]
+[tool.pytest.ini_options]
+testpaths = ["tests"]

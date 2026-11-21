@@ -65,9 +65,9 @@ class ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
 
             denominator = 1
             for i in range(len(adjacency_matrix)):
-                denominator *= math.pow(2, adjacency_matrix[i, i]) * math.factorial(adjacency_matrix[i, i])
+                denominator *= math.pow(2, adjacency_matrix[i, i]) * math.factorial(int(adjacency_matrix[i, i]))
                 for j in range(i + 1, len(adjacency_matrix)):
-                    denominator *= math.factorial(adjacency_matrix[i, j])
+                    denominator *= math.factorial(int(adjacency_matrix[i, j]))
 
             self._saved_xi /= denominator
             # save graph of xi
@@ -76,12 +76,12 @@ class ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
         omega = 1
         denominator = 1
         for r in range(partition.B):
-            omega *= math.factorial(partition.get_degree_of_block(r))
+            omega *= math.factorial(int(partition.get_degree_of_block(r)))
             denominator *= math.pow(2, partition.get_edge_count(r, r) / 2) \
-                * math.factorial(partition.get_edge_count(r, r) / 2)
+                * math.factorial(int(partition.get_edge_count(r, r) / 2))
 
             for s in range(r + 1, partition.B):
-                denominator *= math.factorial(partition.get_edge_count(r, s))
+                denominator *= math.factorial(int(partition.get_edge_count(r, s)))
 
         omega /= denominator
         return self._saved_xi / omega
@@ -104,11 +104,11 @@ class ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
         denominator = 1
         for r in range(partition.B):
             probability *= math.pow(2, partition.get_edge_count(r, r) / 2) \
-                           * math.factorial(partition.get_edge_count(r, r) / 2)
+                           * math.factorial(int(partition.get_edge_count(r, r) / 2))
 
             denominator *= math.pow(partition.get_number_of_nodes_in_block(r), partition.get_degree_of_block(r))
             for s in range(r + 1, partition.B):
-                probability *= math.factorial(partition.get_edge_count(r, s))
+                probability *= math.factorial(int(partition.get_edge_count(r, s)))
 
         probability /= denominator
 
@@ -117,9 +117,9 @@ class ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
 
             denominator = 1
             for i in range(len(adjacency_matrix)):
-                denominator *= math.pow(2, adjacency_matrix[i, i]) * math.factorial(adjacency_matrix[i, i])
+                denominator *= math.pow(2, adjacency_matrix[i, i]) * math.factorial(int(adjacency_matrix[i, i]))
                 for j in range(i + 1, len(adjacency_matrix)):
-                    denominator *= math.factorial(adjacency_matrix[i, j])
+                    denominator *= math.factorial(int(adjacency_matrix[i, j]))
 
             probability /= denominator
 
@@ -258,7 +258,7 @@ class ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
             denominator = 1
             for i in range(len(adjacency_matrix)):
                 for j in range(len(adjacency_matrix)):
-                    denominator *= math.factorial(adjacency_matrix[i, j])
+                    denominator *= math.factorial(int(adjacency_matrix[i, j]))
 
             self._saved_xi /= denominator
             # save graph of xi
@@ -267,11 +267,11 @@ class ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
         omega = 1
         denominator = 1
         for r in range(partition.B):
-            omega *= math.factorial(partition.get_in_degree_of_block(r))
-            omega *= math.factorial(partition.get_out_degree_of_block(r))
+            omega *= math.factorial(int(partition.get_in_degree_of_block(r)))
+            omega *= math.factorial(int(partition.get_out_degree_of_block(r)))
 
             for s in range(partition.B):
-                denominator *= math.factorial(partition.get_edge_count(r, s))
+                denominator *= math.factorial(int(partition.get_edge_count(r, s)))
 
         omega /= denominator
         return self._saved_xi / omega
@@ -297,7 +297,7 @@ class ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
             denominator *= math.pow(partition.get_number_of_nodes_in_block(r), partition.get_out_degree_of_block(r))
 
             for s in range(partition.B):
-                probability *= math.factorial(partition.get_edge_count(r, s))
+                probability *= math.factorial(int(partition.get_edge_count(r, s)))
 
         probability /= denominator
 
@@ -307,7 +307,7 @@ class ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
             denominator = 1
             for i in range(len(adjacency_matrix)):
                 for j in range(len(adjacency_matrix)):
-                    denominator *= math.factorial(adjacency_matrix[i, j])
+                    denominator *= math.factorial(int(adjacency_matrix[i, j]))
 
             probability /= denominator
 

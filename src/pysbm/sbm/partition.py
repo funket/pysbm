@@ -249,8 +249,8 @@ class NxPartition(Partition):
                  save_neighbor_of_blocks=True, fill_random=True, save_neighbor_edges=False,
                  weighted_graph=False, representation=None):
         self._is_weighted = weighted_graph
-        # centrally store name of weight attribute (=WA)
-        self._WA = 'weight'
+        # centrally store name of weight attribute (=WA), None lets networkx count every edge once
+        self._WA = 'weight' if weighted_graph else None
         self._graph = graph
         self.partition = {}
         self.number_of_nodes_per_block = np.zeros(1, dtype=int)
@@ -723,8 +723,8 @@ class NxPartition(Partition):
 
     def get_graph_matrix_representation(self, with_weights=True):
         if with_weights:
-            return nx.to_numpy_matrix(self._graph, weight=self._WA)
-        return nx.to_numpy_matrix(self._graph)
+            return np.asmatrix(nx.to_numpy_array(self._graph, weight=self._WA))
+        return np.asmatrix(nx.to_numpy_array(self._graph))
 
     @staticmethod
     def _degree_iter(node_and_degree_iter):

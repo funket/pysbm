@@ -1702,7 +1702,7 @@ class SpectralInference(Inference):
 
     def __init__(self, graph, objective_function, partition):
         super(SpectralInference, self).__init__(graph, objective_function, partition)
-        self.A = nx.to_numpy_matrix(self.graph)
+        self.A = nx.to_numpy_array(self.graph)
         self.partition = partition
 
     def infer_stochastic_block_model(self):

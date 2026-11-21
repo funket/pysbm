@@ -41,7 +41,7 @@ class TestSingleNetworkTest(ut.TestCase):
         self.karate_club = nx.karate_club_graph()
         self.true_partition = {}
         for node in self.karate_club:
-            if self.karate_club.node[node]['club'] == 'Mr. Hi':
+            if self.karate_club.nodes[node]['club'] == 'Mr. Hi':
                 self.true_partition[node] = 1
             else:
                 self.true_partition[node] = 0
@@ -166,13 +166,15 @@ class TestTestGround(ut.TestCase):
         # if not already there create temp directory
         if not os.path.exists(TEMP_DIRECTORY):
             os.makedirs(TEMP_DIRECTORY)
+        with open(os.path.join(TEMP_DIRECTORY, "Hint.txt"), "w") as file:
+            file.write("This folder is needed as storage for the parallel execution.")
 
     def setUp(self):
         self.tests = []
         karate_club = nx.karate_club_graph()
         true_partition = {}
         for node in karate_club:
-            if karate_club.node[node]['club'] == 'Mr. Hi':
+            if karate_club.nodes[node]['club'] == 'Mr. Hi':
                 true_partition[node] = 1
             else:
                 true_partition[node] = 0
@@ -541,6 +543,10 @@ class TestTestGround(ut.TestCase):
             else:
                 self.assertAlmostEqual(in_edges[p_out], 0, delta=.1)
 
+    @ut.skipUnless(os.path.exists(os.path.join(os.path.dirname(__file__), "..", "data",
+                                               SingleNetworkSupplier.REAL_NETWORK_DATA_FOLDER,
+                                               SingleNetworkSupplier.FOOTBALL_SUB_PATH)),
+                   "real network data must be downloaded into data/Network Data")
     def test_create_real_network_tests(self):
 
         with suppress_output():
@@ -566,7 +572,7 @@ class TestTestGround(ut.TestCase):
                 )
 
         # correct relative path
-        SingleNetworkSupplier.REAL_NETWORK_DATA_FOLDER = "../" + SingleNetworkSupplier.REAL_NETWORK_DATA_FOLDER
+        SingleNetworkSupplier.REAL_NETWORK_DATA_FOLDER = os.path.join(os.path.dirname(__file__), "..", "data", SingleNetworkSupplier.REAL_NETWORK_DATA_FOLDER)
 
         # first football network
         tests = SingleNetworkSupplier.create_real_network_tests(
@@ -1045,7 +1051,7 @@ class TestTestGround(ut.TestCase):
 class TestLFRBenchmark(ut.TestCase):
 
     def test_read_files(self):
-        tests = SingleNetworkSupplier.create_lfr_benchmark_tests("./LFR_benchmark_test_file", [0], 1)
+        tests = SingleNetworkSupplier.create_lfr_benchmark_tests(os.path.join(os.path.dirname(__file__), "LFR_benchmark_test_file"), [0], 1)
         self.assertEqual(len(tests), 1)
 
         graph = nx.Graph()
@@ -1074,7 +1080,7 @@ class DummyInference(sbm.Inference):
         if len(self.partition.graph) == len(nx.karate_club_graph()):
             karate_club = nx.karate_club_graph()
             for node in karate_club:
-                if karate_club.node[node]['club'] == 'Mr. Hi':
+                if karate_club.nodes[node]['club'] == 'Mr. Hi':
                     if not other_partition:
                         self.partition.move_node(node, 1)
                     else:

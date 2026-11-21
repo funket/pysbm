@@ -4,7 +4,7 @@ import networkx as nx
 import numpy as np
 import six
 
-import pysbm.UnitTests.test_partition as test_sbmpartition
+import tests.test_partition as test_sbmpartition
 from pysbm.sbm.nxpartitiongraphbased import NxHierarchicalPartition
 from pysbm.sbm.nxpartitiongraphbased import NxPartitionGraphBased
 from pysbm.sbm.nxpartitiongraphbased import NxPartitionGraphBasedHierarchy

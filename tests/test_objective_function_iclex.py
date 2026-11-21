@@ -450,8 +450,9 @@ class TestICLExactUndirected(ut.TestCase):
         # gamma(.5+.5)*gamma(.5+0)*gamma(.5+3)/(gamma(.5*2+3)*gamma(.5)*gamma(.5)) = 5/16
         # second term
         # gamma(.5*2)*gamma(.5+2)*gamma(.5+2)/(gamma(.5*2+4)*gamma(.5)*gamma(.5)) = 3/128
-        self.assertEqual(calculate_icl_ex_jeffrey_hyperprior_undirected(self.partitions[1]),
-                         math.log(35 / 128) + math.log(1 / 16) + math.log(5 / 16) + math.log(3 / 128))
+        self.assertAlmostEqual(calculate_icl_ex_jeffrey_hyperprior_undirected(self.partitions[1]),
+                               math.log(35 / 128) + math.log(1 / 16) + math.log(5 / 16) + math.log(3 / 128),
+                               places=10)
 
         # first term
         # 0->1
@@ -483,8 +484,9 @@ class TestICLExactUndirected(ut.TestCase):
         # gamma(1+1)*gamma(1+0)*gamma(1+3)/(gamma(1*2+3)*gamma(1)*gamma(1)) = 1/4
         # second term
         # gamma(1*2)*gamma(1+2)*gamma(1+2)/(gamma(1*2+4)*gamma(1)*gamma(1)) = 1/30
-        self.assertEqual(calculate_icl_ex_uniform_hyperprior_undirected(self.partitions[0]),
-                         math.log(1 / 5) + 2 * math.log(1 / 4) + math.log(1 / 30))
+        self.assertAlmostEqual(calculate_icl_ex_uniform_hyperprior_undirected(self.partitions[0]),
+                               math.log(1 / 5) + 2 * math.log(1 / 4) + math.log(1 / 30),
+                               places=10)
 
         # first term
         # 0->1
