@@ -8,21 +8,32 @@ import networkx as nx
 from pysbm.sbm.hierarchical_inference import HierarchicalInference
 from pysbm.sbm.hierarchical_inference import PeixotoHierarchicalInference
 from pysbm.sbm.nxpartitiongraphbased import NxHierarchicalPartition
-from pysbm.sbm.peixotos_hierarchical_sbm import LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper
+from pysbm.sbm.peixotos_hierarchical_sbm import (
+    LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper,
+)
 
 
 class TestHierarchicalInference(ut.TestCase):
     def setUp(self):
         self.karate = nx.karate_club_graph()
-        self.karate_partition = NxHierarchicalPartition(graph=self.karate,
-                                                        number_of_blocks=1,
-                                                        save_degree_distributions=True,
-                                                        representation=[{node: 0 for node in self.karate}]
-                                                        )
+        self.karate_partition = NxHierarchicalPartition(
+            graph=self.karate,
+            number_of_blocks=1,
+            save_degree_distributions=True,
+            representation=[{node: 0 for node in self.karate}],
+        )
 
-        self.objective_function = LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper(is_directed=False)
-        self.inference = HierarchicalInference(self.karate, self.objective_function, self.karate_partition,
-                                               self.objective_function.calculate_delta_actual_level_removed)
+        self.objective_function = (
+            LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper(
+                is_directed=False
+            )
+        )
+        self.inference = HierarchicalInference(
+            self.karate,
+            self.objective_function,
+            self.karate_partition,
+            self.objective_function.calculate_delta_actual_level_removed,
+        )
 
     def test_infer_stepwise(self):
         # print(self.objective_function.calculate(self.karate_partition), self.karate_partition.B,
@@ -56,15 +67,24 @@ class TestHierarchicalInference(ut.TestCase):
 class TestPeixotoHierarchicalInference(ut.TestCase):
     def setUp(self):
         self.karate = nx.karate_club_graph()
-        self.karate_partition = NxHierarchicalPartition(graph=self.karate,
-                                                        number_of_blocks=1,
-                                                        save_degree_distributions=True,
-                                                        representation=[{node: 0 for node in self.karate}]
-                                                        )
+        self.karate_partition = NxHierarchicalPartition(
+            graph=self.karate,
+            number_of_blocks=1,
+            save_degree_distributions=True,
+            representation=[{node: 0 for node in self.karate}],
+        )
 
-        self.objective_function = LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper(is_directed=False)
-        self.inference = PeixotoHierarchicalInference(self.karate, self.objective_function, self.karate_partition,
-                                                      self.objective_function.calculate_delta_actual_level_removed)
+        self.objective_function = (
+            LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper(
+                is_directed=False
+            )
+        )
+        self.inference = PeixotoHierarchicalInference(
+            self.karate,
+            self.objective_function,
+            self.karate_partition,
+            self.objective_function.calculate_delta_actual_level_removed,
+        )
 
     def test_infer_stepwise(self):
         # print(self.objective_function.calculate(self.karate_partition), self.karate_partition.B,
@@ -103,19 +123,31 @@ class TestPeixotoHierarchicalInference(ut.TestCase):
 
 
 class DummyInference(HierarchicalInference):
-
     @staticmethod
     def dummy_function(*args):
         if len(args) > 0:
             return 0
 
-    def __init__(self, number_of_successful_adds=2, number_of_successful_resize=5, number_of_successful_delete=3):
+    def __init__(
+        self,
+        number_of_successful_adds=2,
+        number_of_successful_resize=5,
+        number_of_successful_delete=3,
+    ):
         graph = nx.karate_club_graph()
-        objective_function = LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper(is_directed=False)
+        objective_function = (
+            LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper(
+                is_directed=False
+            )
+        )
         hierarchical_partition = NxHierarchicalPartition(graph)
         delta_objective_function_for_level_removal = self.dummy_function
-        super(DummyInference, self).__init__(graph, objective_function, hierarchical_partition,
-                                             delta_objective_function_for_level_removal)
+        super(DummyInference, self).__init__(
+            graph,
+            objective_function,
+            hierarchical_partition,
+            delta_objective_function_for_level_removal,
+        )
 
         self.number_of_successful_adds = number_of_successful_adds
         self.number_of_successful_resize = number_of_successful_resize

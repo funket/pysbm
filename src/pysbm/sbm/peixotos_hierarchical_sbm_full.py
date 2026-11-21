@@ -10,7 +10,9 @@ import math
 
 from scipy.special import binom
 
-from .peixotos_flat_sbm_full import ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm
+from .peixotos_flat_sbm_full import (
+    ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm,
+)
 from .peixotos_hierarchical_sbm_tools_full import BINOMIALS
 from .nxpartitiongraphbased import NxHierarchicalPartition
 
@@ -20,15 +22,19 @@ from .nxpartitiongraphbased import NxHierarchicalPartition
 # ---------------------------
 # @formatter:off
 class ModelLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
-        ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm):
-
+    ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm
+):
     def calculate_complete_uniform_hyperprior_undirected(self, hierarchy_partition):
         saved_level = hierarchy_partition.actual_level
         hierarchy_partition.actual_level = 0
         probability = 1
         probability *= self._calculate_p_adjacency_undirected(hierarchy_partition)
-        probability *= self._calculate_p_degree_sequence_uniform_hyperprior_undirected(hierarchy_partition)
-        probability *= self._calculate_p_edge_counts_hierarchy_undirected(hierarchy_partition)
+        probability *= self._calculate_p_degree_sequence_uniform_hyperprior_undirected(
+            hierarchy_partition
+        )
+        probability *= self._calculate_p_edge_counts_hierarchy_undirected(
+            hierarchy_partition
+        )
         hierarchy_partition.actual_level = saved_level
         return probability
 
@@ -37,8 +43,12 @@ class ModelLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         hierarchy_partition.actual_level = 0
         probability = 1
         probability *= self._calculate_p_adjacency_undirected(hierarchy_partition)
-        probability *= self._calculate_p_degree_sequence_uniform_undirected(hierarchy_partition)
-        probability *= self._calculate_p_edge_counts_hierarchy_undirected(hierarchy_partition)
+        probability *= self._calculate_p_degree_sequence_uniform_undirected(
+            hierarchy_partition
+        )
+        probability *= self._calculate_p_edge_counts_hierarchy_undirected(
+            hierarchy_partition
+        )
         hierarchy_partition.actual_level = saved_level
         return probability
 
@@ -46,8 +56,12 @@ class ModelLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         saved_level = hierarchy_partition.actual_level
         hierarchy_partition.actual_level = 0
         probability = 1
-        probability *= self._calculate_non_degree_corrected_undirected(hierarchy_partition)
-        probability *= self._calculate_p_edge_counts_hierarchy_undirected(hierarchy_partition)
+        probability *= self._calculate_non_degree_corrected_undirected(
+            hierarchy_partition
+        )
+        probability *= self._calculate_p_edge_counts_hierarchy_undirected(
+            hierarchy_partition
+        )
         hierarchy_partition.actual_level = saved_level
         return probability
 
@@ -94,7 +108,9 @@ class ModelLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
                 probability *= math.factorial(n_r)
 
             # group independent terms of last product
-            number_of_blocks_below = hierarchy_partition.get_number_of_blocks_in_level(level - 1)
+            number_of_blocks_below = hierarchy_partition.get_number_of_blocks_in_level(
+                level - 1
+            )
             probability /= math.factorial(number_of_blocks_below)
 
             binomial_values = (number_of_blocks_below - 1, number_of_blocks - 1)
@@ -108,8 +124,11 @@ class ModelLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         number_of_blocks_below = number_of_blocks
 
         binomial_values = (
-            number_of_blocks_below * (number_of_blocks_below + 1) / 2 + hierarchy_partition.edge_total - 1,
-            hierarchy_partition.edge_total)
+            number_of_blocks_below * (number_of_blocks_below + 1) / 2
+            + hierarchy_partition.edge_total
+            - 1,
+            hierarchy_partition.edge_total,
+        )
         if binomial_values not in BINOMIALS:
             BINOMIALS[binomial_values] = binom(*binomial_values)
         probability /= BINOMIALS[binomial_values]
@@ -128,8 +147,12 @@ class ModelLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         hierarchy_partition.actual_level = 0
         probability = 1
         probability *= self._calculate_p_adjacency_directed(hierarchy_partition)
-        probability *= self._calculate_p_degree_sequence_uniform_hyperprior_directed(hierarchy_partition)
-        probability *= self._calculate_p_edge_counts_hierarchy_directed(hierarchy_partition)
+        probability *= self._calculate_p_degree_sequence_uniform_hyperprior_directed(
+            hierarchy_partition
+        )
+        probability *= self._calculate_p_edge_counts_hierarchy_directed(
+            hierarchy_partition
+        )
         hierarchy_partition.actual_level = saved_level
         return probability
 
@@ -138,8 +161,12 @@ class ModelLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         hierarchy_partition.actual_level = 0
         probability = 1
         probability *= self._calculate_p_adjacency_directed(hierarchy_partition)
-        probability *= self._calculate_p_degree_sequence_uniform_directed(hierarchy_partition)
-        probability *= self._calculate_p_edge_counts_hierarchy_directed(hierarchy_partition)
+        probability *= self._calculate_p_degree_sequence_uniform_directed(
+            hierarchy_partition
+        )
+        probability *= self._calculate_p_edge_counts_hierarchy_directed(
+            hierarchy_partition
+        )
         hierarchy_partition.actual_level = saved_level
         return probability
 
@@ -147,8 +174,12 @@ class ModelLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         saved_level = hierarchy_partition.actual_level
         hierarchy_partition.actual_level = 0
         probability = 1
-        probability *= self._calculate_non_degree_corrected_directed(hierarchy_partition)
-        probability *= self._calculate_p_edge_counts_hierarchy_directed(hierarchy_partition)
+        probability *= self._calculate_non_degree_corrected_directed(
+            hierarchy_partition
+        )
+        probability *= self._calculate_p_edge_counts_hierarchy_directed(
+            hierarchy_partition
+        )
         hierarchy_partition.actual_level = saved_level
         return probability
 
@@ -185,7 +216,9 @@ class ModelLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
 
                 probability *= math.factorial(n_r)
 
-            number_of_blocks_below = hierarchy_partition.get_number_of_blocks_in_level(level - 1)
+            number_of_blocks_below = hierarchy_partition.get_number_of_blocks_in_level(
+                level - 1
+            )
             probability /= math.factorial(number_of_blocks_below)
 
             binomial_values = (number_of_blocks_below - 1, number_of_blocks - 1)
@@ -199,8 +232,11 @@ class ModelLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         number_of_blocks_below = number_of_blocks
 
         binomial_values = (
-            number_of_blocks_below * number_of_blocks_below + hierarchy_partition.edge_total - 1,
-            hierarchy_partition.edge_total)
+            number_of_blocks_below * number_of_blocks_below
+            + hierarchy_partition.edge_total
+            - 1,
+            hierarchy_partition.edge_total,
+        )
         if binomial_values not in BINOMIALS:
             BINOMIALS[binomial_values] = binom(*binomial_values)
         probability /= BINOMIALS[binomial_values]

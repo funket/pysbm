@@ -13,7 +13,8 @@ from pysbm import sbm
 
 
 class NetworkSuppplier(object):
-    """ Create different types of graphs"""
+    """Create different types of graphs"""
+
     STANDARD_SEED = 42
 
     def __init__(self):
@@ -46,7 +47,7 @@ class NetworkSuppplier(object):
         # the information is saved in a node attribute named club
         meta_data_partition = [0 for _ in range(len(graph))]
         for node in graph.nodes_iter():
-            if graph.nodes[node]['club'] == 'Mr. Hi':
+            if graph.nodes[node]["club"] == "Mr. Hi":
                 meta_data_partition[node] = 1
         return [(partition, 2, meta_data_partition)]
 
@@ -58,18 +59,22 @@ class NetworkSuppplier(object):
         for pout in range(1, 8):
             for pin in range(pout + 1, 11):
                 for number_of_vertices in range(2, 11, 2):
-                    generator = PlantedPartitionGenerator(4,
-                                                          number_of_vertices,
-                                                          float(pin) / 10,
-                                                          float(pout) / 10)
-                    for number_of_different_instances in range(number_of_instances_per_combination):
+                    generator = PlantedPartitionGenerator(
+                        4, number_of_vertices, float(pin) / 10, float(pout) / 10
+                    )
+                    for number_of_different_instances in range(
+                        number_of_instances_per_combination
+                    ):
                         graph, number_of_blocks, real_partition = generator.generate(
-                            directed,
-                            self.STANDARD_SEED +
-                            number_of_different_instances)
-                        test_cases.append((self.partition_class(graph),
-                                           number_of_blocks,
-                                           real_partition))
+                            directed, self.STANDARD_SEED + number_of_different_instances
+                        )
+                        test_cases.append(
+                            (
+                                self.partition_class(graph),
+                                number_of_blocks,
+                                real_partition,
+                            )
+                        )
 
         return test_cases
 
@@ -81,21 +86,27 @@ class NetworkSuppplier(object):
 
 class SBMGenerator(object):
     """Generation of graphs based on given SBM"""
-    PROBABILISTIC_EDGES = 'P'
-    FIXED_NUMBER_OF_EDGES = 'D'
 
-    def __init__(self,
-                 number_of_blocks,
-                 nodes_per_block,
-                 edge_matrix,
-                 type_of_edge_matrix,
-                 is_directed_edge_matrix=False):
+    PROBABILISTIC_EDGES = "P"
+    FIXED_NUMBER_OF_EDGES = "D"
+
+    def __init__(
+        self,
+        number_of_blocks,
+        nodes_per_block,
+        edge_matrix,
+        type_of_edge_matrix,
+        is_directed_edge_matrix=False,
+    ):
         self._B = number_of_blocks
         self._nodes_per_block = nodes_per_block
         if len(nodes_per_block) != number_of_blocks:
             raise ValueError()
         self._edge_matrix = edge_matrix
-        if type_of_edge_matrix not in {self.FIXED_NUMBER_OF_EDGES, self.PROBABILISTIC_EDGES}:
+        if type_of_edge_matrix not in {
+            self.FIXED_NUMBER_OF_EDGES,
+            self.PROBABILISTIC_EDGES,
+        }:
             raise ValueError()
         self._edge_type = type_of_edge_matrix
 
@@ -106,7 +117,7 @@ class SBMGenerator(object):
 
         for block in range(self._B):
             if is_directed_edge_matrix:
-                self._edge_matrix[block][block] = .5 * edge_matrix[block][block]
+                self._edge_matrix[block][block] = 0.5 * edge_matrix[block][block]
             if len(self._edge_matrix[block]) != number_of_blocks:
                 raise ValueError()
 
@@ -170,10 +181,9 @@ class SBMGenerator(object):
                     next_to_block_in = self._nodes_per_block[to_block]
 
                 # add random edge
-                if rd.random() < self._get_edge_probability(node_from,
-                                                            node_to,
-                                                            from_block,
-                                                            to_block):
+                if rd.random() < self._get_edge_probability(
+                    node_from, node_to, from_block, to_block
+                ):
                     graph.add_edge(node_from, node_to)
 
                 next_to_block_in -= 1
@@ -224,25 +234,52 @@ class SBMGenerator(object):
                 if not directed and to_block > from_block:
                     break
                 # check value
-                if (directed or from_block != to_block) \
-                        and self._edge_matrix[from_block][to_block] > self._nodes_per_block[from_block] * \
-                        self._nodes_per_block[to_block]:
-                    raise ValueError("Too many edges demanded. \nDemanded numeber: "
-                                     + str(self._edge_matrix[from_block][to_block]) + "\npossible edges "
-                                     + str(self._nodes_per_block[from_block] * self._nodes_per_block[to_block])
-                                     + "\nbetween blocks " + str(from_block) + "->" + str(to_block))
-                elif not directed and from_block == to_block \
-                        and self._edge_matrix[from_block][to_block] > self._nodes_per_block[
-                    from_block] * (self._nodes_per_block[to_block] + 1) / 2:
-                    raise ValueError("Too many edges demanded. \nDemanded numeber: "
-                                     + str(self._edge_matrix[from_block][to_block]) + "\npossible edges "
-                                     + str(self._nodes_per_block[from_block] * \
-                                           (self._nodes_per_block[to_block] + 1) / 2)
-                                     + "\nbetween blocks " + str(from_block) + "->" + str(to_block))
+                if (directed or from_block != to_block) and self._edge_matrix[
+                    from_block
+                ][to_block] > self._nodes_per_block[from_block] * self._nodes_per_block[
+                    to_block
+                ]:
+                    raise ValueError(
+                        "Too many edges demanded. \nDemanded numeber: "
+                        + str(self._edge_matrix[from_block][to_block])
+                        + "\npossible edges "
+                        + str(
+                            self._nodes_per_block[from_block]
+                            * self._nodes_per_block[to_block]
+                        )
+                        + "\nbetween blocks "
+                        + str(from_block)
+                        + "->"
+                        + str(to_block)
+                    )
+                elif (
+                    not directed
+                    and from_block == to_block
+                    and self._edge_matrix[from_block][to_block]
+                    > self._nodes_per_block[from_block]
+                    * (self._nodes_per_block[to_block] + 1)
+                    / 2
+                ):
+                    raise ValueError(
+                        "Too many edges demanded. \nDemanded numeber: "
+                        + str(self._edge_matrix[from_block][to_block])
+                        + "\npossible edges "
+                        + str(
+                            self._nodes_per_block[from_block]
+                            * (self._nodes_per_block[to_block] + 1)
+                            / 2
+                        )
+                        + "\nbetween blocks "
+                        + str(from_block)
+                        + "->"
+                        + str(to_block)
+                    )
                 # create exact the number of edges
                 for _ in range(self._edge_matrix[from_block][to_block]):
                     while True:
-                        from_node = self._get_random_block_element(from_block, block_info)
+                        from_node = self._get_random_block_element(
+                            from_block, block_info
+                        )
                         to_node = self._get_random_block_element(to_block, block_info)
                         # check if edge already exists else choose new!
                         if graph.has_edge(from_node, to_node):
@@ -257,10 +294,12 @@ class SBMGenerator(object):
         block_to_node = []
         actual_start_value = 0
         for number_of_nodes in self._nodes_per_block:
-            block_to_node.append(range(actual_start_value,
-                                       actual_start_value + number_of_nodes))
-            graph.add_nodes_from(range(actual_start_value,
-                                       actual_start_value + number_of_nodes))
+            block_to_node.append(
+                range(actual_start_value, actual_start_value + number_of_nodes)
+            )
+            graph.add_nodes_from(
+                range(actual_start_value, actual_start_value + number_of_nodes)
+            )
             actual_start_value += number_of_nodes
         return block_to_node
 
@@ -276,8 +315,14 @@ class SBMGeneratorDegreeCorrected(SBMGenerator):
 
     _SAMPLE_SIZE = 50
 
-    def __init__(self, number_of_blocks, degree_distribution_per_block,
-                 edge_matrix, type_of_edge_matrix, is_directed_edge_matrix=False):
+    def __init__(
+        self,
+        number_of_blocks,
+        degree_distribution_per_block,
+        edge_matrix,
+        type_of_edge_matrix,
+        is_directed_edge_matrix=False,
+    ):
         self._degree_distribution_per_block = degree_distribution_per_block
         # flat degree distribution and create node_per_block array
         self._flattened_block_distribution = []
@@ -296,15 +341,18 @@ class SBMGeneratorDegreeCorrected(SBMGenerator):
             nodes_per_block,
             edge_matrix,
             type_of_edge_matrix,
-            is_directed_edge_matrix)
+            is_directed_edge_matrix,
+        )
 
     def _get_edge_probability(self, node_from, node_to, from_block, to_block):
         """
         In degree corrected case take care of the probability of each node too.
         """
-        return self._edge_matrix[from_block][to_block] \
-               * self._flattened_block_distribution[node_from] \
-               * self._flattened_block_distribution[node_to]
+        return (
+            self._edge_matrix[from_block][to_block]
+            * self._flattened_block_distribution[node_from]
+            * self._flattened_block_distribution[node_to]
+        )
 
     def _create_block_info(self, graph):
         # add second field for saving the samples
@@ -322,10 +370,14 @@ class SBMGeneratorDegreeCorrected(SBMGenerator):
         # check if samples is empty
         if not samples:
             #  draw multiple samples because this should speed up the generation
-            samples.extend(self.random.choice(nodes,
-                                              size=self._SAMPLE_SIZE,
-                                              replace=True,
-                                              p=self._degree_distribution_per_block[block]))
+            samples.extend(
+                self.random.choice(
+                    nodes,
+                    size=self._SAMPLE_SIZE,
+                    replace=True,
+                    p=self._degree_distribution_per_block[block],
+                )
+            )
 
         return samples.pop()
 
@@ -333,15 +385,24 @@ class SBMGeneratorDegreeCorrected(SBMGenerator):
 class PlantedPartitionGenerator(SBMGenerator):
     """Generator for Planted Partition Networks based on SBMGenerator"""
 
-    def __init__(self,
-                 number_of_groups,
-                 number_of_vertices_in_each_group,
-                 edge_probability_in_group,
-                 edge_probability_between_groups):
+    def __init__(
+        self,
+        number_of_groups,
+        number_of_vertices_in_each_group,
+        edge_probability_in_group,
+        edge_probability_between_groups,
+    ):
         #        create nodes per block array
-        nodes_per_block = [number_of_vertices_in_each_group for _ in range(number_of_groups)]
-        edge_matrix = [[edge_probability_between_groups if i != j else edge_probability_in_group
-                        for i in range(number_of_groups)] for j in range(number_of_groups)]
+        nodes_per_block = [
+            number_of_vertices_in_each_group for _ in range(number_of_groups)
+        ]
+        edge_matrix = [
+            [
+                edge_probability_between_groups if i != j else edge_probability_in_group
+                for i in range(number_of_groups)
+            ]
+            for j in range(number_of_groups)
+        ]
 
         # call old init method to do the rest
         super(PlantedPartitionGenerator, self).__init__(
@@ -349,7 +410,8 @@ class PlantedPartitionGenerator(SBMGenerator):
             nodes_per_block,
             edge_matrix,
             self.PROBABILISTIC_EDGES,
-            is_directed_edge_matrix=False)
+            is_directed_edge_matrix=False,
+        )
 
 
 class Comparator(object):
@@ -364,9 +426,9 @@ class Comparator(object):
 
     def execute_single_test(self, starting_partition, inference_class):
         test_partition = starting_partition.copy()
-        inference = inference_class(starting_partition.graph,
-                                    self.objective_function,
-                                    test_partition)
+        inference = inference_class(
+            starting_partition.graph, self.objective_function, test_partition
+        )
         inference.infer_stochastic_block_model()
         return test_partition
 
@@ -389,8 +451,8 @@ class Comparator(object):
                 for _ in range(repetitions):
                     partition.random_partition(number_of_blocks)
                     resulting_partition = self.execute_single_test(
-                        partition,
-                        inference_class)
+                        partition, inference_class
+                    )
 
                     result = result_evaluator.evaluate(resulting_partition)
                     evaluated_results.append(result)
@@ -488,8 +550,10 @@ class NormalizedMutualInformation(EvaluateResult):
 
         entropy = 0.0
         for block in range(partition.number_of_blocks):
-            p_i = partition.get_number_of_nodes_in_block(block) \
-                  / partition.number_of_nodes
+            p_i = (
+                partition.get_number_of_nodes_in_block(block)
+                / partition.number_of_nodes
+            )
             if p_i != 0:
                 entropy -= p_i * math.log(p_i)
         return entropy
@@ -514,17 +578,22 @@ class NormalizedMutualInformation(EvaluateResult):
 
         mutual_information = 0.0
         for i in range(partition.number_of_blocks):
-            p_i = partition.get_number_of_nodes_in_block(i) \
-                  / partition.number_of_nodes
+            p_i = partition.get_number_of_nodes_in_block(i) / partition.number_of_nodes
             for j in range(self._real_partition.number_of_blocks):
-
-                p_ij = len(partition.get_nodes_of_block(i).intersection(
-                    self._real_partition.get_nodes_of_block(j))) \
-                       / partition.number_of_nodes
+                p_ij = (
+                    len(
+                        partition.get_nodes_of_block(i).intersection(
+                            self._real_partition.get_nodes_of_block(j)
+                        )
+                    )
+                    / partition.number_of_nodes
+                )
 
                 if p_ij != 0:
-                    p_j = self._real_partition.get_number_of_nodes_in_block(j) \
-                          / self._real_partition.number_of_nodes
+                    p_j = (
+                        self._real_partition.get_number_of_nodes_in_block(j)
+                        / self._real_partition.number_of_nodes
+                    )
 
                     mutual_information += p_ij * math.log(p_ij / (p_i * p_j))
 
@@ -546,7 +615,9 @@ class NormalizedMutualInformation(EvaluateResult):
             simple_partition = partition
         else:
             simple_partition = SimplePartition(partition.get_representation())
-        denominator = math.sqrt(self.entropy(simple_partition) * self._real_partition_entropy)
+        denominator = math.sqrt(
+            self.entropy(simple_partition) * self._real_partition_entropy
+        )
         # defined in that way
         if denominator == 0:
             return 0

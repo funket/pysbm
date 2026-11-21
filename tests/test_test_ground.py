@@ -21,12 +21,18 @@ class TestSimplePartition(ut.TestCase):
 
     def test_filling(self):
         """Create and assign different Partitions"""
-        self.assertEqual(self.all_in_one.node_to_block, {k: v for k, v in enumerate([0, 0, 0, 0, 0])})
-        self.assertEqual(self.single_groups.node_to_block, {k: v for k, v in enumerate(range(6))})
+        self.assertEqual(
+            self.all_in_one.node_to_block, {k: v for k, v in enumerate([0, 0, 0, 0, 0])}
+        )
+        self.assertEqual(
+            self.single_groups.node_to_block, {k: v for k, v in enumerate(range(6))}
+        )
 
         self.all_in_one.node_to_block = self.single_groups.node_to_block
 
-        self.assertEqual(self.all_in_one.node_to_block, {k: v for k, v in enumerate(range(6))})
+        self.assertEqual(
+            self.all_in_one.node_to_block, {k: v for k, v in enumerate(range(6))}
+        )
 
     def test_getters(self):
         """Test reading the information from simple partitions"""
@@ -46,11 +52,20 @@ class TestSimplePartition(ut.TestCase):
 
     def test_representations(self):
         """Test str and repr casting"""
-        self.assertEqual(str(self.all_in_one), str({k: v for k, v in enumerate([0, 0, 0, 0, 0])}))
-        self.assertEqual(str(self.single_groups), str({k: v for k, v in enumerate(range(6))}))
+        self.assertEqual(
+            str(self.all_in_one), str({k: v for k, v in enumerate([0, 0, 0, 0, 0])})
+        )
+        self.assertEqual(
+            str(self.single_groups), str({k: v for k, v in enumerate(range(6))})
+        )
 
-        self.assertEqual(repr(self.all_in_one), "SimplePartition({0: 0, 1: 0, 2: 0, 3: 0, 4: 0})")
-        self.assertEqual(repr(self.single_groups), "SimplePartition({0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5})")
+        self.assertEqual(
+            repr(self.all_in_one), "SimplePartition({0: 0, 1: 0, 2: 0, 3: 0, 4: 0})"
+        )
+        self.assertEqual(
+            repr(self.single_groups),
+            "SimplePartition({0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5})",
+        )
 
 
 class TestNormalizedMutualInformation(ut.TestCase):
@@ -71,9 +86,12 @@ class TestNormalizedMutualInformation(ut.TestCase):
         self.four_partitions.append([0, 1, 2, 3])
         # and transform them into class representation
         for i, partition in enumerate(self.four_partitions):
-            self.four_partitions[i] = sbmt.SimplePartition({k: v for k, v in enumerate(partition)})
+            self.four_partitions[i] = sbmt.SimplePartition(
+                {k: v for k, v in enumerate(partition)}
+            )
+
     def test_base_class(self):
-        """ Test base class abstract methods"""
+        """Test base class abstract methods"""
         evaluator = sbmt.EvaluateResult()
 
         with self.assertRaises(NotImplementedError):
@@ -86,27 +104,41 @@ class TestNormalizedMutualInformation(ut.TestCase):
 
         #        one node in another group
         #           half half partition
-        self.assertEqual(self.evaluator.entropy(self.four_partitions[1]),
-                         -3.0 / 4 * math.log(3.0 / 4) - 1.0 / 4 * math.log(1.0 / 4))
+        self.assertEqual(
+            self.evaluator.entropy(self.four_partitions[1]),
+            -3.0 / 4 * math.log(3.0 / 4) - 1.0 / 4 * math.log(1.0 / 4),
+        )
 
         # half half partition
-        self.assertEqual(self.evaluator.entropy(self.four_partitions[2]), -math.log(1.0 / 2))
+        self.assertEqual(
+            self.evaluator.entropy(self.four_partitions[2]), -math.log(1.0 / 2)
+        )
 
         # every node in a single group
-        self.assertEqual(self.evaluator.entropy(self.four_partitions[7]), -math.log(1.0 / 4))
+        self.assertEqual(
+            self.evaluator.entropy(self.four_partitions[7]), -math.log(1.0 / 4)
+        )
 
     def test_mutual_information(self):
         """Test mutual information"""
         #        one own partition it should give the maximum value which is the entropy
-        self.assertEqual(self.evaluator.mutual_information(self.four_partitions[2]),
-                         self.evaluator.entropy(self.four_partitions[2]))
+        self.assertEqual(
+            self.evaluator.mutual_information(self.four_partitions[2]),
+            self.evaluator.entropy(self.four_partitions[2]),
+        )
         #        same on the partition with exchanged block numbers
-        self.assertEqual(self.evaluator.mutual_information(sbmt.SimplePartition({0: 1, 1: 1, 2: 0, 3: 0})),
-                         self.evaluator.entropy(self.four_partitions[2]))
+        self.assertEqual(
+            self.evaluator.mutual_information(
+                sbmt.SimplePartition({0: 1, 1: 1, 2: 0, 3: 0})
+            ),
+            self.evaluator.entropy(self.four_partitions[2]),
+        )
 
         for i, partition in enumerate(self.four_partitions):
-            self.assertLessEqual(self.evaluator.mutual_information(self.four_partitions[i]),
-                                 self.evaluator.entropy(self.four_partitions[2]))
+            self.assertLessEqual(
+                self.evaluator.mutual_information(self.four_partitions[i]),
+                self.evaluator.entropy(self.four_partitions[2]),
+            )
 
     def test_evaluate(self):
         """Test basic behaviour of normalized mutual information"""
@@ -114,28 +146,32 @@ class TestNormalizedMutualInformation(ut.TestCase):
         #        with the same partition return 1
         self.assertEqual(self.evaluator.evaluate(self.four_partitions[2]), 1)
         #        same for shifted block labels
-        self.assertEqual(self.evaluator.evaluate(sbmt.SimplePartition({0: 1, 1: 1, 2: 0, 3: 0})), 1)
+        self.assertEqual(
+            self.evaluator.evaluate(sbmt.SimplePartition({0: 1, 1: 1, 2: 0, 3: 0})), 1
+        )
 
         #        all others return values smaller than 1
         for i, partition in enumerate(self.four_partitions):
             if i != 2:
-                self.assertLess(self.evaluator.evaluate(self.four_partitions[i]),
-                                1)
+                self.assertLess(self.evaluator.evaluate(self.four_partitions[i]), 1)
 
 
 class TestPlantedPartition(ut.TestCase):
-
     def test_simple_partitions(self):
         # all edges in group
         planted_partition_generator = sbmt.PlantedPartitionGenerator(2, 5, 1, 0)
-        graph, number_of_groups, true_partition = planted_partition_generator.generate(directed=False, seed=42)
+        graph, number_of_groups, true_partition = planted_partition_generator.generate(
+            directed=False, seed=42
+        )
         self.assertEqual(number_of_groups, 2)
         self.assertEqual(true_partition, {x: 0 if x < 5 else 1 for x in range(10)})
         edges = [(x, y) for x in range(5) for y in range(x, 5)]
         edges.extend([(x, y) for x in range(5, 10) for y in range(x, 10)])
         self.assertEqual(list(graph.edges()), edges)
 
-        graph, number_of_groups, true_partition = planted_partition_generator.generate(directed=True, seed=42)
+        graph, number_of_groups, true_partition = planted_partition_generator.generate(
+            directed=True, seed=42
+        )
         self.assertEqual(number_of_groups, 2)
         self.assertEqual(true_partition, {x: 0 if x < 5 else 1 for x in range(10)})
         edges = [(x, y) for x in range(5) for y in range(5)]
@@ -144,13 +180,17 @@ class TestPlantedPartition(ut.TestCase):
 
         # all edges between group
         planted_partition_generator = sbmt.PlantedPartitionGenerator(2, 5, 0, 1)
-        graph, number_of_groups, true_partition = planted_partition_generator.generate(directed=False, seed=42)
+        graph, number_of_groups, true_partition = planted_partition_generator.generate(
+            directed=False, seed=42
+        )
         self.assertEqual(number_of_groups, 2)
         self.assertEqual(true_partition, {x: 0 if x < 5 else 1 for x in range(10)})
         edges = [(x, y) for x in range(5) for y in range(5, 10)]
         self.assertEqual(list(graph.edges()), edges)
 
-        graph, number_of_groups, true_partition = planted_partition_generator.generate(directed=True, seed=42)
+        graph, number_of_groups, true_partition = planted_partition_generator.generate(
+            directed=True, seed=42
+        )
         self.assertEqual(number_of_groups, 2)
         self.assertEqual(true_partition, {x: 0 if x < 5 else 1 for x in range(10)})
         edges = [(x, y) for x in range(5) for y in range(5, 10)]
@@ -160,8 +200,10 @@ class TestPlantedPartition(ut.TestCase):
     def test_check_probabilities(self):
         # check if counts match
         true_partition = {x: 0 if x < 100 else 1 for x in range(200)}
-        planted_partition_generator = sbmt.PlantedPartitionGenerator(2, 100, .5, 0)
-        graph, number_of_groups, partition = planted_partition_generator.generate(directed=False, seed=42)
+        planted_partition_generator = sbmt.PlantedPartitionGenerator(2, 100, 0.5, 0)
+        graph, number_of_groups, partition = planted_partition_generator.generate(
+            directed=False, seed=42
+        )
         self.assertEqual(number_of_groups, 2)
         self.assertEqual(partition, true_partition)
         between_groups = 0
@@ -172,10 +214,12 @@ class TestPlantedPartition(ut.TestCase):
             else:
                 between_groups += 1
         # denominator = probability*number_of_groups*number_of_nodes_per_group*(number_of_nodes_per_group)/2
-        self.assertAlmostEqual(in_groups / (2 * 100 * 101 / 2), .5, delta=.1)
+        self.assertAlmostEqual(in_groups / (2 * 100 * 101 / 2), 0.5, delta=0.1)
         self.assertEqual(between_groups, 0)
 
-        graph, number_of_groups, partition = planted_partition_generator.generate(directed=True, seed=42)
+        graph, number_of_groups, partition = planted_partition_generator.generate(
+            directed=True, seed=42
+        )
         self.assertEqual(number_of_groups, 2)
         self.assertEqual(partition, true_partition)
         between_groups = 0
@@ -185,12 +229,14 @@ class TestPlantedPartition(ut.TestCase):
                 in_groups += 1
             else:
                 between_groups += 1
-        self.assertAlmostEqual(in_groups / (100 * 100 * 2), .5, delta=.1)
+        self.assertAlmostEqual(in_groups / (100 * 100 * 2), 0.5, delta=0.1)
         self.assertEqual(between_groups, 0)
 
         # edges between groups
         planted_partition_generator = sbmt.PlantedPartitionGenerator(2, 100, 0, 0.5)
-        graph, number_of_groups, partition = planted_partition_generator.generate(directed=False, seed=42)
+        graph, number_of_groups, partition = planted_partition_generator.generate(
+            directed=False, seed=42
+        )
         self.assertEqual(number_of_groups, 2)
         self.assertEqual(partition, true_partition)
         between_groups = 0
@@ -201,9 +247,11 @@ class TestPlantedPartition(ut.TestCase):
             else:
                 between_groups += 1
         self.assertEqual(in_groups, 0)
-        self.assertAlmostEqual(between_groups / (100 * 100), 0.5, delta=.1)
+        self.assertAlmostEqual(between_groups / (100 * 100), 0.5, delta=0.1)
 
-        graph, number_of_groups, partition = planted_partition_generator.generate(directed=True, seed=42)
+        graph, number_of_groups, partition = planted_partition_generator.generate(
+            directed=True, seed=42
+        )
         self.assertEqual(number_of_groups, 2)
         self.assertEqual(partition, true_partition)
         between_groups = 0
@@ -214,15 +262,17 @@ class TestPlantedPartition(ut.TestCase):
             else:
                 between_groups += 1
         self.assertEqual(in_groups, 0)
-        self.assertAlmostEqual(between_groups / (2 * 100 * 100), 0.5, delta=.1)
+        self.assertAlmostEqual(between_groups / (2 * 100 * 100), 0.5, delta=0.1)
 
     def test_check_probabilities_with_more_groups(self):
         # check if counts match
         true_partition = {x: 0 if x < 100 else 1 for x in range(200)}
         for x in range(200, 300):
             true_partition[x] = 2
-        planted_partition_generator = sbmt.PlantedPartitionGenerator(3, 100, .5, 0)
-        graph, number_of_groups, partition = planted_partition_generator.generate(directed=False, seed=42)
+        planted_partition_generator = sbmt.PlantedPartitionGenerator(3, 100, 0.5, 0)
+        graph, number_of_groups, partition = planted_partition_generator.generate(
+            directed=False, seed=42
+        )
         self.assertEqual(number_of_groups, 3)
         self.assertEqual(partition, true_partition)
         between_groups = 0
@@ -233,10 +283,12 @@ class TestPlantedPartition(ut.TestCase):
             else:
                 between_groups += 1
         # denominator = probability*number_of_groups*number_of_nodes_per_group*(number_of_nodes_per_group)/2
-        self.assertAlmostEqual(in_groups / (3 * 100 * 101 / 2), .5, delta=.1)
+        self.assertAlmostEqual(in_groups / (3 * 100 * 101 / 2), 0.5, delta=0.1)
         self.assertEqual(between_groups, 0)
 
-        graph, number_of_groups, partition = planted_partition_generator.generate(directed=True, seed=42)
+        graph, number_of_groups, partition = planted_partition_generator.generate(
+            directed=True, seed=42
+        )
         self.assertEqual(number_of_groups, 3)
         self.assertEqual(partition, true_partition)
         between_groups = 0
@@ -246,12 +298,14 @@ class TestPlantedPartition(ut.TestCase):
                 in_groups += 1
             else:
                 between_groups += 1
-        self.assertAlmostEqual(in_groups / (100 * 100 * 3), .5, delta=.1)
+        self.assertAlmostEqual(in_groups / (100 * 100 * 3), 0.5, delta=0.1)
         self.assertEqual(between_groups, 0)
 
         # edges between groups
         planted_partition_generator = sbmt.PlantedPartitionGenerator(3, 100, 0, 0.5)
-        graph, number_of_groups, partition = planted_partition_generator.generate(directed=False, seed=42)
+        graph, number_of_groups, partition = planted_partition_generator.generate(
+            directed=False, seed=42
+        )
         self.assertEqual(number_of_groups, 3)
         self.assertEqual(partition, true_partition)
         between_groups = 0
@@ -262,9 +316,11 @@ class TestPlantedPartition(ut.TestCase):
             else:
                 between_groups += 1
         self.assertEqual(in_groups, 0)
-        self.assertAlmostEqual(between_groups / (100 * 100 * 3), 0.5, delta=.1)
+        self.assertAlmostEqual(between_groups / (100 * 100 * 3), 0.5, delta=0.1)
 
-        graph, number_of_groups, partition = planted_partition_generator.generate(directed=True, seed=42)
+        graph, number_of_groups, partition = planted_partition_generator.generate(
+            directed=True, seed=42
+        )
         self.assertEqual(number_of_groups, 3)
         self.assertEqual(partition, true_partition)
         between_groups = 0
@@ -275,4 +331,4 @@ class TestPlantedPartition(ut.TestCase):
             else:
                 between_groups += 1
         self.assertEqual(in_groups, 0)
-        self.assertAlmostEqual(between_groups / (2 * 3 * 100 * 100), 0.5, delta=.1)
+        self.assertAlmostEqual(between_groups / (2 * 3 * 100 * 100), 0.5, delta=0.1)

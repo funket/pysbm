@@ -4,6 +4,7 @@
 """
 Partition of a graph into different groups with saving a lot of additional information
 """
+
 import random as rd
 
 import networkx as nx
@@ -15,11 +16,19 @@ from .exceptions import NoFreeNodeException
 
 
 class Partition(object):
-    """ Partition of a graph """
+    """Partition of a graph"""
 
-    def __init__(self, graph, number_of_blocks=None, calculate_degree_of_blocks=True,
-                 save_neighbor_of_blocks=True, fill_random=True, save_neighbor_edges=False, representation=None,
-                 with_covariate=False):
+    def __init__(
+        self,
+        graph,
+        number_of_blocks=None,
+        calculate_degree_of_blocks=True,
+        save_neighbor_of_blocks=True,
+        fill_random=True,
+        save_neighbor_edges=False,
+        representation=None,
+        with_covariate=False,
+    ):
         self._graph = graph
         self.B = number_of_blocks
         self._calculate_degree_of_blocks = calculate_degree_of_blocks
@@ -43,16 +52,15 @@ class Partition(object):
         return self._graph
 
     def is_graph_directed(self):
-        """ Return True if Graph is directed """
+        """Return True if Graph is directed"""
         raise NotImplementedError()
 
     def move_node(self, node, to_block):
-        """ Change Block Membership of a single node """
+        """Change Block Membership of a single node"""
         raise NotImplementedError()
 
-
     def get_number_of_nodes_in_block(self, block_number):
-        """ Get Number of nodes """
+        """Get Number of nodes"""
         raise NotImplementedError()
 
     def get_degree_of_block(self, block_number):
@@ -83,7 +91,7 @@ class Partition(object):
         raise NotImplementedError()
 
     def random_partition(self, number_of_blocks=None):
-        """ Fill partition with random partition """
+        """Fill partition with random partition"""
         raise NotImplementedError()
 
     def get_random_node(self, no_single=True):
@@ -94,12 +102,12 @@ class Partition(object):
         raise NotImplementedError()
 
     def get_random_move(self):
-        """ Return triple of random node, old block and random new block """
+        """Return triple of random node, old block and random new block"""
         raise NotImplementedError()
 
     def get_random_neighboring_edge_of_block(self, block_number):
-        """ 
-        Return a random edge adjacent to given block. 
+        """
+        Return a random edge adjacent to given block.
         Important: on directed includes links pointing to a block too.
         For easier handling all edges are stored in the format
         (node of block_number, node of other block)
@@ -108,46 +116,46 @@ class Partition(object):
         raise NotImplementedError()
 
     def precalc_move(self, move_candidate, objective_function):
-        """ Calculate arguments for delta of objective function """
+        """Calculate arguments for delta of objective function"""
         raise NotImplementedError()
 
     def get_neighbors_of_block(self, block_number):
-        """ Get neighboring blocks of given block """
+        """Get neighboring blocks of given block"""
         raise NotImplementedError()
 
     def get_neighbors_of_node(self, node):
-        """ Get neighbors of node """
+        """Get neighbors of node"""
         raise NotImplementedError()
 
     def get_representation(self):
-        """ Return in short form partition of nodes """
+        """Return in short form partition of nodes"""
         raise NotImplementedError()
 
     def set_from_representation(self, representation):
-        """ Set block membership from representation, which is a dict of nodes (key) an corresponding block (value)."""
+        """Set block membership from representation, which is a dict of nodes (key) an corresponding block (value)."""
         for node in representation:
             self.move_node(node, representation[node])
 
     def copy(self):
-        """ Return a copy of the partition """
+        """Return a copy of the partition"""
         raise NotImplementedError()
 
     def get_nodes_iter(self):
-        """ Return iteration over all nodes """
+        """Return iteration over all nodes"""
         raise NotImplementedError()
 
     def get_block_of_node(self, node):
-        """ Return the block of a node """
+        """Return the block of a node"""
         raise NotImplementedError()
 
     def get_block_memberships(self):
-        """ Return list with all block memberships.
-            Needed e.g. for drawing.
+        """Return list with all block memberships.
+        Needed e.g. for drawing.
         """
         raise NotImplementedError()
 
     def set_save_neighbor_edges(self, save_neighbor_edges):
-        """ Change flag save_neighbor_edges """
+        """Change flag save_neighbor_edges"""
         raise NotImplementedError()
 
     def merge_blocks(self, merges, new_block_count):
@@ -248,12 +256,20 @@ class NxPartition(Partition):
     and beside block merging, empty blocks will be kept
     """
 
-    def __init__(self, graph=nx.DiGraph(), number_of_blocks=None, calculate_degree_of_blocks=True,
-                 save_neighbor_of_blocks=True, fill_random=True, save_neighbor_edges=False,
-                 weighted_graph=False, representation=None):
+    def __init__(
+        self,
+        graph=nx.DiGraph(),
+        number_of_blocks=None,
+        calculate_degree_of_blocks=True,
+        save_neighbor_of_blocks=True,
+        fill_random=True,
+        save_neighbor_edges=False,
+        weighted_graph=False,
+        representation=None,
+    ):
         self._is_weighted = weighted_graph
         # centrally store name of weight attribute (=WA), None lets networkx count every edge once
-        self._WA = 'weight' if weighted_graph else None
+        self._WA = "weight" if weighted_graph else None
         self._graph = graph
         self.partition = {}
         self.number_of_nodes_per_block = np.zeros(1, dtype=int)
@@ -269,10 +285,15 @@ class NxPartition(Partition):
                 self.neighboring_edges = [additional_types.WeightedListDict()]
             else:
                 self.neighboring_edges = [additional_types.ListDict()]
-        super(NxPartition, self).__init__(graph, number_of_blocks, calculate_degree_of_blocks,
-                                          save_neighbor_of_blocks, fill_random,
-                                          save_neighbor_edges,
-                                          representation=representation)
+        super(NxPartition, self).__init__(
+            graph,
+            number_of_blocks,
+            calculate_degree_of_blocks,
+            save_neighbor_of_blocks,
+            fill_random,
+            save_neighbor_edges,
+            representation=representation,
+        )
         # in the moment only implemented with empty blocks
         self.with_empty_blocks = True
 
@@ -292,14 +313,14 @@ class NxPartition(Partition):
         self.number_of_nodes_per_block[block] += 1
         if self._calculate_degree_of_blocks:
             if self._graph.is_directed():
-                self.block_degrees[block] += self._graph.out_degree(node,
-                                                                    weight=self._WA)
+                self.block_degrees[block] += self._graph.out_degree(
+                    node, weight=self._WA
+                )
             else:
                 self.block_degrees[block] += self._graph.degree(node, weight=self._WA)
 
     def _add_edge_count(self, from_node, to_node, weight=1):
-        """ Increase value of block_edges
-        """
+        """Increase value of block_edges"""
         from_block = self.partition[from_node]
         to_block = self.partition[to_node]
 
@@ -331,9 +352,10 @@ class NxPartition(Partition):
         if self.is_graph_directed() and self._calculate_degree_of_blocks:
             self.block_in_degrees[to_block] += weight
 
-    def _remove_edge_count(self, from_node, to_node, weight,
-                           from_node_block=None, to_node_block=None):
-        """ Decrease value of block_edges """
+    def _remove_edge_count(
+        self, from_node, to_node, weight, from_node_block=None, to_node_block=None
+    ):
+        """Decrease value of block_edges"""
         # get block membership which were not given
         if from_node_block is None:
             from_node_block = self.partition[from_node]
@@ -345,8 +367,10 @@ class NxPartition(Partition):
         # if needed refresh block neighbor
         if self._save_neighbor_of_blocks:
             # double check for directed graphs
-            if self.block_edges[from_node_block][to_node_block] == 0 and \
-                    self.block_edges[to_node_block][from_node_block] == 0:
+            if (
+                self.block_edges[from_node_block][to_node_block] == 0
+                and self.block_edges[to_node_block][from_node_block] == 0
+            ):
                 self.list_of_block_neighbors[from_node_block].discard(to_node_block)
                 self.list_of_block_neighbors[to_node_block].discard(from_node_block)
 
@@ -354,10 +378,14 @@ class NxPartition(Partition):
         if self._save_neighbor_edges:
             if self._is_weighted:
                 # noinspection PyArgumentList
-                self.neighboring_edges[from_node_block].remove((from_node, to_node), weight)
+                self.neighboring_edges[from_node_block].remove(
+                    (from_node, to_node), weight
+                )
                 if self.is_graph_directed():
                     # noinspection PyArgumentList
-                    self.neighboring_edges[to_node_block].remove((to_node, from_node), weight)
+                    self.neighboring_edges[to_node_block].remove(
+                        (to_node, from_node), weight
+                    )
             else:
                 self.neighboring_edges[from_node_block].remove((from_node, to_node))
                 if self.is_graph_directed():
@@ -367,18 +395,21 @@ class NxPartition(Partition):
         if self.is_graph_directed() and self._calculate_degree_of_blocks:
             self.block_in_degrees[to_node_block] -= weight
 
-    def _change_edge_count(self, from_node, to_node, weight=1,
-                           old_from_block=None, old_to_block=None):
-        """ Change value of block edges """
+    def _change_edge_count(
+        self, from_node, to_node, weight=1, old_from_block=None, old_to_block=None
+    ):
+        """Change value of block edges"""
         # check default value
         if not self._is_weighted:
             weight = 1
         # add to new and remove from old
-        self._remove_edge_count(from_node,
-                                to_node,
-                                weight,
-                                from_node_block=old_from_block,
-                                to_node_block=old_to_block)
+        self._remove_edge_count(
+            from_node,
+            to_node,
+            weight,
+            from_node_block=old_from_block,
+            to_node_block=old_to_block,
+        )
         self._add_edge_count(from_node, to_node, weight)
 
     def is_graph_directed(self):
@@ -399,48 +430,72 @@ class NxPartition(Partition):
         # refresh block degree
         if self._calculate_degree_of_blocks:
             if self._graph.is_directed():
-                self.block_degrees[old_block] -= self._graph.out_degree(node, weight=self._WA)
-                self.block_degrees[to_block] += self._graph.out_degree(node, weight=self._WA)
+                self.block_degrees[old_block] -= self._graph.out_degree(
+                    node, weight=self._WA
+                )
+                self.block_degrees[to_block] += self._graph.out_degree(
+                    node, weight=self._WA
+                )
             else:
-                self.block_degrees[old_block] -= self._graph.degree(node, weight=self._WA)
-                self.block_degrees[to_block] += self._graph.degree(node, weight=self._WA)
+                self.block_degrees[old_block] -= self._graph.degree(
+                    node, weight=self._WA
+                )
+                self.block_degrees[to_block] += self._graph.degree(
+                    node, weight=self._WA
+                )
 
                 # refresh values of edge counts
         if self._graph.is_directed():
             #  if selfloop concern that from and to block is changed
             for _, to_node, weight in self._graph.out_edges(node, data=self._WA):
                 if node != to_node:
-                    self._change_edge_count(node, to_node, weight,
-                                            old_from_block=old_block)
+                    self._change_edge_count(
+                        node, to_node, weight, old_from_block=old_block
+                    )
                 else:
-                    self._change_edge_count(node, node, weight,
-                                            old_from_block=old_block,
-                                            old_to_block=old_block)
+                    self._change_edge_count(
+                        node,
+                        node,
+                        weight,
+                        old_from_block=old_block,
+                        old_to_block=old_block,
+                    )
             weight = 1
             for from_node, _, data in self._graph.in_edges(node, data=True):
                 #  for in edges NetworkX support only full data access therefore this workaround
                 if self._is_weighted:
                     weight = data[self._WA]
                 if node != from_node:
-                    self._change_edge_count(from_node, node, weight,
-                                            old_to_block=old_block)
+                    self._change_edge_count(
+                        from_node, node, weight, old_to_block=old_block
+                    )
                     #  else no change because already changed in successors!
         else:
             for _, to_node, weight in self._graph.edges(node, data=self._WA):
                 # for to_node in self._graph.neighbors(node):
                 #  if selfloop concern that from and to block is changed
                 if node != to_node:
-                    self._change_edge_count(node, to_node, weight,
-                                            old_from_block=old_block)
-                    self._change_edge_count(to_node, node, weight,
-                                            old_to_block=old_block)
+                    self._change_edge_count(
+                        node, to_node, weight, old_from_block=old_block
+                    )
+                    self._change_edge_count(
+                        to_node, node, weight, old_to_block=old_block
+                    )
                 else:
-                    self._change_edge_count(node, node, weight,
-                                            old_from_block=old_block,
-                                            old_to_block=old_block)
-                    self._change_edge_count(node, node, weight,
-                                            old_from_block=old_block,
-                                            old_to_block=old_block)
+                    self._change_edge_count(
+                        node,
+                        node,
+                        weight,
+                        old_from_block=old_block,
+                        old_to_block=old_block,
+                    )
+                    self._change_edge_count(
+                        node,
+                        node,
+                        weight,
+                        old_from_block=old_block,
+                        old_to_block=old_block,
+                    )
 
     def random_partition(self, number_of_blocks=None):
         # First create representation and fill partition with representation afterwards
@@ -481,9 +536,13 @@ class NxPartition(Partition):
 
         if self._save_neighbor_edges:
             if self._is_weighted:
-                self.neighboring_edges = [additional_types.WeightedListDict() for _ in range(self.B)]
+                self.neighboring_edges = [
+                    additional_types.WeightedListDict() for _ in range(self.B)
+                ]
             else:
-                self.neighboring_edges = [additional_types.ListDict() for _ in range(self.B)]
+                self.neighboring_edges = [
+                    additional_types.ListDict() for _ in range(self.B)
+                ]
 
         # assign nodes like given in the representation
         for node in self._graph:
@@ -549,7 +608,7 @@ class NxPartition(Partition):
         return node
 
     def get_random_move(self):
-        """ Return triple of random node, old block and random new block """
+        """Return triple of random node, old block and random new block"""
         node = self.get_random_node()
         old_block = self.partition[node]
 
@@ -566,7 +625,7 @@ class NxPartition(Partition):
         return self.neighboring_edges[block_number].choose_random()
 
     def precalc_move(self, move_candidate, objective_function):
-        """ Calculate arguments for delta of objective function """
+        """Calculate arguments for delta of objective function"""
         node, from_block, to_block = move_candidate
         # Need to calculate:
         # neighbor_blocks: blocks neighboring the node (each block only once)
@@ -595,16 +654,23 @@ class NxPartition(Partition):
                 # selfloops already counted
                 if neighbor != node:
                     block = self.partition[neighbor]
-                    predecessor_block_info[block] = predecessor_block_info.get(block, 0) \
-                                                    + weight
+                    predecessor_block_info[block] = (
+                        predecessor_block_info.get(block, 0) + weight
+                    )
 
-            parameters = (neighbor_block_info,
-                          predecessor_block_info,
-                          selfloops,
-                          self._graph.in_degree(node, weight=self._WA),
-                          self._graph.out_degree(node, weight=self._WA))
+            parameters = (
+                neighbor_block_info,
+                predecessor_block_info,
+                selfloops,
+                self._graph.in_degree(node, weight=self._WA),
+                self._graph.out_degree(node, weight=self._WA),
+            )
         else:
-            parameters = (neighbor_block_info, selfloops, self._graph.degree(node, weight=self._WA))
+            parameters = (
+                neighbor_block_info,
+                selfloops,
+                self._graph.degree(node, weight=self._WA),
+            )
 
         return parameters
 
@@ -620,13 +686,15 @@ class NxPartition(Partition):
         return "{" + output + "}"
 
     def copy(self):
-        new = NxPartition(self._graph,
-                          self.B,
-                          self._calculate_degree_of_blocks,
-                          self._save_neighbor_of_blocks,
-                          fill_random=False,
-                          save_neighbor_edges=self._save_neighbor_edges,
-                          weighted_graph=self._is_weighted)
+        new = NxPartition(
+            self._graph,
+            self.B,
+            self._calculate_degree_of_blocks,
+            self._save_neighbor_of_blocks,
+            fill_random=False,
+            save_neighbor_edges=self._save_neighbor_edges,
+            weighted_graph=self._is_weighted,
+        )
 
         new.partition = self.partition.copy()
         new.block_edges = self.block_edges.copy()
@@ -669,19 +737,31 @@ class NxPartition(Partition):
             self._save_neighbor_edges = save_neighbor_edges
 
             if self._is_weighted:
-                self.neighboring_edges = [additional_types.WeightedListDict() for _ in range(self.B)]
+                self.neighboring_edges = [
+                    additional_types.WeightedListDict() for _ in range(self.B)
+                ]
                 for edge in self._graph.edges(data=self._WA, default=1):
                     # add to_node in list of block of from_node
-                    self.neighboring_edges[self.partition[edge[0]]].add((edge[0], edge[1]), edge[2])
+                    self.neighboring_edges[self.partition[edge[0]]].add(
+                        (edge[0], edge[1]), edge[2]
+                    )
                     # to include the "incoming" edges too:
-                    self.neighboring_edges[self.partition[edge[1]]].add((edge[1], edge[0]), edge[2])
+                    self.neighboring_edges[self.partition[edge[1]]].add(
+                        (edge[1], edge[0]), edge[2]
+                    )
             else:
-                self.neighboring_edges = [additional_types.ListDict() for _ in range(self.B)]
+                self.neighboring_edges = [
+                    additional_types.ListDict() for _ in range(self.B)
+                ]
                 for edge in self._graph.edges():
                     # add to_node in list of block of from_node
-                    self.neighboring_edges[self.partition[edge[0]]].add((edge[0], edge[1]))
+                    self.neighboring_edges[self.partition[edge[0]]].add(
+                        (edge[0], edge[1])
+                    )
                     # to include the "incoming" edges too:
-                    self.neighboring_edges[self.partition[edge[1]]].add((edge[1], edge[0]))
+                    self.neighboring_edges[self.partition[edge[1]]].add(
+                        (edge[1], edge[0])
+                    )
 
     def merge_blocks(self, merges, new_block_count):
         # no checks!
@@ -701,9 +781,9 @@ class NxPartition(Partition):
             degree_distributions = [{} for _ in range(self.B)]
 
             for node, degree in degree_iter:
-                degree_distributions[self.partition[node]][degree] = degree_distributions[self.partition[node]].get(
-                    degree,
-                    0) + 1
+                degree_distributions[self.partition[node]][degree] = (
+                    degree_distributions[self.partition[node]].get(degree, 0) + 1
+                )
 
             if probability:
                 for block, degree_distribution in enumerate(degree_distributions):
@@ -715,10 +795,12 @@ class NxPartition(Partition):
 
         if self._graph.is_directed():
             if self._is_weighted:
-                return create_degree_distribution(self._graph.in_degree(weight=self._WA)), create_degree_distribution(
-                    self._graph.out_degree(weight=self._WA))
-            return create_degree_distribution(self._graph.in_degree()), create_degree_distribution(
-                self._graph.out_degree())
+                return create_degree_distribution(
+                    self._graph.in_degree(weight=self._WA)
+                ), create_degree_distribution(self._graph.out_degree(weight=self._WA))
+            return create_degree_distribution(
+                self._graph.in_degree()
+            ), create_degree_distribution(self._graph.out_degree())
         # else...
         if self._is_weighted:
             return create_degree_distribution(self._graph.degree(weight=self._WA))
@@ -754,12 +836,18 @@ class NxPartition(Partition):
 
         for node in self._graph.nodes:
             if self._is_weighted:
-                joint_degrees = (self._graph.in_degree(node, weight=self._WA),
-                                 self._graph.out_degree(node, weight=self._WA))
+                joint_degrees = (
+                    self._graph.in_degree(node, weight=self._WA),
+                    self._graph.out_degree(node, weight=self._WA),
+                )
             else:
-                joint_degrees = (self._graph.in_degree(node), self._graph.out_degree(node))
-            degree_distributions[self.partition[node]][joint_degrees] = degree_distributions[self.partition[node]].get(
-                joint_degrees, 0) + 1
+                joint_degrees = (
+                    self._graph.in_degree(node),
+                    self._graph.out_degree(node),
+                )
+            degree_distributions[self.partition[node]][joint_degrees] = (
+                degree_distributions[self.partition[node]].get(joint_degrees, 0) + 1
+            )
 
         return degree_distributions
 
@@ -778,12 +866,28 @@ class NxPartition(Partition):
 class NxPartitionWithMoveCounter(NxPartition):
     """Partition which counts the number of performed node moves"""
 
-    def __init__(self, graph, number_of_blocks=None, calculate_degree_of_blocks=True, save_neighbor_of_blocks=True,
-                 fill_random=True, save_neighbor_edges=False, weighted_graph=False, representation=None):
+    def __init__(
+        self,
+        graph,
+        number_of_blocks=None,
+        calculate_degree_of_blocks=True,
+        save_neighbor_of_blocks=True,
+        fill_random=True,
+        save_neighbor_edges=False,
+        weighted_graph=False,
+        representation=None,
+    ):
         self.node_moves = 0
-        super(NxPartitionWithMoveCounter, self).__init__(graph, number_of_blocks, calculate_degree_of_blocks,
-                                                         save_neighbor_of_blocks, fill_random,
-                                                         save_neighbor_edges, weighted_graph, representation)
+        super(NxPartitionWithMoveCounter, self).__init__(
+            graph,
+            number_of_blocks,
+            calculate_degree_of_blocks,
+            save_neighbor_of_blocks,
+            fill_random,
+            save_neighbor_edges,
+            weighted_graph,
+            representation,
+        )
 
     def move_node(self, node, to_block):
         # only count real moves

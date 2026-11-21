@@ -15,8 +15,12 @@ from .exceptions import NoFreeNodeException
 from .objective_function_iclex import IntegratedCompleteLikelihoodExact
 from .objective_functions import *
 from .partition import Partition
-from .peixotos_flat_sbm import LogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmWrapper
-from .peixotos_hierarchical_sbm import LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper
+from .peixotos_flat_sbm import (
+    LogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmWrapper,
+)
+from .peixotos_hierarchical_sbm import (
+    LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper,
+)
 from .objective_function_newman_group_size import NewmanReinertDegreeCorrected
 from .objective_function_newman_group_size import NewmanReinertNonDegreeCorrected
 
@@ -24,7 +28,7 @@ rd.seed()
 
 
 class Inference(object):
-    """Infer stochastic block model out of a given graph """
+    """Infer stochastic block model out of a given graph"""
 
     title = "Forgot to replace title"
     short_title = "Forgot to replace short title"
@@ -67,6 +71,7 @@ class Inference(object):
 
 class MetropolisInference(Inference):
     """Inference of SBM with Metropolis Algorithm"""
+
     title = "Metropolis Inference"
     short_title = "MA 5k"
 
@@ -112,17 +117,18 @@ class MetropolisInference(Inference):
         node, from_block, to_block = move_candidate
 
         if self.use_delta:
-            parameter = self.partition.precalc_move(move_candidate, self._objective_function)
-            delta = self._objective_function.calculate_delta(self.partition,
-                                                             from_block,
-                                                             to_block,
-                                                             *parameter)
+            parameter = self.partition.precalc_move(
+                move_candidate, self._objective_function
+            )
+            delta = self._objective_function.calculate_delta(
+                self.partition, from_block, to_block, *parameter
+            )
             # long version of probability = min(1, math.exp(delta)) and if rd.random() < probability:...
             #  but this version can handle bigger deltas and prevent OverflowError
             if delta >= 0:
                 move_node = True
             else:
-                move_node = (rd.random() < math.exp(delta))
+                move_node = rd.random() < math.exp(delta)
             if move_node:
                 self.partition.move_node(node, to_block)
                 self.node_moves += 1
@@ -134,7 +140,7 @@ class MetropolisInference(Inference):
             if delta >= 0:
                 move_node = True
             else:
-                move_node = (rd.random() < math.exp(delta))
+                move_node = rd.random() < math.exp(delta)
             if move_node:
                 self._objective_function.old_value = new_value
                 self.node_moves += 1
@@ -152,28 +158,43 @@ class MetropolisInference(Inference):
 
 class PeixotoInference(Inference):
     """Inference Algorithm described in Peixoto 2014"""
+
     title = "Peixoto Inference"
     short_title = "PAH"
 
-    _objective_function_classes = (TraditionalMicrocanonicalEntropy,
-                                   TraditionalMicrocanonicalEntropyDense,
-                                   TraditionalUnnormalizedLogLikelyhood,
-                                   LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper,
-                                   LogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmWrapper,
-                                   IntegratedCompleteLikelihoodExact,
-                                   NewmanReinertDegreeCorrected,
-                                   NewmanReinertNonDegreeCorrected)
+    _objective_function_classes = (
+        TraditionalMicrocanonicalEntropy,
+        TraditionalMicrocanonicalEntropyDense,
+        TraditionalUnnormalizedLogLikelyhood,
+        LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper,
+        LogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmWrapper,
+        IntegratedCompleteLikelihoodExact,
+        NewmanReinertDegreeCorrected,
+        NewmanReinertNonDegreeCorrected,
+    )
 
-    def __init__(self, graph, objective_function, partition, no_partition_reset=False, limit_possible_blocks=False,
-                 add_additional_mergers=True, mcmc_steps=100):
+    def __init__(
+        self,
+        graph,
+        objective_function,
+        partition,
+        no_partition_reset=False,
+        limit_possible_blocks=False,
+        add_additional_mergers=True,
+        mcmc_steps=100,
+    ):
         super(PeixotoInference, self).__init__(graph, objective_function, partition)
         # in the actual setting need to know the final blocksize and therefore take the value from partition
         self.aimed_b = partition.B
         # create a partition with every node in a own block
         if not no_partition_reset:
             self.partition.random_partition(partition.get_number_of_nodes())
-        self.mcmc = MetropolisHastingInference(graph, objective_function, self.partition,
-                                               limit_possible_blocks=limit_possible_blocks)
+        self.mcmc = MetropolisHastingInference(
+            graph,
+            objective_function,
+            self.partition,
+            limit_possible_blocks=limit_possible_blocks,
+        )
         self.mcmc_steps = mcmc_steps
         # free parameter for the selection of block merges in a Metropolis Hasting like fashion
         self.epsilon = 0.1
@@ -209,7 +230,9 @@ class PeixotoInference(Inference):
 
         # Similar to the method select_new_block of Metropolis Hasting
         #  only change is that t is a neighboring block and not a node
-        t = self.partition.get_block_of_node(self.partition.get_random_neighboring_edge_of_block(block)[1])
+        t = self.partition.get_block_of_node(
+            self.partition.get_random_neighboring_edge_of_block(block)[1]
+        )
         # 2. Select s randomly from all B choices with equal probability
         if self.limit_possible_blocks:
             s = rd.choice(self.partition.get_possible_blocks(block))
@@ -217,12 +240,24 @@ class PeixotoInference(Inference):
             s = rd.choice(range(self.partition.B))
         # 3. Accept with probability R_t
         if self.partition.is_graph_directed():
-            rt = self.epsilon * self.partition.B \
-                 / (self.partition.get_in_degree_of_block(t) + self.partition.get_in_degree_of_block(t)
-                    + self.epsilon * self.partition.B)
+            rt = (
+                self.epsilon
+                * self.partition.B
+                / (
+                    self.partition.get_in_degree_of_block(t)
+                    + self.partition.get_in_degree_of_block(t)
+                    + self.epsilon * self.partition.B
+                )
+            )
         else:
-            rt = self.epsilon * self.partition.B \
-                 / (self.partition.get_degree_of_block(t) + self.epsilon * self.partition.B)
+            rt = (
+                self.epsilon
+                * self.partition.B
+                / (
+                    self.partition.get_degree_of_block(t)
+                    + self.epsilon * self.partition.B
+                )
+            )
         if rd.random() < rt:
             return s
         # 4. If rejected chose a random edge adjacent to block t and the label s
@@ -232,7 +267,9 @@ class PeixotoInference(Inference):
             to_node = self.partition.get_random_neighboring_edge_of_block(t)[1]
             return self.partition.get_block_of_node(to_node)
         # else need additional check if move is allowed
-        possible_blocks = self.partition.get_possible_blocks(block, with_in_operation=True)
+        possible_blocks = self.partition.get_possible_blocks(
+            block, with_in_operation=True
+        )
         for _ in range(25):
             to_node = self.partition.get_random_neighboring_edge_of_block(t)[1]
             new_block = self.partition.get_block_of_node(to_node)
@@ -258,7 +295,7 @@ class PeixotoInference(Inference):
         #    from 0...B-1
         number_of_loops = 0
 
-        for (_, from_block, to_block) in delta_with_merges:
+        for _, from_block, to_block in delta_with_merges:
             block_found_from = from_block in blocks_to_be_merged
             block_found_to = to_block in blocks_to_be_merged
 
@@ -310,7 +347,9 @@ class PeixotoInference(Inference):
             #     works due to sorting by key, the first merge met is the x:x entry
             if self.add_additional_mergers and new_block >= max_block_number:
                 new_block = free_blocks.pop()
-                blocks_to_be_merged[block].update_observed(additional_types.Observed(new_block))
+                blocks_to_be_merged[block].update_observed(
+                    additional_types.Observed(new_block)
+                )
             if block != new_block:
                 merges[block] = new_block
                 free_blocks.append(block)
@@ -335,7 +374,7 @@ class PeixotoInference(Inference):
         for block in range(self.partition.B):
             # determine parameters:
             best_merge = None
-            best_delta = -float('inf')
+            best_delta = -float("inf")
 
             parameter, reference = self._precalc_block_merge(block)
 
@@ -349,11 +388,14 @@ class PeixotoInference(Inference):
                 if merge_with_block == best_merge or merge_with_block == block:
                     continue
                 # adjustment for delta formula
-                saved_data = self._adjustment_delta_pre(reference, block, merge_with_block)
+                saved_data = self._adjustment_delta_pre(
+                    reference, block, merge_with_block
+                )
 
                 #  insert parameters depending on new block
                 delta = self._objective_function.calculate_delta(
-                    self.partition, block, merge_with_block, *parameter)
+                    self.partition, block, merge_with_block, *parameter
+                )
 
                 #      reset neighbor_info kit
                 self._adjustment_delta_post(reference, merge_with_block, saved_data)
@@ -386,7 +428,7 @@ class PeixotoInference(Inference):
             pass
 
     def _precalc_block_merge(self, block):
-        """ Analog to precalc move of partition calculate the needed parameters for a block merge"""
+        """Analog to precalc move of partition calculate the needed parameters for a block merge"""
         include_covariates = self.partition.with_covariate
         kit = {}
         if self.partition.is_graph_directed():
@@ -404,18 +446,24 @@ class PeixotoInference(Inference):
             kit[block] = 0
 
             reference = (kit, kti)
-            if isinstance(self._objective_function,
-                          self._objective_function_classes):
-                parameter = (kit, kti, self.partition.get_edge_count(block, block),
-                             self.partition.get_in_degree_of_block(block),
-                             self.partition.get_out_degree_of_block(block),
-                             self.partition.get_number_of_nodes_in_block(block),
-                             False,  # remove block
-                             )
+            if isinstance(self._objective_function, self._objective_function_classes):
+                parameter = (
+                    kit,
+                    kti,
+                    self.partition.get_edge_count(block, block),
+                    self.partition.get_in_degree_of_block(block),
+                    self.partition.get_out_degree_of_block(block),
+                    self.partition.get_number_of_nodes_in_block(block),
+                    False,  # remove block
+                )
             else:
-                parameter = (kit, kti, self.partition.get_edge_count(block, block),
-                             self.partition.get_in_degree_of_block(block),
-                             self.partition.get_out_degree_of_block(block))
+                parameter = (
+                    kit,
+                    kti,
+                    self.partition.get_edge_count(block, block),
+                    self.partition.get_in_degree_of_block(block),
+                    self.partition.get_out_degree_of_block(block),
+                )
 
             if include_covariates:
                 # same as above but read summed covariates
@@ -424,24 +472,34 @@ class PeixotoInference(Inference):
                 reference += reference + (covariate_kit, covariate_kti)
                 for neighbor in self.partition.get_neighbors_of_block(block):
                     if self.partition.get_edge_count(block, neighbor) != 0:
-                        covariate_kit[neighbor] = self.partition.get_sum_of_covariates(block, neighbor)
+                        covariate_kit[neighbor] = self.partition.get_sum_of_covariates(
+                            block, neighbor
+                        )
                     if self.partition.get_edge_count(neighbor, block) != 0:
-                        covariate_kti[neighbor] = self.partition.get_sum_of_covariates(neighbor, block)
+                        covariate_kti[neighbor] = self.partition.get_sum_of_covariates(
+                            neighbor, block
+                        )
 
-                if isinstance(self._objective_function,
-                              self._objective_function_classes):
-                    parameter = parameter \
-                                + (covariate_kit, covariate_kti, self.partition.get_sum_of_covariates(block, block),
-                                   sum(covariate_kti.values()),
-                                   sum(covariate_kit.values()),
-                                   self.partition.get_number_of_nodes_in_block(block),
-                                   False,  # remove block
-                                   )
+                if isinstance(
+                    self._objective_function, self._objective_function_classes
+                ):
+                    parameter = parameter + (
+                        covariate_kit,
+                        covariate_kti,
+                        self.partition.get_sum_of_covariates(block, block),
+                        sum(covariate_kti.values()),
+                        sum(covariate_kit.values()),
+                        self.partition.get_number_of_nodes_in_block(block),
+                        False,  # remove block
+                    )
                 else:
-                    parameter = parameter \
-                                + (kit, kti, self.partition.get_sum_of_covariates(block, block),
-                                   sum(covariate_kti.values()),
-                                   sum(covariate_kit.values()))
+                    parameter = parameter + (
+                        kit,
+                        kti,
+                        self.partition.get_sum_of_covariates(block, block),
+                        sum(covariate_kti.values()),
+                        sum(covariate_kit.values()),
+                    )
 
         else:
             for neighbor in self.partition.get_neighbors_of_block(block):
@@ -450,54 +508,77 @@ class PeixotoInference(Inference):
             kit[block] = 0
 
             reference = (kit,)
-            if isinstance(self._objective_function,
-                          self._objective_function_classes):
-                parameter = (kit, self.partition.get_edge_count(block, block) / 2,
-                             self.partition.get_degree_of_block(block),
-                             self.partition.get_number_of_nodes_in_block(block),
-                             False,  # remove block
-                             )
+            if isinstance(self._objective_function, self._objective_function_classes):
+                parameter = (
+                    kit,
+                    self.partition.get_edge_count(block, block) / 2,
+                    self.partition.get_degree_of_block(block),
+                    self.partition.get_number_of_nodes_in_block(block),
+                    False,  # remove block
+                )
             else:
-                parameter = (kit, self.partition.get_edge_count(block, block) / 2,
-                             self.partition.get_degree_of_block(block))
+                parameter = (
+                    kit,
+                    self.partition.get_edge_count(block, block) / 2,
+                    self.partition.get_degree_of_block(block),
+                )
 
             if include_covariates:
                 covariate_kit = {}
                 reference = (kit, covariate_kit)
 
                 for neighbor in self.partition.get_neighbors_of_block(block):
-                    covariate_kit[neighbor] = self.partition.get_sum_of_covariates(block, neighbor)
+                    covariate_kit[neighbor] = self.partition.get_sum_of_covariates(
+                        block, neighbor
+                    )
 
-                if isinstance(self._objective_function,
-                              self._objective_function_classes):
-                    parameter = parameter \
-                                + (covariate_kit, self.partition.get_sum_of_covariates(block, block),
-                                   sum(covariate_kit.values()),
-                                   self.partition.get_number_of_nodes_in_block(block),
-                                   False,  # remove block
-                                   )
+                if isinstance(
+                    self._objective_function, self._objective_function_classes
+                ):
+                    parameter = parameter + (
+                        covariate_kit,
+                        self.partition.get_sum_of_covariates(block, block),
+                        sum(covariate_kit.values()),
+                        self.partition.get_number_of_nodes_in_block(block),
+                        False,  # remove block
+                    )
                 else:
-                    parameter = parameter \
-                                + (covariate_kit, self.partition.get_sum_of_covariates(block, block),
-                                   sum(covariate_kit.values()))
+                    parameter = parameter + (
+                        covariate_kit,
+                        self.partition.get_sum_of_covariates(block, block),
+                        sum(covariate_kit.values()),
+                    )
         return parameter, reference
 
     def _adjustment_delta_pre(self, reference, block, merge_with_block):
-        """ Pre delta calculation changes of the parameters """
+        """Pre delta calculation changes of the parameters"""
         if self.partition.is_graph_directed():
             kit, kti = reference[:2]
             old_value_kit = kit.get(merge_with_block, None)
-            kit[merge_with_block] = self.partition.get_edge_count(block, merge_with_block)
+            kit[merge_with_block] = self.partition.get_edge_count(
+                block, merge_with_block
+            )
             old_value_kti = kti.get(merge_with_block, None)
-            kti[merge_with_block] = self.partition.get_edge_count(merge_with_block, block)
+            kti[merge_with_block] = self.partition.get_edge_count(
+                merge_with_block, block
+            )
             # same adjustments for covariates
             if self.partition.with_covariate:
                 covariance_kit, covariance_kti = reference[2], reference[3]
                 old_value_covariance_kit = covariance_kit.get(merge_with_block, None)
-                covariance_kit[merge_with_block] = self.partition.get_sum_of_covariates(block, merge_with_block)
+                covariance_kit[merge_with_block] = self.partition.get_sum_of_covariates(
+                    block, merge_with_block
+                )
                 old_value_covariance_kti = covariance_kti.get(merge_with_block, None)
-                covariance_kti[merge_with_block] = self.partition.get_sum_of_covariates(merge_with_block, block)
-                return old_value_kit, old_value_kti, old_value_covariance_kit, old_value_covariance_kti
+                covariance_kti[merge_with_block] = self.partition.get_sum_of_covariates(
+                    merge_with_block, block
+                )
+                return (
+                    old_value_kit,
+                    old_value_kti,
+                    old_value_covariance_kit,
+                    old_value_covariance_kti,
+                )
             return old_value_kit, old_value_kti
         # else:...
         kit = reference[0]
@@ -507,12 +588,14 @@ class PeixotoInference(Inference):
         if self.partition.with_covariate:
             covariance_kit, covariance_kti = reference[1]
             old_value_covariance_kit = covariance_kit.get(merge_with_block, None)
-            covariance_kit[merge_with_block] = self.partition.get_sum_of_covariates(block, merge_with_block)
+            covariance_kit[merge_with_block] = self.partition.get_sum_of_covariates(
+                block, merge_with_block
+            )
             return old_value, old_value_covariance_kit
-        return old_value,
+        return (old_value,)
 
     def _adjustment_delta_post(self, reference, merge_with_block, saved_data):
-        """ Reset parameters after delta calculations to the old values """
+        """Reset parameters after delta calculations to the old values"""
         if self.partition.is_graph_directed():
             kit, kti = reference[:2]
             old_value_kit, old_value_kti = saved_data[:2]
@@ -527,7 +610,10 @@ class PeixotoInference(Inference):
             # same adjustments for covariates
             if self.partition.with_covariate:
                 covariance_kit, covariance_kti = reference[2], reference[3]
-                old_value_covariance_kit, old_value_covariance_kti = saved_data[2], saved_data[3]
+                old_value_covariance_kit, old_value_covariance_kti = (
+                    saved_data[2],
+                    saved_data[3],
+                )
                 if old_value_covariance_kit is None:
                     del covariance_kit[merge_with_block]
                 else:
@@ -566,11 +652,16 @@ class PeixotoInference(Inference):
 # @formatter:off
 class MetropolisHastingInference(Inference):
     """Metropolis Hasting Inference Algorithm as described in Peixoto 2014"""
+
     title = "Metropolis Hasting Inference"
     short_title = "MHA 1k"
 
-    def __init__(self, graph, objective_function, partition, limit_possible_blocks=False):
-        super(MetropolisHastingInference, self).__init__(graph, objective_function, partition)
+    def __init__(
+        self, graph, objective_function, partition, limit_possible_blocks=False
+    ):
+        super(MetropolisHastingInference, self).__init__(
+            graph, objective_function, partition
+        )
         # free parameter of the metropolis hasting markov chain
         self.epsilon = 0.1
         self.beta_zero = None
@@ -626,14 +717,16 @@ class MetropolisHastingInference(Inference):
             elif new_value > max_value:
                 max_value = new_value
 
-        self.beta_zero = 1.5*(max_value - min_value)
+        self.beta_zero = 1.5 * (max_value - min_value)
 
     def infer_stepwise_undirected(self):
         node = self.partition.get_random_node()
         from_block = self.partition.get_block_of_node(node)
         s = self._select_new_block_undirected(node)
 
-        acceptance_probability = self._calculate_acceptance_probability_undirected(node, from_block, s)
+        acceptance_probability = self._calculate_acceptance_probability_undirected(
+            node, from_block, s
+        )
 
         if rd.random() < acceptance_probability and from_block != s:
             self.partition.move_node(node, s)
@@ -642,7 +735,9 @@ class MetropolisHastingInference(Inference):
         self.performed_steps += 1
         self.update_temperature()
 
-    def _calculate_acceptance_probability_undirected(self, node, from_block, to_block, debug=False):
+    def _calculate_acceptance_probability_undirected(
+        self, node, from_block, to_block, debug=False
+    ):
         """
         Calculate the acceptance probability, i.e. calculate the following formula:
          acceptance_probability = e^(beta*Delta)
@@ -653,8 +748,12 @@ class MetropolisHastingInference(Inference):
         """
         s = to_block
         # calculate delta and parameter, which are needed for the rest of the formula too
-        parameter = self.partition.precalc_move((node, from_block, s), self._objective_function)
-        delta = self._objective_function.calculate_delta(self.partition, from_block, s, *parameter)
+        parameter = self.partition.precalc_move(
+            (node, from_block, s), self._objective_function
+        )
+        delta = self._objective_function.calculate_delta(
+            self.partition, from_block, s, *parameter
+        )
 
         top = 0.0
         bottom = 0.0
@@ -669,34 +768,65 @@ class MetropolisHastingInference(Inference):
         for neighbor in kit:
             #  special handling for s and from block the same
             if from_block == s and neighbor == s:
-                top += (kit[neighbor] + selfloops) / (degree - selfloops) \
-                       * self._probability_undirected(from_block, neighbor)
-                bottom += (kit[neighbor] + selfloops) / (degree - selfloops) \
+                top += (
+                    (kit[neighbor] + selfloops)
+                    / (degree - selfloops)
+                    * self._probability_undirected(from_block, neighbor)
+                )
+                bottom += (
+                    (kit[neighbor] + selfloops)
+                    / (degree - selfloops)
                     * self._probability_undirected(s, neighbor)
+                )
             # in the case from block != s handle s and from block separate
             elif neighbor == from_block:
-                top += kit[neighbor] / (degree - selfloops) \
-                       * self._probability_undirected(from_block, neighbor,
-                                                      2 * (kit[from_block] + selfloops),
-                                                      degree)
-                bottom += (kit[neighbor] + selfloops) / (degree - selfloops) \
+                top += (
+                    kit[neighbor]
+                    / (degree - selfloops)
+                    * self._probability_undirected(
+                        from_block, neighbor, 2 * (kit[from_block] + selfloops), degree
+                    )
+                )
+                bottom += (
+                    (kit[neighbor] + selfloops)
+                    / (degree - selfloops)
                     * self._probability_undirected(s, neighbor)
+                )
             elif neighbor == s:
-                top += (kit[neighbor] + selfloops) / (degree - selfloops) \
-                       * self._probability_undirected(from_block, neighbor,
-                                                      kit[s] - kit[from_block],
-                                                      -degree)
-                bottom += kit[neighbor] / (degree - selfloops) * self._probability_undirected(s, neighbor)
+                top += (
+                    (kit[neighbor] + selfloops)
+                    / (degree - selfloops)
+                    * self._probability_undirected(
+                        from_block, neighbor, kit[s] - kit[from_block], -degree
+                    )
+                )
+                bottom += (
+                    kit[neighbor]
+                    / (degree - selfloops)
+                    * self._probability_undirected(s, neighbor)
+                )
             elif from_block != s:
-                top += kit[neighbor] / (degree - selfloops) \
-                       * self._probability_undirected(from_block, neighbor, kit[neighbor])
-                bottom += kit[neighbor] / (degree - selfloops) \
+                top += (
+                    kit[neighbor]
+                    / (degree - selfloops)
+                    * self._probability_undirected(from_block, neighbor, kit[neighbor])
+                )
+                bottom += (
+                    kit[neighbor]
+                    / (degree - selfloops)
                     * self._probability_undirected(s, neighbor)
+                )
             else:
-                top += kit[neighbor] / (degree - selfloops) \
-                       * self._probability_undirected(from_block, neighbor)
-                bottom += kit[neighbor] / (degree - selfloops) \
+                top += (
+                    kit[neighbor]
+                    / (degree - selfloops)
+                    * self._probability_undirected(from_block, neighbor)
+                )
+                bottom += (
+                    kit[neighbor]
+                    / (degree - selfloops)
                     * self._probability_undirected(s, neighbor)
+                )
         # for better testing
         if debug:
             return top, bottom
@@ -729,7 +859,8 @@ class MetropolisHastingInference(Inference):
         #   with R_t=\epsilon*B/(degree_of_block(t)+epsilon*B)
         # 1. Select a random neighbor j of the node i and obtain its block membership->t
         t = self.partition.get_block_of_node(
-            rd.choice(self.partition.get_neighbors_of_node(node)))
+            rd.choice(self.partition.get_neighbors_of_node(node))
+        )
         # 2. Select s randomly from all B choices with equal probability
         if self.limit_possible_blocks:
             block = self.partition.get_block_of_node(node)
@@ -737,8 +868,11 @@ class MetropolisHastingInference(Inference):
         else:
             s = rd.choice(range(self.partition.B))
         # 3. Accept with probability R_t
-        rt = self.epsilon * self.partition.B \
+        rt = (
+            self.epsilon
+            * self.partition.B
             / (self.partition.get_degree_of_block(t) + self.epsilon * self.partition.B)
+        )
         if rd.random() < rt:
             return s
         # 4. If rejected chose a random edge adjacent to block t and the label s
@@ -749,7 +883,9 @@ class MetropolisHastingInference(Inference):
             return self.partition.get_block_of_node(to_node)
         # else need additional check if move is allowed
         # noinspection PyUnboundLocalVariable
-        possible_blocks = self.partition.get_possible_blocks(block, with_in_operation=True)
+        possible_blocks = self.partition.get_possible_blocks(
+            block, with_in_operation=True
+        )
         for _ in range(25):
             to_node = self.partition.get_random_neighboring_edge_of_block(t)[1]
             new_block = self.partition.get_block_of_node(to_node)
@@ -759,8 +895,9 @@ class MetropolisHastingInference(Inference):
         # else simple return any random block
         return new_block
 
-    def _probability_undirected(self, to_block, neighbor_block,
-                                change_ets=0, change_degree_of_block=0):
+    def _probability_undirected(
+        self, to_block, neighbor_block, change_ets=0, change_degree_of_block=0
+    ):
         """
         Return the probability p(r-s|t).
         The formula for directed and undirected graphs are different.
@@ -786,10 +923,16 @@ class MetropolisHastingInference(Inference):
         # TODO format docstrings accordingly to
         # http://sphinxcontrib-napoleon.readthedocs.io/en/latest/example_numpy.html#example-numpy
         #
-        return ((self.partition.get_edge_count(neighbor_block, to_block) - change_ets)
-                + self.epsilon) \
-            / ((self.partition.get_degree_of_block(neighbor_block) - change_degree_of_block)
-                + self.epsilon * self.partition.B)
+        return (
+            (self.partition.get_edge_count(neighbor_block, to_block) - change_ets)
+            + self.epsilon
+        ) / (
+            (
+                self.partition.get_degree_of_block(neighbor_block)
+                - change_degree_of_block
+            )
+            + self.epsilon * self.partition.B
+        )
 
     # ---- directed versions
 
@@ -798,7 +941,9 @@ class MetropolisHastingInference(Inference):
         from_block = self.partition.get_block_of_node(node)
         s = self._select_new_block_directed(node)
 
-        acceptance_probability = self._calculate_acceptance_probability_directed(node, from_block, s)
+        acceptance_probability = self._calculate_acceptance_probability_directed(
+            node, from_block, s
+        )
 
         if rd.random() < acceptance_probability and from_block != s:
             self.partition.move_node(node, s)
@@ -807,7 +952,9 @@ class MetropolisHastingInference(Inference):
         self.performed_steps += 1
         self.update_temperature()
 
-    def _calculate_acceptance_probability_directed(self, node, from_block, to_block, debug=False):
+    def _calculate_acceptance_probability_directed(
+        self, node, from_block, to_block, debug=False
+    ):
         """
         Calculate the acceptance probability, i.e. calculate the following formula:
          acceptance_probability = e^(beta*Delta)
@@ -818,8 +965,12 @@ class MetropolisHastingInference(Inference):
         """
         s = to_block
         # calculate delta and parameter, which are needed for the rest of the formula too
-        parameter = self.partition.precalc_move((node, from_block, s), self._objective_function)
-        delta = self._objective_function.calculate_delta(self.partition, from_block, s, *parameter)
+        parameter = self.partition.precalc_move(
+            (node, from_block, s), self._objective_function
+        )
+        delta = self._objective_function.calculate_delta(
+            self.partition, from_block, s, *parameter
+        )
 
         top = 0.0
         bottom = 0.0
@@ -827,55 +978,85 @@ class MetropolisHastingInference(Inference):
         kit, kti, selfloops, in_degree, out_degree = parameter
         for neighbor in kit:
             if from_block == s and neighbor == s:
-                top += (kit[neighbor] + kti[neighbor] + 2 * selfloops) / (in_degree + out_degree) \
-                       * self._probability_directed(from_block, neighbor)
-                bottom += (kit[neighbor] + kti[neighbor] + 2 * selfloops) / (in_degree + out_degree) \
+                top += (
+                    (kit[neighbor] + kti[neighbor] + 2 * selfloops)
+                    / (in_degree + out_degree)
+                    * self._probability_directed(from_block, neighbor)
+                )
+                bottom += (
+                    (kit[neighbor] + kti[neighbor] + 2 * selfloops)
+                    / (in_degree + out_degree)
                     * self._probability_directed(s, neighbor)
+                )
             elif neighbor == from_block:
                 kti_value = kti[neighbor]
-                top += (kit[neighbor] + kti_value) \
-                    / (in_degree + out_degree) \
-                    * self._probability_directed(from_block,
-                                                 neighbor,
-                                                 kit[from_block] + kti_value + selfloops,
-                                                 out_degree,
-                                                 kit[from_block] + kti_value + selfloops,
-                                                 in_degree)
-                bottom += (kit[neighbor] + kti_value + 2 * selfloops) \
-                    / (in_degree + out_degree) \
+                top += (
+                    (kit[neighbor] + kti_value)
+                    / (in_degree + out_degree)
+                    * self._probability_directed(
+                        from_block,
+                        neighbor,
+                        kit[from_block] + kti_value + selfloops,
+                        out_degree,
+                        kit[from_block] + kti_value + selfloops,
+                        in_degree,
+                    )
+                )
+                bottom += (
+                    (kit[neighbor] + kti_value + 2 * selfloops)
+                    / (in_degree + out_degree)
                     * self._probability_directed(s, neighbor)
+                )
             elif neighbor == s:
                 kti_value = kti[neighbor]
-                top += (kit[neighbor] + kti_value + 2 * selfloops) \
-                    / (in_degree + out_degree) \
-                    * self._probability_directed(from_block,
-                                                 neighbor,
-                                                 -kit[from_block] + kti[neighbor],
-                                                 -out_degree,
-                                                 -kti[from_block] + kit[neighbor],
-                                                 -in_degree)
-                bottom += (kit[neighbor] + kti_value) \
-                    / (in_degree + out_degree) \
+                top += (
+                    (kit[neighbor] + kti_value + 2 * selfloops)
+                    / (in_degree + out_degree)
+                    * self._probability_directed(
+                        from_block,
+                        neighbor,
+                        -kit[from_block] + kti[neighbor],
+                        -out_degree,
+                        -kti[from_block] + kit[neighbor],
+                        -in_degree,
+                    )
+                )
+                bottom += (
+                    (kit[neighbor] + kti_value)
+                    / (in_degree + out_degree)
                     * self._probability_directed(s, neighbor)
+                )
             elif from_block != s:
                 kti_value = kti.pop(neighbor, 0)
                 #      change the est and ets values according
-                top += (kit[neighbor] + kti_value) \
-                    / (in_degree + out_degree) \
-                    * self._probability_directed(from_block, neighbor,
-                                                 change_est=kit[neighbor], change_ets=kti_value)
-                bottom += (kit[neighbor] + kti_value) \
-                    / (in_degree + out_degree) \
+                top += (
+                    (kit[neighbor] + kti_value)
+                    / (in_degree + out_degree)
+                    * self._probability_directed(
+                        from_block,
+                        neighbor,
+                        change_est=kit[neighbor],
+                        change_ets=kti_value,
+                    )
+                )
+                bottom += (
+                    (kit[neighbor] + kti_value)
+                    / (in_degree + out_degree)
                     * self._probability_directed(s, neighbor)
+                )
             else:
                 kti_value = kti.pop(neighbor, 0)
                 #      no change else because these e_ts entries aren't influenced by the move
-                top += (kit[neighbor] + kti_value) \
-                    / (in_degree + out_degree) \
+                top += (
+                    (kit[neighbor] + kti_value)
+                    / (in_degree + out_degree)
                     * self._probability_directed(from_block, neighbor)
-                bottom += (kit[neighbor] + kti_value) \
-                    / (in_degree + out_degree) \
+                )
+                bottom += (
+                    (kit[neighbor] + kti_value)
+                    / (in_degree + out_degree)
                     * self._probability_directed(s, neighbor)
+                )
 
                 #  now handle all neighbors in kti not already gotten by kit
                 # first remove s and from block because both were already handled in loop before
@@ -886,15 +1067,29 @@ class MetropolisHastingInference(Inference):
         for neighbor in kti:
             # kit value don't exists -> kit=0
             if from_block != s:
-                top += kti[neighbor] / (in_degree + out_degree) \
-                       * self._probability_directed(from_block, neighbor, change_ets=kti[neighbor])
-                bottom += kti[neighbor] / (in_degree + out_degree) \
+                top += (
+                    kti[neighbor]
+                    / (in_degree + out_degree)
+                    * self._probability_directed(
+                        from_block, neighbor, change_ets=kti[neighbor]
+                    )
+                )
+                bottom += (
+                    kti[neighbor]
+                    / (in_degree + out_degree)
                     * self._probability_directed(s, neighbor)
+                )
             else:
-                top += kti[neighbor] / (in_degree + out_degree) \
-                       * self._probability_directed(from_block, neighbor)
-                bottom += kti[neighbor] / (in_degree + out_degree) \
+                top += (
+                    kti[neighbor]
+                    / (in_degree + out_degree)
+                    * self._probability_directed(from_block, neighbor)
+                )
+                bottom += (
+                    kti[neighbor]
+                    / (in_degree + out_degree)
                     * self._probability_directed(s, neighbor)
+                )
 
         # for better testing
         if debug:
@@ -928,7 +1123,8 @@ class MetropolisHastingInference(Inference):
         #   with R_t=\epsilon*B/(degree_of_block(t)+epsilon*B)
         # 1. Select a random neighbor j of the node i and obtain its block membership->t
         t = self.partition.get_block_of_node(
-            rd.choice(self.partition.get_neighbors_of_node(node)))
+            rd.choice(self.partition.get_neighbors_of_node(node))
+        )
         # 2. Select s randomly from all B choices with equal probability
         if self.limit_possible_blocks:
             block = self.partition.get_block_of_node(node)
@@ -938,9 +1134,15 @@ class MetropolisHastingInference(Inference):
         # 3. Accept with probability R_t
 
         #     directed case is an extension of Peixoto's ansatz
-        rt = self.epsilon * self.partition.B \
-            / (self.partition.get_in_degree_of_block(t) + self.partition.get_out_degree_of_block(t)
-                + self.epsilon * self.partition.B)
+        rt = (
+            self.epsilon
+            * self.partition.B
+            / (
+                self.partition.get_in_degree_of_block(t)
+                + self.partition.get_out_degree_of_block(t)
+                + self.epsilon * self.partition.B
+            )
+        )
         if rd.random() < rt:
             return s
         # 4. If rejected chose a random edge adjacent to block t and the label s
@@ -951,7 +1153,9 @@ class MetropolisHastingInference(Inference):
             return self.partition.get_block_of_node(to_node)
         # else need additional check if move is allowed
         # noinspection PyUnboundLocalVariable
-        possible_blocks = self.partition.get_possible_blocks(block, with_in_operation=True)
+        possible_blocks = self.partition.get_possible_blocks(
+            block, with_in_operation=True
+        )
         for _ in range(25):
             to_node = self.partition.get_random_neighboring_edge_of_block(t)[1]
             new_block = self.partition.get_block_of_node(to_node)
@@ -961,9 +1165,15 @@ class MetropolisHastingInference(Inference):
         # else simple return any random block
         return new_block
 
-    def _probability_directed(self, to_block, neighbor_block,
-                              change_ets=0, change_degree_of_block=0,
-                              change_est=0, change_in_degree_of_block=0):
+    def _probability_directed(
+        self,
+        to_block,
+        neighbor_block,
+        change_ets=0,
+        change_degree_of_block=0,
+        change_est=0,
+        change_in_degree_of_block=0,
+    ):
         """
         Return the probability p(r-s|t).
         The formula for directed and undirected graphs are different.
@@ -989,67 +1199,94 @@ class MetropolisHastingInference(Inference):
         Again with the optional parameters to change the values.
         Change_degree_of_block change the value of out_degree of block.
         """
-        return ((self.partition.get_edge_count(neighbor_block, to_block) - change_ets)
-                + (self.partition.get_edge_count(to_block, neighbor_block) - change_est)
-                + self.epsilon) \
-            / ((self.partition.get_out_degree_of_block(neighbor_block) - change_degree_of_block)
-                + (self.partition.get_in_degree_of_block(neighbor_block) - change_in_degree_of_block)
-                + self.epsilon * self.partition.B)
+        return (
+            (self.partition.get_edge_count(neighbor_block, to_block) - change_ets)
+            + (self.partition.get_edge_count(to_block, neighbor_block) - change_est)
+            + self.epsilon
+        ) / (
+            (
+                self.partition.get_out_degree_of_block(neighbor_block)
+                - change_degree_of_block
+            )
+            + (
+                self.partition.get_in_degree_of_block(neighbor_block)
+                - change_in_degree_of_block
+            )
+            + self.epsilon * self.partition.B
+        )
+
+
 # @formatter:on
 
 
 class MetropolisHastingInferenceTenK(MetropolisHastingInference):
     """Fix Number of Steps"""
+
     title = "Metropolis Hasting Inference 10k"
     short_title = "MHA 10k"
 
     def __init__(self, graph, objective_function, partition):
-        super(MetropolisHastingInferenceTenK, self).__init__(graph, objective_function, partition)
+        super(MetropolisHastingInferenceTenK, self).__init__(
+            graph, objective_function, partition
+        )
         self.default_number_of_steps = 10000
 
 
 class MetropolisHastingInferenceFiftyK(MetropolisHastingInference):
     """Fix Number of Steps"""
+
     title = "Metropolis Hasting Inference 50k"
     short_title = "MHA 50k"
 
     def __init__(self, graph, objective_function, partition):
-        super(MetropolisHastingInferenceFiftyK, self).__init__(graph, objective_function, partition)
+        super(MetropolisHastingInferenceFiftyK, self).__init__(
+            graph, objective_function, partition
+        )
         self.default_number_of_steps = 50000
 
 
 class MetropolisHastingInferenceHundredK(MetropolisHastingInference):
     """Fix Number of Steps"""
+
     title = "Metropolis Hasting Inference 100k"
     short_title = "MHA 100k"
 
     def __init__(self, graph, objective_function, partition):
-        super(MetropolisHastingInferenceHundredK, self).__init__(graph, objective_function, partition)
+        super(MetropolisHastingInferenceHundredK, self).__init__(
+            graph, objective_function, partition
+        )
         self.default_number_of_steps = 100000
 
 
 class MetropolisHastingInferenceTwoHundredFiftyK(MetropolisHastingInference):
     """Fix Number of Steps"""
+
     title = "Metropolis Hasting Inference 250k"
     short_title = "MHA 250k"
 
     def __init__(self, graph, objective_function, partition):
-        super(MetropolisHastingInferenceTwoHundredFiftyK, self).__init__(graph, objective_function, partition)
+        super(MetropolisHastingInferenceTwoHundredFiftyK, self).__init__(
+            graph, objective_function, partition
+        )
         self.default_number_of_steps = 250000
 
 
 class MetropolisHastingInferenceFiveHundredK(MetropolisHastingInference):
     """Fix Number of Steps"""
+
     title = "Metropolis Hasting Inference 500k"
     short_title = "MHA 500k"
 
     def __init__(self, graph, objective_function, partition):
-        super(MetropolisHastingInferenceFiveHundredK, self).__init__(graph, objective_function, partition)
+        super(MetropolisHastingInferenceFiveHundredK, self).__init__(
+            graph, objective_function, partition
+        )
         self.default_number_of_steps = 500000
 
 
 class MetropolisHastingInferenceSimulatedAnnealingCauchy(MetropolisHastingInference):
     """Metropolis Hasting Inference Algorithm with Cauchy Simulated Annealing"""
+
     title = "Metropolis Hasting Inference Simulated Annealing Cauchy"
     short_title = "MHAC 1k"
 
@@ -1059,29 +1296,39 @@ class MetropolisHastingInferenceSimulatedAnnealingCauchy(MetropolisHastingInfere
         self.beta = (1 + self.performed_steps) / self.beta_zero
 
 
-class MetropolisHastingInferenceSimulatedAnnealingCauchyFiftyK(MetropolisHastingInferenceSimulatedAnnealingCauchy):
+class MetropolisHastingInferenceSimulatedAnnealingCauchyFiftyK(
+    MetropolisHastingInferenceSimulatedAnnealingCauchy
+):
     """Fix Number of Steps"""
+
     title = "Metropolis Hasting Inference Simulated Annealing Cauchy 50k"
     short_title = "MHAC 50k"
 
     def __init__(self, graph, objective_function, partition):
-        super(MetropolisHastingInferenceSimulatedAnnealingCauchy, self).__init__(graph, objective_function, partition)
+        super(MetropolisHastingInferenceSimulatedAnnealingCauchy, self).__init__(
+            graph, objective_function, partition
+        )
         self.default_number_of_steps = 50000
 
 
 class MetropolisHastingInferenceSimulatedAnnealingCauchyTwoHundredFiftyK(
-    MetropolisHastingInferenceSimulatedAnnealingCauchy):
+    MetropolisHastingInferenceSimulatedAnnealingCauchy
+):
     """Fix Number of Steps"""
+
     title = "Metropolis Hasting Inference Simulated Annealing Cauchy 250k"
     short_title = "MHAC 250k"
 
     def __init__(self, graph, objective_function, partition):
-        super(MetropolisHastingInferenceSimulatedAnnealingCauchy, self).__init__(graph, objective_function, partition)
+        super(MetropolisHastingInferenceSimulatedAnnealingCauchy, self).__init__(
+            graph, objective_function, partition
+        )
         self.default_number_of_steps = 250000
 
 
 class MetropolisHastingInferenceSimulatedAnnealingBoltzman(MetropolisHastingInference):
     """Metropolis Hasting Inference Algorithm with Cauchy Simulated Annealing"""
+
     title = "Metropolis Hasting Inference Simulated Annealing Boltzman"
     short_title = "MHAB 1k"
 
@@ -1091,24 +1338,33 @@ class MetropolisHastingInferenceSimulatedAnnealingBoltzman(MetropolisHastingInfe
         self.beta = math.log(1 + self.performed_steps) / self.beta_zero
 
 
-class MetropolisHastingInferenceSimulatedAnnealingBoltzmanFiftyK(MetropolisHastingInferenceSimulatedAnnealingBoltzman):
+class MetropolisHastingInferenceSimulatedAnnealingBoltzmanFiftyK(
+    MetropolisHastingInferenceSimulatedAnnealingBoltzman
+):
     """Fix Number of Steps"""
+
     title = "Metropolis Hasting Inference Simulated Annealing Boltzman 50k"
     short_title = "MHAB 50k"
 
     def __init__(self, graph, objective_function, partition):
-        super(MetropolisHastingInferenceSimulatedAnnealingBoltzman, self).__init__(graph, objective_function, partition)
+        super(MetropolisHastingInferenceSimulatedAnnealingBoltzman, self).__init__(
+            graph, objective_function, partition
+        )
         self.default_number_of_steps = 50000
 
 
 class MetropolisHastingInferenceSimulatedAnnealingBoltzmanTwoHundredFiftyK(
-    MetropolisHastingInferenceSimulatedAnnealingBoltzman):
+    MetropolisHastingInferenceSimulatedAnnealingBoltzman
+):
     """Fix Number of Steps"""
+
     title = "Metropolis Hasting Inference Simulated Annealing Boltzman 250k"
     short_title = "MHAB 250k"
 
     def __init__(self, graph, objective_function, partition):
-        super(MetropolisHastingInferenceSimulatedAnnealingBoltzman, self).__init__(graph, objective_function, partition)
+        super(MetropolisHastingInferenceSimulatedAnnealingBoltzman, self).__init__(
+            graph, objective_function, partition
+        )
         self.default_number_of_steps = 250000
 
 
@@ -1117,22 +1373,33 @@ class KarrerInference(Inference):
     Heuristic Inference Algorithm described in Karrer and Newman 2011
         slightly enhanced?
     """
+
     title = "Karrer Inference"
     short_title = "KL-G"
 
-    def __init__(self, graph, objective_function, partition, no_negative_move=False, limit_possible_blocks=False):
+    def __init__(
+        self,
+        graph,
+        objective_function,
+        partition,
+        no_negative_move=False,
+        limit_possible_blocks=False,
+    ):
         super(KarrerInference, self).__init__(graph, objective_function, partition)
         self.no_negative_move = no_negative_move
         self.limit_possible_blocks = limit_possible_blocks
-        self._last_objective_value = float('-inf')
+        self._last_objective_value = float("-inf")
 
     def infer_stochastic_block_model(self):
         try:
             for _ in range(100):
                 self.infer_stepwise()
             else:
-                raise Exception("Could not find minimum in 100 steps" + str(self.partition.get_representation()) + str(
-                    self.partition.graph.edges()))
+                raise Exception(
+                    "Could not find minimum in 100 steps"
+                    + str(self.partition.get_representation())
+                    + str(self.partition.graph.edges())
+                )
         except StopIteration:
             pass
 
@@ -1155,10 +1422,12 @@ class KarrerInference(Inference):
                 possible_blocks.remove(from_block)
             for block in possible_blocks:
                 if block != from_block:
-                    parameter = self.partition.precalc_move((node, from_block, block),
-                                                            self._objective_function)
+                    parameter = self.partition.precalc_move(
+                        (node, from_block, block), self._objective_function
+                    )
                     delta = self._objective_function.calculate_delta(
-                        self.partition, from_block, block, *parameter)
+                        self.partition, from_block, block, *parameter
+                    )
                 else:
                     delta = 0.0
                 if delta > move_delta:
@@ -1184,7 +1453,7 @@ class KarrerInference(Inference):
 
             actual_value = self.objective_function.calculate(self.partition)
             if actual_value < self._last_objective_value + 0.01:
-                if actual_value < self._last_objective_value - .1:
+                if actual_value < self._last_objective_value - 0.1:
                     # if new one is worse then retrieve old state
                     self.partition.set_from_representation(saved_representation)
                 raise StopIteration()
@@ -1197,21 +1466,37 @@ class KarrerInference(Inference):
 
 
 class KarrerInferenceNoNegativeMove(KarrerInference):
-    """ Karrer with No Negative Move"""
+    """Karrer with No Negative Move"""
+
     title = "Karrer Inference with no negative move"
     short_title = "KL-G nn"
 
-    def __init__(self, graph, objective_function, partition, limit_possible_blocks=False):
-        super(KarrerInferenceNoNegativeMove, self).__init__(graph, objective_function, partition, no_negative_move=True,
-                                                            limit_possible_blocks=limit_possible_blocks)
+    def __init__(
+        self, graph, objective_function, partition, limit_possible_blocks=False
+    ):
+        super(KarrerInferenceNoNegativeMove, self).__init__(
+            graph,
+            objective_function,
+            partition,
+            no_negative_move=True,
+            limit_possible_blocks=limit_possible_blocks,
+        )
 
 
 class EMInference(Inference):
     """Expectation-Maximization Algorithm for SBM inference"""
+
     title = "Expectation Maximization Inference"
     short_title = "KL-EM"
 
-    def __init__(self, graph, objective_function, partition, with_toggle_detection=True, limit_possible_blocks=False):
+    def __init__(
+        self,
+        graph,
+        objective_function,
+        partition,
+        with_toggle_detection=True,
+        limit_possible_blocks=False,
+    ):
         super(EMInference, self).__init__(graph, objective_function, partition)
         self.with_toggle_detection = with_toggle_detection
         self._old_value = self._objective_function.calculate(partition)
@@ -1223,8 +1508,13 @@ class EMInference(Inference):
                 for _ in range(2 * len(self.graph)):
                     self.infer_stepwise_directed()
                 else:
-                    print("EMInference: could not find an optimal partition in", 2 * len(self.graph), "steps",
-                          self.partition.get_representation(), self.graph.edges())
+                    print(
+                        "EMInference: could not find an optimal partition in",
+                        2 * len(self.graph),
+                        "steps",
+                        self.partition.get_representation(),
+                        self.graph.edges(),
+                    )
             except StopIteration:
                 pass
         else:
@@ -1232,8 +1522,13 @@ class EMInference(Inference):
                 for _ in range(2 * len(self.graph)):
                     self.infer_stepwise_undirected()
                 else:
-                    print("EMInference: could not find an optimal partition in", 2 * len(self.graph), "steps",
-                          self.partition.get_representation(), self.graph.edges())
+                    print(
+                        "EMInference: could not find an optimal partition in",
+                        2 * len(self.graph),
+                        "steps",
+                        self.partition.get_representation(),
+                        self.graph.edges(),
+                    )
             except StopIteration:
                 pass
 
@@ -1264,7 +1559,11 @@ class EMInference(Inference):
         for node in self.partition.get_nodes_iter():
             from_block = self.partition.get_block_of_node(node)
             #     ensure that one don't move the last node out of the block
-            if self.partition.get_number_of_nodes_in_block(from_block) - nodes_moved[from_block] == 1:
+            if (
+                self.partition.get_number_of_nodes_in_block(from_block)
+                - nodes_moved[from_block]
+                == 1
+            ):
                 continue
             next_block = from_block
             move_delta = 0
@@ -1273,13 +1572,15 @@ class EMInference(Inference):
                 possible_blocks = self.partition.get_possible_blocks(from_block)
 
             possible_blocks.remove(from_block)
-            parameter = self.partition.precalc_move((node, from_block, from_block),
-                                                    self._objective_function)
+            parameter = self.partition.precalc_move(
+                (node, from_block, from_block), self._objective_function
+            )
             for block in possible_blocks:
                 if block not in parameter[0]:
                     parameter[0][block] = 0
                 delta = self._objective_function.calculate_delta(
-                    self.partition, from_block, block, *parameter)
+                    self.partition, from_block, block, *parameter
+                )
 
                 if parameter[0][block] == 0:
                     del parameter[0][block]
@@ -1307,10 +1608,12 @@ class EMInference(Inference):
                     # carefully move all nodes which increase the value
                     for node, to_block in moves:
                         from_block = self.partition.get_block_of_node(node)
-                        parameter = self.partition.precalc_move((node, from_block, to_block),
-                                                                self._objective_function)
+                        parameter = self.partition.precalc_move(
+                            (node, from_block, to_block), self._objective_function
+                        )
                         delta = self._objective_function.calculate_delta(
-                            self.partition, from_block, to_block, *parameter)
+                            self.partition, from_block, to_block, *parameter
+                        )
                         if delta > 0.001:
                             self.partition.move_node(node, to_block)
                             self.node_moves += 1
@@ -1342,7 +1645,11 @@ class EMInference(Inference):
         for node in self.partition.get_nodes_iter():
             from_block = self.partition.get_block_of_node(node)
             #     ensure that one don't move the last node out of the block
-            if self.partition.get_number_of_nodes_in_block(from_block) - nodes_moved[from_block] == 1:
+            if (
+                self.partition.get_number_of_nodes_in_block(from_block)
+                - nodes_moved[from_block]
+                == 1
+            ):
                 continue
             next_block = from_block
             move_delta = 0
@@ -1351,15 +1658,17 @@ class EMInference(Inference):
                 possible_blocks = self.partition.get_possible_blocks(from_block)
 
             possible_blocks.remove(from_block)
-            parameter = self.partition.precalc_move((node, from_block, from_block),
-                                                    self._objective_function)
+            parameter = self.partition.precalc_move(
+                (node, from_block, from_block), self._objective_function
+            )
             for block in possible_blocks:
                 if block not in parameter[0]:
                     parameter[0][block] = 0
                 if block not in parameter[1]:
                     parameter[1][block] = 0
                 delta = self._objective_function.calculate_delta(
-                    self.partition, from_block, block, *parameter)
+                    self.partition, from_block, block, *parameter
+                )
 
                 if parameter[0][block] == 0:
                     del parameter[0][block]
@@ -1389,10 +1698,12 @@ class EMInference(Inference):
                     # carefully move all nodes which increase the value
                     for node, to_block in moves:
                         from_block = self.partition.get_block_of_node(node)
-                        parameter = self.partition.precalc_move((node, from_block, to_block),
-                                                                self._objective_function)
+                        parameter = self.partition.precalc_move(
+                            (node, from_block, to_block), self._objective_function
+                        )
                         delta = self._objective_function.calculate_delta(
-                            self.partition, from_block, to_block, *parameter)
+                            self.partition, from_block, to_block, *parameter
+                        )
                         if delta > 0.001:
                             self.partition.move_node(node, to_block)
                             self.node_moves += 1
@@ -1409,7 +1720,9 @@ class KerninghanLinInference(Inference):
     short_title = "KL"
 
     def __init__(self, graph, objective_function, partition, no_negative_move=False):
-        super(KerninghanLinInference, self).__init__(graph, objective_function, partition)
+        super(KerninghanLinInference, self).__init__(
+            graph, objective_function, partition
+        )
         self.no_negative_move = no_negative_move
         # always check for improvement as additional condition to break the loop
         self._last_objective_value = objective_function.calculate(partition)
@@ -1422,8 +1735,11 @@ class KerninghanLinInference(Inference):
                 except StopIteration:
                     break
             else:
-                raise Exception("Could not find minimum in 100 steps" + str(self.partition.get_representation()) + str(
-                    self.partition.graph.edges()))
+                raise Exception(
+                    "Could not find minimum in 100 steps"
+                    + str(self.partition.get_representation())
+                    + str(self.partition.graph.edges())
+                )
         else:
             for _ in range(100):
                 try:
@@ -1431,31 +1747,37 @@ class KerninghanLinInference(Inference):
                 except StopIteration:
                     break
             else:
-                raise Exception("Could not find minimum in 100 steps" + str(self.partition.get_representation()) + str(
-                    self.partition.graph.edges()))
+                raise Exception(
+                    "Could not find minimum in 100 steps"
+                    + str(self.partition.get_representation())
+                    + str(self.partition.graph.edges())
+                )
 
     def infer_stepwise_undirected(self):
         # calculate optimal values
         optimal_values = {}
         optimal_blocks = {}
         overall_optimal_move = ()
-        overall_optimal_value = float('-inf')
+        overall_optimal_value = float("-inf")
         negative_move_counter = 3
         start_representation = self.partition.get_representation()
         # init values
         for node in self.partition.get_nodes_iter():
-            best_found = float('-inf')
+            best_found = float("-inf")
             best_block = None
             actual_block = self.partition.get_block_of_node(node)
-            precalc_info = self.partition.precalc_move((node, actual_block, actual_block), self.objective_function)
+            precalc_info = self.partition.precalc_move(
+                (node, actual_block, actual_block), self.objective_function
+            )
             for other_block in self.partition.get_possible_blocks(actual_block):
                 if other_block == actual_block:
                     continue
                 if other_block not in precalc_info[0]:
                     precalc_info[0][other_block] = 0
 
-                delta = self.objective_function.calculate_delta(self.partition, actual_block, other_block,
-                                                                *precalc_info)
+                delta = self.objective_function.calculate_delta(
+                    self.partition, actual_block, other_block, *precalc_info
+                )
                 if delta > best_found:
                     best_found = delta
                     best_block = other_block
@@ -1489,20 +1811,23 @@ class KerninghanLinInference(Inference):
             self.partition.move_node(overall_optimal_move[0], overall_optimal_move[2])
 
             overall_optimal_move = ()
-            overall_optimal_value = float('-inf')
+            overall_optimal_value = float("-inf")
 
             for node in list(optimal_values.keys()):
-                best_found = float('-inf')
+                best_found = float("-inf")
                 best_block = None
                 actual_block = self.partition.get_block_of_node(node)
-                precalc_info = self.partition.precalc_move((node, actual_block, actual_block), self.objective_function)
+                precalc_info = self.partition.precalc_move(
+                    (node, actual_block, actual_block), self.objective_function
+                )
                 for other_block in self.partition.get_possible_blocks(actual_block):
                     if other_block == actual_block:
                         continue
                     if other_block not in precalc_info[0]:
                         precalc_info[0][other_block] = 0
-                    delta = self.objective_function.calculate_delta(self.partition, actual_block, other_block,
-                                                                    *precalc_info)
+                    delta = self.objective_function.calculate_delta(
+                        self.partition, actual_block, other_block, *precalc_info
+                    )
                     if delta > best_found:
                         best_found = delta
                         best_block = other_block
@@ -1534,17 +1859,20 @@ class KerninghanLinInference(Inference):
 
         # check if any real improvement is possible
         # difference to total sum (last value in actual sum) to deal with cases where the result is not 0
-        if len(history_values) > optimal_index >= 0 and optimal_sum > 0.01 and (
-                actual_sum < 0.01 or optimal_sum - actual_sum > 0.01):
+        if (
+            len(history_values) > optimal_index >= 0
+            and optimal_sum > 0.01
+            and (actual_sum < 0.01 or optimal_sum - actual_sum > 0.01)
+        ):
             # retrieve state of this case
-            for node, old_block, _ in history_moves[optimal_index + 1:]:
+            for node, old_block, _ in history_moves[optimal_index + 1 :]:
                 self.partition.move_node(node, old_block)
 
             # extra checks to stop endless loops
             actual_value = self.objective_function.calculate(self.partition)
             if actual_value < self._last_objective_value + 0.01:
                 # only minor improvement or no improvement -> stop
-                if actual_value < self._last_objective_value - .1:
+                if actual_value < self._last_objective_value - 0.1:
                     # if new one is worse then retrieve old state
                     self.partition.set_from_representation(start_representation)
                 raise StopIteration()
@@ -1559,15 +1887,17 @@ class KerninghanLinInference(Inference):
         optimal_values = {}
         optimal_blocks = {}
         overall_optimal_move = ()
-        overall_optimal_value = float('-inf')
+        overall_optimal_value = float("-inf")
         negative_move_counter = 3
         start_representation = self.partition.get_representation()
         # init values
         for node in self.partition.get_nodes_iter():
-            best_found = float('-inf')
+            best_found = float("-inf")
             best_block = None
             actual_block = self.partition.get_block_of_node(node)
-            precalc_info = self.partition.precalc_move((node, actual_block, actual_block), self.objective_function)
+            precalc_info = self.partition.precalc_move(
+                (node, actual_block, actual_block), self.objective_function
+            )
             for other_block in self.partition.get_possible_blocks(actual_block):
                 if other_block == actual_block:
                     continue
@@ -1575,8 +1905,9 @@ class KerninghanLinInference(Inference):
                     precalc_info[0][other_block] = 0
                 if other_block not in precalc_info[1]:
                     precalc_info[1][other_block] = 0
-                delta = self.objective_function.calculate_delta(self.partition, actual_block, other_block,
-                                                                *precalc_info)
+                delta = self.objective_function.calculate_delta(
+                    self.partition, actual_block, other_block, *precalc_info
+                )
                 if delta > best_found:
                     best_found = delta
                     best_block = other_block
@@ -1612,13 +1943,15 @@ class KerninghanLinInference(Inference):
             self.partition.move_node(overall_optimal_move[0], overall_optimal_move[2])
 
             overall_optimal_move = ()
-            overall_optimal_value = float('-inf')
+            overall_optimal_value = float("-inf")
 
             for node in list(optimal_values.keys()):
-                best_found = float('-inf')
+                best_found = float("-inf")
                 best_block = None
                 actual_block = self.partition.get_block_of_node(node)
-                precalc_info = self.partition.precalc_move((node, actual_block, actual_block), self.objective_function)
+                precalc_info = self.partition.precalc_move(
+                    (node, actual_block, actual_block), self.objective_function
+                )
                 for other_block in self.partition.get_possible_blocks(actual_block):
                     if other_block == actual_block:
                         continue
@@ -1626,8 +1959,9 @@ class KerninghanLinInference(Inference):
                         precalc_info[0][other_block] = 0
                     if other_block not in precalc_info[1]:
                         precalc_info[1][other_block] = 0
-                    delta = self.objective_function.calculate_delta(self.partition, actual_block, other_block,
-                                                                    *precalc_info)
+                    delta = self.objective_function.calculate_delta(
+                        self.partition, actual_block, other_block, *precalc_info
+                    )
                     if delta > best_found:
                         best_found = delta
                         best_block = other_block
@@ -1661,17 +1995,20 @@ class KerninghanLinInference(Inference):
 
         # check if any real improvement is possible
         # difference to total sum (last value in actual sum) to deal with cases where the result is not 0
-        if len(history_values) > optimal_index >= 0 and optimal_sum > 0.01 and (
-                actual_sum < 0.01 or optimal_sum - actual_sum > 0.01):
+        if (
+            len(history_values) > optimal_index >= 0
+            and optimal_sum > 0.01
+            and (actual_sum < 0.01 or optimal_sum - actual_sum > 0.01)
+        ):
             # retrieve state of this case
-            for node, old_block, _ in history_moves[optimal_index + 1:]:
+            for node, old_block, _ in history_moves[optimal_index + 1 :]:
                 self.partition.move_node(node, old_block)
 
             # extra checks to stop endless loops
             actual_value = self.objective_function.calculate(self.partition)
             if actual_value < self._last_objective_value + 0.01:
                 # only minor improvement or no improvement -> stop
-                if actual_value < self._last_objective_value - .1:
+                if actual_value < self._last_objective_value - 0.1:
                     # if new one is worse then retrieve old state
                     self.partition.set_from_representation(start_representation)
                 raise StopIteration()
@@ -1693,8 +2030,9 @@ class KerninghanLinInferenceNoNegative(KerninghanLinInference):
     short_title = "KL nn"
 
     def __init__(self, graph, objective_function, partition):
-        super(KerninghanLinInferenceNoNegative, self).__init__(graph, objective_function, partition,
-                                                               no_negative_move=True)
+        super(KerninghanLinInferenceNoNegative, self).__init__(
+            graph, objective_function, partition, no_negative_move=True
+        )
 
 
 class SpectralInference(Inference):
@@ -1711,7 +2049,7 @@ class SpectralInference(Inference):
     def infer_stochastic_block_model(self):
         # get B' from the paper (named B here)
         size = len(self.A)
-        degree = nx.degree(self.graph, weight='weight')
+        degree = nx.degree(self.graph, weight="weight")
         degree = list(degree)
         degree_list = []
         # get matrix with entrys of -1 for B' [0][1]
@@ -1727,7 +2065,9 @@ class SpectralInference(Inference):
                     continue
                 if i >= size and j < size:  # B'[0][1] = -1 (see paper)
                     B[i][j] = minus_ones[i - size][j]
-                if i < size and j >= size:  # B'[1][0] = D-1 (see paper) but our D is already -1
+                if (
+                    i < size and j >= size
+                ):  # B'[1][0] = D-1 (see paper) but our D is already -1
                     B[i][j] = D[i][j - size]
                 if i >= size and j >= size:  # B'[1][1] = A (see paper)
                     B[i][j] = self.A[i - size, j - size]
@@ -1736,25 +2076,27 @@ class SpectralInference(Inference):
         values, vectors = la.eig(B)
         # make sure, that vectors is not empty, even if all eigenvalues are partly imaginary,
         # if possible get rid of vectors of imaginary eigenvalues
-        number_of_clusters = max(list(list(self.partition.get_representation().values()))) + 1
-        test = vectors[:, abs(values.imag) > .0001]
+        number_of_clusters = (
+            max(list(list(self.partition.get_representation().values()))) + 1
+        )
+        test = vectors[:, abs(values.imag) > 0.0001]
         vectors_2 = vectors
 
         # if there are enough eigenvectors without imaginary part:
         if len(test[0]) <= len(vectors[0]) - number_of_clusters:
-            vectors = vectors[:, abs(values.imag) < .0001]
+            vectors = vectors[:, abs(values.imag) < 0.0001]
             size_i = len(vectors[0])
             size_j = len(vectors)
             vectors_real = np.zeros((size_j, size_i))
             for i in range(size_j):
                 for j in range(size_i):
                     vectors_real[i][j] = vectors[i][j].real
-            vectors_real = vectors_real[len(self.A):2 * len(self.A), :]
+            vectors_real = vectors_real[len(self.A) : 2 * len(self.A), :]
             vectors = vectors_real
 
         # if there are not enough eigenvectors without imaginary part:
         else:
-            vectors_2 = vectors_2[:, abs(values.imag) >= .0001]
+            vectors_2 = vectors_2[:, abs(values.imag) >= 0.0001]
             size_i = len(vectors_2[0])
             size_j = len(vectors_2)
             vectors_real = np.zeros((size_j, size_i))
@@ -1767,9 +2109,11 @@ class SpectralInference(Inference):
 
             # use both parts as own vector
             separated_vectors = np.concatenate((vectors_real, vectors_imag), axis=1)
-            separated_vectors = separated_vectors[len(self.A):2 * len(self.A), :]
+            separated_vectors = separated_vectors[len(self.A) : 2 * len(self.A), :]
             vectors = separated_vectors
-        kmeans = cl.KMeans(n_clusters=number_of_clusters, random_state=None).fit_predict(vectors)
+        kmeans = cl.KMeans(
+            n_clusters=number_of_clusters, random_state=None
+        ).fit_predict(vectors)
         # update partition
         node_list = list(self.graph.nodes())
         for i in range(len(node_list)):

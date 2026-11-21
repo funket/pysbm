@@ -1,7 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (C) 2026 Thorben Funke
 # SPDX-License-Identifier: CC-BY-SA-4.0
 
-""" Partition of NetworkX Graphs based on internal representation as NetworkX Graph"""
+"""Partition of NetworkX Graphs based on internal representation as NetworkX Graph"""
 
 import random as rd
 
@@ -14,11 +14,19 @@ from .exceptions import NoFreeNodeException
 
 
 class NxPartitionGraphBased(Partition):
-
-    def __init__(self, graph=nx.DiGraph(), number_of_blocks=None, calculate_degree_of_blocks=True,
-                 save_neighbor_of_blocks=True, fill_random=True, save_neighbor_edges=False,
-                 weighted_graph=False, save_degree_distributions=False, representation=None,
-                 with_covariate=False):
+    def __init__(
+        self,
+        graph=nx.DiGraph(),
+        number_of_blocks=None,
+        calculate_degree_of_blocks=True,
+        save_neighbor_of_blocks=True,
+        fill_random=True,
+        save_neighbor_edges=False,
+        weighted_graph=False,
+        save_degree_distributions=False,
+        representation=None,
+        with_covariate=False,
+    ):
         self._graph = graph
         self.partition = {}  # Link of node to groups
         self._is_directed = graph.is_directed()
@@ -28,12 +36,12 @@ class NxPartitionGraphBased(Partition):
             self._partition_graph_representation = nx.DiGraph()
         else:
             self._partition_graph_representation = nx.Graph()
-        self._WA = 'weight'
-        self._NODES_A = 'nodes'
-        self._NEIGHBORS_A = 'neighbors'
-        self._NEIGHBORING_EDGES_A = 'edge neighbors'
-        self._DEGREES = 'degrees'
-        self._COVARIATE = 'covariate'
+        self._WA = "weight"
+        self._NODES_A = "nodes"
+        self._NEIGHBORS_A = "neighbors"
+        self._NEIGHBORING_EDGES_A = "edge neighbors"
+        self._DEGREES = "degrees"
+        self._COVARIATE = "covariate"
 
         self._save_degree_distributions = save_degree_distributions
 
@@ -46,14 +54,16 @@ class NxPartitionGraphBased(Partition):
         self.node_neighbors = {}
         self._refresh_node_neighbors()
 
-        super(NxPartitionGraphBased, self).__init__(graph,
-                                                    number_of_blocks=number_of_blocks,
-                                                    calculate_degree_of_blocks=calculate_degree_of_blocks,
-                                                    save_neighbor_of_blocks=save_neighbor_of_blocks,
-                                                    fill_random=fill_random,
-                                                    save_neighbor_edges=save_neighbor_edges,
-                                                    representation=representation,
-                                                    with_covariate=with_covariate)
+        super(NxPartitionGraphBased, self).__init__(
+            graph,
+            number_of_blocks=number_of_blocks,
+            calculate_degree_of_blocks=calculate_degree_of_blocks,
+            save_neighbor_of_blocks=save_neighbor_of_blocks,
+            fill_random=fill_random,
+            save_neighbor_edges=save_neighbor_edges,
+            representation=representation,
+            with_covariate=with_covariate,
+        )
         # Handling of degree method for directed graphs
         if self._is_directed:
             self.get_degree_of_block = self.get_out_degree_of_block
@@ -69,7 +79,10 @@ class NxPartitionGraphBased(Partition):
             return
 
         # check if null move (only relabeling
-        if len(self._partition_graph_representation.nodes[old_block][self._NODES_A]) == 1:
+        if (
+            len(self._partition_graph_representation.nodes[old_block][self._NODES_A])
+            == 1
+        ):
             # quick check if not a one element is moved to another one element block
             if to_block not in self._partition_graph_representation:
                 return
@@ -81,18 +94,25 @@ class NxPartitionGraphBased(Partition):
             # if blocks were not deleted may insert into empty block and have to increase block count
             if self.with_empty_blocks:
                 # if node set is empty
-                if not self._partition_graph_representation.nodes[to_block][self._NODES_A]:
+                if not self._partition_graph_representation.nodes[to_block][
+                    self._NODES_A
+                ]:
                     self.B += 1
-            self._partition_graph_representation.nodes[to_block][self._NODES_A].add(node)
+            self._partition_graph_representation.nodes[to_block][self._NODES_A].add(
+                node
+            )
         else:
             self._partition_graph_representation.add_node(to_block)
             self._partition_graph_representation.nodes[to_block][self._NODES_A] = {node}
             self.B += 1
             if self._save_neighbor_edges:
                 self._partition_graph_representation.nodes[to_block][
-                    self._NEIGHBORING_EDGES_A] = self._neighbor_edge_class()
+                    self._NEIGHBORING_EDGES_A
+                ] = self._neighbor_edge_class()
             if self._save_neighbor_of_blocks:
-                self._partition_graph_representation.nodes[to_block][self._NEIGHBORS_A] = set()
+                self._partition_graph_representation.nodes[to_block][
+                    self._NEIGHBORS_A
+                ] = set()
             if self._save_degree_distributions:
                 self._partition_graph_representation.nodes[to_block][self._DEGREES] = {}
 
@@ -101,7 +121,9 @@ class NxPartitionGraphBased(Partition):
             if self._is_directed:
                 if self._is_weighted:
                     degree = (
-                        self._graph.in_degree(node, weight=self._WA), self._graph.out_degree(node, weight=self._WA))
+                        self._graph.in_degree(node, weight=self._WA),
+                        self._graph.out_degree(node, weight=self._WA),
+                    )
                 else:
                     degree = (self._graph.in_degree(node), self._graph.out_degree(node))
             else:
@@ -110,14 +132,29 @@ class NxPartitionGraphBased(Partition):
                 else:
                     degree = self._graph.degree(node)
             # add new
-            self._partition_graph_representation.nodes[to_block][self._DEGREES][degree] = \
-                self._partition_graph_representation.nodes[to_block][self._DEGREES].get(degree, 0) + 1
+            self._partition_graph_representation.nodes[to_block][self._DEGREES][
+                degree
+            ] = (
+                self._partition_graph_representation.nodes[to_block][self._DEGREES].get(
+                    degree, 0
+                )
+                + 1
+            )
             # remove old
-            if self._partition_graph_representation.nodes[old_block][self._DEGREES][degree] == 1:
+            if (
+                self._partition_graph_representation.nodes[old_block][self._DEGREES][
+                    degree
+                ]
+                == 1
+            ):
                 # to only store those entries which are non zero
-                del self._partition_graph_representation.nodes[old_block][self._DEGREES][degree]
+                del self._partition_graph_representation.nodes[old_block][
+                    self._DEGREES
+                ][degree]
             else:
-                self._partition_graph_representation.nodes[old_block][self._DEGREES][degree] -= 1
+                self._partition_graph_representation.nodes[old_block][self._DEGREES][
+                    degree
+                ] -= 1
 
         # refresh edges
         if self._is_directed:
@@ -128,21 +165,28 @@ class NxPartitionGraphBased(Partition):
                 else:
                     weight = data[self._WA]
                 if node != to_node:
-                    self._change_edge_count(node, to_node, weight, data,
-                                            old_from_block=old_block)
+                    self._change_edge_count(
+                        node, to_node, weight, data, old_from_block=old_block
+                    )
                 else:
                     #  if selfloop concern that from and to block is changed
-                    self._change_edge_count(node, node, weight, data,
-                                            old_from_block=old_block,
-                                            old_to_block=old_block)
+                    self._change_edge_count(
+                        node,
+                        node,
+                        weight,
+                        data,
+                        old_from_block=old_block,
+                        old_to_block=old_block,
+                    )
             weight = 1
             for from_node, _, data in self._graph.in_edges(node, data=True):
                 #  for in edges NetworkX support only full data access therefore this workaround
                 if self._is_weighted:
                     weight = data[self._WA]
                 if node != from_node:
-                    self._change_edge_count(from_node, node, weight, data,
-                                            old_to_block=old_block)
+                    self._change_edge_count(
+                        from_node, node, weight, data, old_to_block=old_block
+                    )
                     #  else no change because already changed in successors!
         else:
             for _, to_node, data in self._graph.edges(node, data=True):
@@ -152,17 +196,28 @@ class NxPartitionGraphBased(Partition):
                 else:
                     weight = data[self._WA]
                 if node != to_node:
-                    self._change_edge_count(node, to_node, weight, data,
-                                            old_from_block=old_block)
+                    self._change_edge_count(
+                        node, to_node, weight, data, old_from_block=old_block
+                    )
                 else:
                     #  if selfloop concern that from and to block is changed
-                    self._change_edge_count(node, node, weight, data,
-                                            old_from_block=old_block,
-                                            old_to_block=old_block)
+                    self._change_edge_count(
+                        node,
+                        node,
+                        weight,
+                        data,
+                        old_from_block=old_block,
+                        old_to_block=old_block,
+                    )
 
         # remove old block
-        if len(self._partition_graph_representation.nodes[old_block][self._NODES_A]) > 1:
-            self._partition_graph_representation.nodes[old_block][self._NODES_A].discard(node)
+        if (
+            len(self._partition_graph_representation.nodes[old_block][self._NODES_A])
+            > 1
+        ):
+            self._partition_graph_representation.nodes[old_block][
+                self._NODES_A
+            ].discard(node)
         else:
             self.B -= 1
             if not self.with_empty_blocks:
@@ -172,32 +227,71 @@ class NxPartitionGraphBased(Partition):
                 if old_block != self.B:
                     if self._save_neighbor_of_blocks:
                         # if demanded refresh saved neighbors
-                        for block in self._partition_graph_representation.nodes[self.B][self._NEIGHBORS_A]:
+                        for block in self._partition_graph_representation.nodes[self.B][
+                            self._NEIGHBORS_A
+                        ]:
                             # avoid changing deleted block or relabeling of item in container
                             # while it is used for iterating
                             if block != self.B and block != old_block:
-                                self._partition_graph_representation.nodes[block][self._NEIGHBORS_A].discard(self.B)
-                                self._partition_graph_representation.nodes[block][self._NEIGHBORS_A].add(old_block)
+                                self._partition_graph_representation.nodes[block][
+                                    self._NEIGHBORS_A
+                                ].discard(self.B)
+                                self._partition_graph_representation.nodes[block][
+                                    self._NEIGHBORS_A
+                                ].add(old_block)
 
                         # refresh self reference
-                        if self.B in self._partition_graph_representation.nodes[self.B][self._NEIGHBORS_A]:
-                            self._partition_graph_representation.nodes[self.B][self._NEIGHBORS_A].discard(self.B)
-                            self._partition_graph_representation.nodes[self.B][self._NEIGHBORS_A].add(old_block)
+                        if (
+                            self.B
+                            in self._partition_graph_representation.nodes[self.B][
+                                self._NEIGHBORS_A
+                            ]
+                        ):
+                            self._partition_graph_representation.nodes[self.B][
+                                self._NEIGHBORS_A
+                            ].discard(self.B)
+                            self._partition_graph_representation.nodes[self.B][
+                                self._NEIGHBORS_A
+                            ].add(old_block)
 
-                    nx.relabel_nodes(self._partition_graph_representation, {self.B: old_block}, copy=False)
-                    for node in self._partition_graph_representation.nodes[old_block][self._NODES_A]:
+                    nx.relabel_nodes(
+                        self._partition_graph_representation,
+                        {self.B: old_block},
+                        copy=False,
+                    )
+                    for node in self._partition_graph_representation.nodes[old_block][
+                        self._NODES_A
+                    ]:
                         self.partition[node] = old_block
             else:
-                self._partition_graph_representation.nodes[old_block][self._NODES_A].discard(node)
+                self._partition_graph_representation.nodes[old_block][
+                    self._NODES_A
+                ].discard(node)
 
-    def _change_edge_count(self, from_node, to_node, weight, edge_data,
-                           old_from_block=None, old_to_block=None):
-        """ Change value of block edges """
-        self._decrease_edge_count(from_node, to_node, weight, edge_data, old_from_block, old_to_block)
+    def _change_edge_count(
+        self,
+        from_node,
+        to_node,
+        weight,
+        edge_data,
+        old_from_block=None,
+        old_to_block=None,
+    ):
+        """Change value of block edges"""
+        self._decrease_edge_count(
+            from_node, to_node, weight, edge_data, old_from_block, old_to_block
+        )
         self._add_edge_count(from_node, to_node, weight, edge_data)
 
-    def _decrease_edge_count(self, from_node, to_node, weight, edge_data,
-                             old_from_block=None, old_to_block=None):
+    def _decrease_edge_count(
+        self,
+        from_node,
+        to_node,
+        weight,
+        edge_data,
+        old_from_block=None,
+        old_to_block=None,
+    ):
         # get block membership which were not given
         if old_from_block is None:
             old_from_block = self.partition[from_node]
@@ -205,35 +299,53 @@ class NxPartitionGraphBased(Partition):
             old_to_block = self.partition[to_node]
 
         # decrease edge count
-        self._partition_graph_representation[old_from_block][old_to_block][self._WA] -= weight
-        if self._partition_graph_representation[old_from_block][old_to_block][self._WA] == 0:
-            self._partition_graph_representation.remove_edge(old_from_block, old_to_block)
+        self._partition_graph_representation[old_from_block][old_to_block][
+            self._WA
+        ] -= weight
+        if (
+            self._partition_graph_representation[old_from_block][old_to_block][self._WA]
+            == 0
+        ):
+            self._partition_graph_representation.remove_edge(
+                old_from_block, old_to_block
+            )
             # if now no edge exist remove neighbor
-            if not self._partition_graph_representation.has_edge(old_to_block,
-                                                                 old_from_block) and self._save_neighbor_of_blocks:
-                self._partition_graph_representation.nodes[old_from_block][self._NEIGHBORS_A].discard(old_to_block)
-                self._partition_graph_representation.nodes[old_to_block][self._NEIGHBORS_A].discard(old_from_block)
+            if (
+                not self._partition_graph_representation.has_edge(
+                    old_to_block, old_from_block
+                )
+                and self._save_neighbor_of_blocks
+            ):
+                self._partition_graph_representation.nodes[old_from_block][
+                    self._NEIGHBORS_A
+                ].discard(old_to_block)
+                self._partition_graph_representation.nodes[old_to_block][
+                    self._NEIGHBORS_A
+                ].discard(old_from_block)
         elif self._with_covariate:
             # only if edge is not removed decrease edge covariate value
-            self._partition_graph_representation[old_from_block][old_to_block][self._COVARIATE] -= edge_data[
-                self._COVARIATE]
+            self._partition_graph_representation[old_from_block][old_to_block][
+                self._COVARIATE
+            ] -= edge_data[self._COVARIATE]
 
         # if demanded refresh neighbor edge variables
         if self._save_neighbor_edges:
             if self._is_weighted:
                 # remove old ones
-                self._partition_graph_representation.nodes[old_to_block][self._NEIGHBORING_EDGES_A].remove(
-                    (to_node, from_node),
-                    weight)
-                self._partition_graph_representation.nodes[old_from_block][self._NEIGHBORING_EDGES_A].remove(
-                    (from_node, to_node),
-                    weight)
+                self._partition_graph_representation.nodes[old_to_block][
+                    self._NEIGHBORING_EDGES_A
+                ].remove((to_node, from_node), weight)
+                self._partition_graph_representation.nodes[old_from_block][
+                    self._NEIGHBORING_EDGES_A
+                ].remove((from_node, to_node), weight)
             else:
                 # remove old ones
-                self._partition_graph_representation.nodes[old_to_block][self._NEIGHBORING_EDGES_A].remove(
-                    (to_node, from_node))
-                self._partition_graph_representation.nodes[old_from_block][self._NEIGHBORING_EDGES_A].remove(
-                    (from_node, to_node))
+                self._partition_graph_representation.nodes[old_to_block][
+                    self._NEIGHBORING_EDGES_A
+                ].remove((to_node, from_node))
+                self._partition_graph_representation.nodes[old_from_block][
+                    self._NEIGHBORING_EDGES_A
+                ].remove((from_node, to_node))
 
     def _add_edge_count(self, from_node, to_node, weight, edge_data):
         # add new edge count
@@ -241,57 +353,87 @@ class NxPartitionGraphBased(Partition):
         new_to_block = self.partition[to_node]
 
         if self._partition_graph_representation.has_edge(new_from_block, new_to_block):
-            self._partition_graph_representation[new_from_block][new_to_block][self._WA] += weight
+            self._partition_graph_representation[new_from_block][new_to_block][
+                self._WA
+            ] += weight
             if self._with_covariate:
-                self._partition_graph_representation[new_from_block][new_to_block][self._COVARIATE] += edge_data[
-                    self._COVARIATE]
+                self._partition_graph_representation[new_from_block][new_to_block][
+                    self._COVARIATE
+                ] += edge_data[self._COVARIATE]
         else:
             # if new connection of blocks add neighborhood relationship
-            if self._save_neighbor_of_blocks and not self._partition_graph_representation.has_edge(new_to_block,
-                                                                                                   new_from_block):
-                self._partition_graph_representation.nodes[new_from_block][self._NEIGHBORS_A].add(new_to_block)
-                self._partition_graph_representation.nodes[new_to_block][self._NEIGHBORS_A].add(new_from_block)
+            if (
+                self._save_neighbor_of_blocks
+                and not self._partition_graph_representation.has_edge(
+                    new_to_block, new_from_block
+                )
+            ):
+                self._partition_graph_representation.nodes[new_from_block][
+                    self._NEIGHBORS_A
+                ].add(new_to_block)
+                self._partition_graph_representation.nodes[new_to_block][
+                    self._NEIGHBORS_A
+                ].add(new_from_block)
             # then add edge
             self._partition_graph_representation.add_edge(new_from_block, new_to_block)
-            self._partition_graph_representation[new_from_block][new_to_block][self._WA] = weight
+            self._partition_graph_representation[new_from_block][new_to_block][
+                self._WA
+            ] = weight
             if self._with_covariate:
-                self._partition_graph_representation[new_from_block][new_to_block][self._COVARIATE] = edge_data[
-                    self._COVARIATE]
+                self._partition_graph_representation[new_from_block][new_to_block][
+                    self._COVARIATE
+                ] = edge_data[self._COVARIATE]
 
         # if demanded refresh neighbor edge variables
         if self._save_neighbor_edges:
             if self._is_weighted:
-                self._partition_graph_representation.nodes[new_to_block][self._NEIGHBORING_EDGES_A].add(
-                    (to_node, from_node),
-                    weight)
-                self._partition_graph_representation.nodes[new_from_block][self._NEIGHBORING_EDGES_A].add(
-                    (from_node, to_node),
-                    weight)
+                self._partition_graph_representation.nodes[new_to_block][
+                    self._NEIGHBORING_EDGES_A
+                ].add((to_node, from_node), weight)
+                self._partition_graph_representation.nodes[new_from_block][
+                    self._NEIGHBORING_EDGES_A
+                ].add((from_node, to_node), weight)
             else:
-                self._partition_graph_representation.nodes[new_to_block][self._NEIGHBORING_EDGES_A].add(
-                    (to_node, from_node))
-                self._partition_graph_representation.nodes[new_from_block][self._NEIGHBORING_EDGES_A].add(
-                    (from_node, to_node))
+                self._partition_graph_representation.nodes[new_to_block][
+                    self._NEIGHBORING_EDGES_A
+                ].add((to_node, from_node))
+                self._partition_graph_representation.nodes[new_from_block][
+                    self._NEIGHBORING_EDGES_A
+                ].add((from_node, to_node))
 
     def get_number_of_nodes_in_block(self, block_number):
-        return len(self._partition_graph_representation.nodes[block_number][self._NODES_A])
+        return len(
+            self._partition_graph_representation.nodes[block_number][self._NODES_A]
+        )
 
     def get_degree_of_block(self, block_number):
-        return self._partition_graph_representation.degree(block_number, weight=self._WA)
+        return self._partition_graph_representation.degree(
+            block_number, weight=self._WA
+        )
 
     def get_in_degree_of_block(self, block_number):
-        return self._partition_graph_representation.in_degree(block_number, weight=self._WA)
+        return self._partition_graph_representation.in_degree(
+            block_number, weight=self._WA
+        )
 
     def get_out_degree_of_block(self, block_number):
-        return self._partition_graph_representation.out_degree(block_number, weight=self._WA)
+        return self._partition_graph_representation.out_degree(
+            block_number, weight=self._WA
+        )
 
     def get_edge_count(self, from_block, to_block):
         if self._partition_graph_representation.has_edge(from_block, to_block):
             if self._is_directed:
-                return self._partition_graph_representation[from_block][to_block][self._WA]
+                return self._partition_graph_representation[from_block][to_block][
+                    self._WA
+                ]
             if from_block != to_block:
-                return self._partition_graph_representation[from_block][to_block][self._WA]
-            return 2 * self._partition_graph_representation[from_block][to_block][self._WA]
+                return self._partition_graph_representation[from_block][to_block][
+                    self._WA
+                ]
+            return (
+                2 * self._partition_graph_representation[from_block][to_block][self._WA]
+            )
         return 0
 
     def get_sum_of_covariates(self, from_block, to_block):
@@ -303,7 +445,9 @@ class NxPartitionGraphBased(Partition):
         :param to_block: to block
         :return: sum of covariates between the two blocks
         """
-        return self._partition_graph_representation[from_block][to_block][self._COVARIATE]
+        return self._partition_graph_representation[from_block][to_block][
+            self._COVARIATE
+        ]
 
     def random_partition(self, number_of_blocks=None):
         # First create representation and fill partition with representation afterwards
@@ -337,31 +481,46 @@ class NxPartitionGraphBased(Partition):
             self._partition_graph_representation.nodes[block][self._NODES_A] = set()
             if self._save_neighbor_edges:
                 self._partition_graph_representation.nodes[block][
-                    self._NEIGHBORING_EDGES_A] = self._neighbor_edge_class()
+                    self._NEIGHBORING_EDGES_A
+                ] = self._neighbor_edge_class()
             if self._save_neighbor_of_blocks:
-                self._partition_graph_representation.nodes[block][self._NEIGHBORS_A] = set()
+                self._partition_graph_representation.nodes[block][self._NEIGHBORS_A] = (
+                    set()
+                )
             if self._save_degree_distributions:
                 self._partition_graph_representation.nodes[block][self._DEGREES] = {}
 
         for node in self._graph:
             self.partition[node] = representation[node]
-            self._partition_graph_representation.nodes[representation[node]][self._NODES_A].add(node)
+            self._partition_graph_representation.nodes[representation[node]][
+                self._NODES_A
+            ].add(node)
 
             if self._save_degree_distributions:
                 if self._is_directed:
                     if self._is_weighted:
                         degree = (
                             self._graph.in_degree(node, weight=self._WA),
-                            self._graph.out_degree(node, weight=self._WA))
+                            self._graph.out_degree(node, weight=self._WA),
+                        )
                     else:
-                        degree = (self._graph.in_degree(node), self._graph.out_degree(node))
+                        degree = (
+                            self._graph.in_degree(node),
+                            self._graph.out_degree(node),
+                        )
                 else:
                     if self._is_weighted:
                         degree = self._graph.degree(node, weight=self._WA)
                     else:
                         degree = self._graph.degree(node)
-                self._partition_graph_representation.nodes[self.partition[node]][self._DEGREES][degree] = \
-                    self._partition_graph_representation.nodes[self.partition[node]][self._DEGREES].get(degree, 0) + 1
+                self._partition_graph_representation.nodes[self.partition[node]][
+                    self._DEGREES
+                ][degree] = (
+                    self._partition_graph_representation.nodes[self.partition[node]][
+                        self._DEGREES
+                    ].get(degree, 0)
+                    + 1
+                )
 
         # fill edge counts
         for from_node, to_node, data in self._graph.edges(data=True):
@@ -376,14 +535,28 @@ class NxPartitionGraphBased(Partition):
         node = rd.choice(list(self._graph.nodes.keys()))
         if not no_single:
             return node
-        if len(self._partition_graph_representation.nodes[self.partition[node]][self._NODES_A]) == 1:
+        if (
+            len(
+                self._partition_graph_representation.nodes[self.partition[node]][
+                    self._NODES_A
+                ]
+            )
+            == 1
+        ):
             #    after first try slower
             unchecked_nodes = list(self._graph.nodes.keys())
             unchecked_nodes.remove(node)
             while unchecked_nodes:
                 node = rd.choice(unchecked_nodes)
                 unchecked_nodes.remove(node)
-                if len(self._partition_graph_representation.nodes[self.partition[node]][self._NODES_A]) > 1:
+                if (
+                    len(
+                        self._partition_graph_representation.nodes[
+                            self.partition[node]
+                        ][self._NODES_A]
+                    )
+                    > 1
+                ):
                     break
             else:
                 # all nodes in a block with size 1
@@ -404,7 +577,9 @@ class NxPartitionGraphBased(Partition):
         return node, old_block, new_block
 
     def get_random_neighboring_edge_of_block(self, block_number):
-        return self._partition_graph_representation.nodes[block_number][self._NEIGHBORING_EDGES_A].choose_random()
+        return self._partition_graph_representation.nodes[block_number][
+            self._NEIGHBORING_EDGES_A
+        ].choose_random()
 
     def precalc_move(self, move_candidate, objective_function, covariate=None):
 
@@ -447,34 +622,48 @@ class NxPartitionGraphBased(Partition):
                 # selfloops already counted
                 if neighbor != node:
                     block = self.partition[neighbor]
-                    predecessor_block_info[block] = predecessor_block_info.get(block, 0) + weight
+                    predecessor_block_info[block] = (
+                        predecessor_block_info.get(block, 0) + weight
+                    )
 
             if use_edge_information:
-                parameters = (neighbor_block_info,
-                              predecessor_block_info,
-                              selfloops,
-                              self._graph.in_degree(node, weight=edge_attribute),
-                              self._graph.out_degree(node, weight=edge_attribute))
+                parameters = (
+                    neighbor_block_info,
+                    predecessor_block_info,
+                    selfloops,
+                    self._graph.in_degree(node, weight=edge_attribute),
+                    self._graph.out_degree(node, weight=edge_attribute),
+                )
             else:
-                parameters = (neighbor_block_info,
-                              predecessor_block_info,
-                              selfloops,
-                              self._graph.in_degree(node),
-                              self._graph.out_degree(node))
+                parameters = (
+                    neighbor_block_info,
+                    predecessor_block_info,
+                    selfloops,
+                    self._graph.in_degree(node),
+                    self._graph.out_degree(node),
+                )
         else:
             if use_edge_information:
-                parameters = (neighbor_block_info, selfloops, self._graph.degree(node, weight=edge_attribute))
+                parameters = (
+                    neighbor_block_info,
+                    selfloops,
+                    self._graph.degree(node, weight=edge_attribute),
+                )
             else:
                 parameters = (neighbor_block_info, selfloops, self._graph.degree(node))
 
         if self._with_covariate and covariate is None:
             # if partition includes covariate information get and return the additional information
-            return parameters + self.precalc_move(move_candidate, objective_function, covariate=self._COVARIATE)
+            return parameters + self.precalc_move(
+                move_candidate, objective_function, covariate=self._COVARIATE
+            )
 
         return parameters
 
     def get_neighbors_of_block(self, block_number):
-        return self._partition_graph_representation.nodes[block_number][self._NEIGHBORS_A]
+        return self._partition_graph_representation.nodes[block_number][
+            self._NEIGHBORS_A
+        ]
 
     def get_neighbors_of_node(self, node):
         return self.node_neighbors[node]
@@ -501,32 +690,43 @@ class NxPartitionGraphBased(Partition):
         return self.partition.copy()
 
     def copy(self):
-        new = self.__class__(self._graph,
-                             self.B,
-                             self._calculate_degree_of_blocks,
-                             self._save_neighbor_of_blocks,
-                             fill_random=False,
-                             save_neighbor_edges=self._save_neighbor_edges,
-                             weighted_graph=self._is_weighted,
-                             with_covariate=self._with_covariate)
+        new = self.__class__(
+            self._graph,
+            self.B,
+            self._calculate_degree_of_blocks,
+            self._save_neighbor_of_blocks,
+            fill_random=False,
+            save_neighbor_edges=self._save_neighbor_edges,
+            weighted_graph=self._is_weighted,
+            with_covariate=self._with_covariate,
+        )
 
         new.partition = self.partition.copy()
-        new._partition_graph_representation = self._partition_graph_representation.copy()
+        new._partition_graph_representation = (
+            self._partition_graph_representation.copy()
+        )
 
         # copy membership saving
         for block in self._partition_graph_representation.nodes:
-            new._partition_graph_representation.nodes[block][self._NODES_A] = \
+            new._partition_graph_representation.nodes[block][self._NODES_A] = (
                 self._partition_graph_representation.nodes[block][self._NODES_A].copy()
+            )
 
         if self._save_neighbor_edges:
             for block in self._partition_graph_representation.nodes:
-                new._partition_graph_representation.nodes[block][self._NEIGHBORING_EDGES_A] = \
-                    self._partition_graph_representation.nodes[block][self._NEIGHBORING_EDGES_A].copy()
+                new._partition_graph_representation.nodes[block][
+                    self._NEIGHBORING_EDGES_A
+                ] = self._partition_graph_representation.nodes[block][
+                    self._NEIGHBORING_EDGES_A
+                ].copy()
 
         if self._save_neighbor_of_blocks:
             for block in self._partition_graph_representation.nodes:
-                new._partition_graph_representation.nodes[block][self._NEIGHBORS_A] = \
-                    self._partition_graph_representation.nodes[block][self._NEIGHBORS_A].copy()
+                new._partition_graph_representation.nodes[block][self._NEIGHBORS_A] = (
+                    self._partition_graph_representation.nodes[block][
+                        self._NEIGHBORS_A
+                    ].copy()
+                )
 
         return new
 
@@ -544,38 +744,51 @@ class NxPartitionGraphBased(Partition):
         if self._save_neighbor_edges and not save_neighbor_edges:
             self._save_neighbor_edges = save_neighbor_edges
             for block in self._partition_graph_representation.nodes:
-                del self._partition_graph_representation.nodes[block][self._NEIGHBORING_EDGES_A]
+                del self._partition_graph_representation.nodes[block][
+                    self._NEIGHBORING_EDGES_A
+                ]
         # if new create list
         if not self._save_neighbor_edges and save_neighbor_edges:
             self._save_neighbor_edges = save_neighbor_edges
 
             for block in self._partition_graph_representation.nodes:
                 self._partition_graph_representation.nodes[block][
-                    self._NEIGHBORING_EDGES_A] = self._neighbor_edge_class()
+                    self._NEIGHBORING_EDGES_A
+                ] = self._neighbor_edge_class()
 
             if self._is_weighted:
                 for edge in self._graph.edges(data=self._WA, default=1):
                     # add to_node in list of block of from_node
-                    self._partition_graph_representation.nodes[self.partition[edge[0]]][self._NEIGHBORING_EDGES_A].add(
-                        (edge[0], edge[1]), edge[2])
+                    self._partition_graph_representation.nodes[self.partition[edge[0]]][
+                        self._NEIGHBORING_EDGES_A
+                    ].add((edge[0], edge[1]), edge[2])
                     # to include the "incoming" edges too:
-                    self._partition_graph_representation.nodes[self.partition[edge[1]]][self._NEIGHBORING_EDGES_A].add(
-                        (edge[1], edge[0]), edge[2])
+                    self._partition_graph_representation.nodes[self.partition[edge[1]]][
+                        self._NEIGHBORING_EDGES_A
+                    ].add((edge[1], edge[0]), edge[2])
             else:
                 for edge in self._graph.edges():
                     # add to_node in list of block of from_node
-                    self._partition_graph_representation.nodes[self.partition[edge[0]]][self._NEIGHBORING_EDGES_A].add(
-                        (edge[0], edge[1]))
+                    self._partition_graph_representation.nodes[self.partition[edge[0]]][
+                        self._NEIGHBORING_EDGES_A
+                    ].add((edge[0], edge[1]))
                     # to include the "incoming" edges too:
-                    self._partition_graph_representation.nodes[self.partition[edge[1]]][self._NEIGHBORING_EDGES_A].add(
-                        (edge[1], edge[0]))
+                    self._partition_graph_representation.nodes[self.partition[edge[1]]][
+                        self._NEIGHBORING_EDGES_A
+                    ].add((edge[1], edge[0]))
 
     def merge_blocks(self, merges, new_block_count):
         # retrieve nodes in right order
         node_mergers = []
         for block in sorted(merges.keys(), reverse=True):
             node_mergers.append(
-                (self._partition_graph_representation.nodes[block][self._NODES_A].copy(), merges[block]))
+                (
+                    self._partition_graph_representation.nodes[block][
+                        self._NODES_A
+                    ].copy(),
+                    merges[block],
+                )
+            )
 
         for nodes, to_block in node_mergers:
             for node in nodes:
@@ -591,9 +804,9 @@ class NxPartitionGraphBased(Partition):
             degree_distributions = [{} for _ in range(self.B)]
 
             for node, degree in degree_iter:
-                degree_distributions[self.partition[node]][degree] = degree_distributions[self.partition[node]].get(
-                    degree,
-                    0) + 1
+                degree_distributions[self.partition[node]][degree] = (
+                    degree_distributions[self.partition[node]].get(degree, 0) + 1
+                )
 
             if probability:
                 return transform_into_probabilities(degree_distributions)
@@ -601,7 +814,9 @@ class NxPartitionGraphBased(Partition):
 
         def transform_into_probabilities(raw_degree_distributions):
             for block, degree_distribution in enumerate(raw_degree_distributions):
-                block_size = 1.0 / len(self._partition_graph_representation.nodes[block][self._NODES_A])
+                block_size = 1.0 / len(
+                    self._partition_graph_representation.nodes[block][self._NODES_A]
+                )
                 for degree in degree_distribution:
                     degree_distribution[degree] *= block_size
 
@@ -609,16 +824,21 @@ class NxPartitionGraphBased(Partition):
 
         if self._graph.is_directed():
             if self._is_weighted:
-                return create_degree_distribution(self._graph.in_degree(weight=self._WA)), create_degree_distribution(
-                    self._graph.out_degree(weight=self._WA))
-            return create_degree_distribution(self._graph.in_degree()), create_degree_distribution(
-                self._graph.out_degree())
+                return create_degree_distribution(
+                    self._graph.in_degree(weight=self._WA)
+                ), create_degree_distribution(self._graph.out_degree(weight=self._WA))
+            return create_degree_distribution(
+                self._graph.in_degree()
+            ), create_degree_distribution(self._graph.out_degree())
         # else...
         if self._save_degree_distributions and not self._is_directed:
             saved_degree_distributions = []
             for saved_block in range(self.B):
                 saved_degree_distributions.append(
-                    self._partition_graph_representation.nodes[saved_block][self._DEGREES].copy())
+                    self._partition_graph_representation.nodes[saved_block][
+                        self._DEGREES
+                    ].copy()
+                )
 
             if probability:
                 return transform_into_probabilities(saved_degree_distributions)
@@ -660,17 +880,27 @@ class NxPartitionGraphBased(Partition):
         # quicker if saving done
         if self._save_degree_distributions and self._is_directed:
             for block in range(self.B):
-                degree_distributions[block] = self._partition_graph_representation.nodes[block][self._DEGREES].copy()
+                degree_distributions[block] = (
+                    self._partition_graph_representation.nodes[block][
+                        self._DEGREES
+                    ].copy()
+                )
             return degree_distributions
 
         for node in self._graph.nodes:
             if self._is_weighted:
-                joint_degrees = (self._graph.in_degree(node, weight=self._WA),
-                                 self._graph.out_degree(node, weight=self._WA))
+                joint_degrees = (
+                    self._graph.in_degree(node, weight=self._WA),
+                    self._graph.out_degree(node, weight=self._WA),
+                )
             else:
-                joint_degrees = (self._graph.in_degree(node), self._graph.out_degree(node))
-            degree_distributions[self.partition[node]][joint_degrees] = degree_distributions[self.partition[node]].get(
-                joint_degrees, 0) + 1
+                joint_degrees = (
+                    self._graph.in_degree(node),
+                    self._graph.out_degree(node),
+                )
+            degree_distributions[self.partition[node]][joint_degrees] = (
+                degree_distributions[self.partition[node]].get(joint_degrees, 0) + 1
+            )
 
         return degree_distributions
 
@@ -681,7 +911,10 @@ class NxPartitionGraphBased(Partition):
         super(NxPartitionGraphBased, self).set_from_representation(representation)
         self.with_empty_blocks = old_with_empty_blocks
         # check number of empty blocks
-        if self.B != len(self._partition_graph_representation) or self.partition != representation:
+        if (
+            self.B != len(self._partition_graph_representation)
+            or self.partition != representation
+        ):
             # else only possible if representation contains information about every node
             if len(representation) != len(self._graph):
                 raise ValueError()
@@ -692,7 +925,15 @@ class NxPartitionGraphBased(Partition):
 
             # remove nodes and reset counter
             self._partition_graph_representation.remove_nodes_from(
-                range(1, max(len(self._partition_graph_representation), saved_number_of_blocks) + 1))
+                range(
+                    1,
+                    max(
+                        len(self._partition_graph_representation),
+                        saved_number_of_blocks,
+                    )
+                    + 1,
+                )
+            )
 
             self.B = 1
             super(NxPartitionGraphBased, self).set_from_representation(representation)
@@ -718,7 +959,9 @@ class NxPartitionGraphBased(Partition):
         return self._partition_graph_representation
 
     def get_number_of_nodes_with_same_degree_in_block(self, block, degree):
-        return self._partition_graph_representation.nodes[block][self._DEGREES].get(degree, 0)
+        return self._partition_graph_representation.nodes[block][self._DEGREES].get(
+            degree, 0
+        )
 
     def get_possible_blocks(self, block, with_in_operation=False):
         return range(self.B)
@@ -731,19 +974,32 @@ class NxPartitionGraphBased(Partition):
 
         # quicker if saving done
         if self._save_degree_distributions:
-            degree_distribution = self._partition_graph_representation.nodes[block][self._DEGREES].copy()
+            degree_distribution = self._partition_graph_representation.nodes[block][
+                self._DEGREES
+            ].copy()
             return degree_distribution
 
         if self._is_directed:
-            for node in self._partition_graph_representation.nodes[block][self._NODES_A]:
+            for node in self._partition_graph_representation.nodes[block][
+                self._NODES_A
+            ]:
                 if self._is_weighted:
-                    joint_degrees = (self._graph.in_degree(node, weight=self._WA),
-                                     self._graph.out_degree(node, weight=self._WA))
+                    joint_degrees = (
+                        self._graph.in_degree(node, weight=self._WA),
+                        self._graph.out_degree(node, weight=self._WA),
+                    )
                 else:
-                    joint_degrees = (self._graph.in_degree(node), self._graph.out_degree(node))
-                degree_distribution[joint_degrees] = degree_distribution.get(joint_degrees, 0) + 1
+                    joint_degrees = (
+                        self._graph.in_degree(node),
+                        self._graph.out_degree(node),
+                    )
+                degree_distribution[joint_degrees] = (
+                    degree_distribution.get(joint_degrees, 0) + 1
+                )
         else:
-            for node in self._partition_graph_representation.nodes[block][self._NODES_A]:
+            for node in self._partition_graph_representation.nodes[block][
+                self._NODES_A
+            ]:
                 if self._is_weighted:
                     degree = self._graph.degree(node, weight=self._WA)
                 else:
@@ -764,10 +1020,19 @@ class NxPartitionGraphBased(Partition):
 class NxPartitionGraphBasedWithMoveCounter(NxPartitionGraphBased):
     """Partition including counter of node moves"""
 
-    def __init__(self, graph=nx.DiGraph(), number_of_blocks=None, calculate_degree_of_blocks=True,
-                 save_neighbor_of_blocks=True, fill_random=True, save_neighbor_edges=False,
-                 weighted_graph=False, save_degree_distributions=False, representation=None,
-                 with_covariate=False):
+    def __init__(
+        self,
+        graph=nx.DiGraph(),
+        number_of_blocks=None,
+        calculate_degree_of_blocks=True,
+        save_neighbor_of_blocks=True,
+        fill_random=True,
+        save_neighbor_edges=False,
+        weighted_graph=False,
+        save_degree_distributions=False,
+        representation=None,
+        with_covariate=False,
+    ):
         self.node_moves = 0
         super(NxPartitionGraphBasedWithMoveCounter, self).__init__(
             graph=graph,
@@ -779,7 +1044,8 @@ class NxPartitionGraphBasedWithMoveCounter(NxPartitionGraphBased):
             weighted_graph=weighted_graph,
             save_degree_distributions=save_degree_distributions,
             representation=representation,
-            with_covariate=with_covariate)
+            with_covariate=with_covariate,
+        )
 
     def move_node(self, node, to_block):
         # only count real moves
@@ -789,17 +1055,31 @@ class NxPartitionGraphBasedWithMoveCounter(NxPartitionGraphBased):
 
 
 class NxPartitionGraphBasedHierarchy(NxPartitionGraphBased):
-
-    def __init__(self, graph=nx.DiGraph(), number_of_blocks=None, calculate_degree_of_blocks=True,
-                 save_neighbor_of_blocks=True, fill_random=True, save_neighbor_edges=False, weighted_graph=False,
-                 save_degree_distributions=False, representation=None, with_covariate=False):
-        super(NxPartitionGraphBasedHierarchy, self).__init__(graph, number_of_blocks, calculate_degree_of_blocks,
-                                                             save_neighbor_of_blocks, fill_random,
-                                                             save_neighbor_edges, weighted_graph,
-                                                             save_degree_distributions,
-                                                             representation=representation,
-                                                             with_covariate=with_covariate
-                                                             )
+    def __init__(
+        self,
+        graph=nx.DiGraph(),
+        number_of_blocks=None,
+        calculate_degree_of_blocks=True,
+        save_neighbor_of_blocks=True,
+        fill_random=True,
+        save_neighbor_edges=False,
+        weighted_graph=False,
+        save_degree_distributions=False,
+        representation=None,
+        with_covariate=False,
+    ):
+        super(NxPartitionGraphBasedHierarchy, self).__init__(
+            graph,
+            number_of_blocks,
+            calculate_degree_of_blocks,
+            save_neighbor_of_blocks,
+            fill_random,
+            save_neighbor_edges,
+            weighted_graph,
+            save_degree_distributions,
+            representation=representation,
+            with_covariate=with_covariate,
+        )
 
     def move_node(self, node, to_block, return_edge_changes=False):
         # safe old block
@@ -812,7 +1092,10 @@ class NxPartitionGraphBasedHierarchy(NxPartitionGraphBased):
         old_edges = []
         change_of_number_of_blocks = False
         # check if block will be removed
-        if len(self._partition_graph_representation.nodes[old_block][self._NODES_A]) == 1:
+        if (
+            len(self._partition_graph_representation.nodes[old_block][self._NODES_A])
+            == 1
+        ):
             change_of_number_of_blocks = True
             # quick check if not a one element is moved to another one element block
             if to_block not in self._partition_graph_representation:
@@ -825,10 +1108,14 @@ class NxPartitionGraphBasedHierarchy(NxPartitionGraphBased):
             # if blocks were not deleted may insert into empty block and have to increase block count
             if self.with_empty_blocks:
                 # if node set is empty
-                if not self._partition_graph_representation.nodes[to_block][self._NODES_A]:
+                if not self._partition_graph_representation.nodes[to_block][
+                    self._NODES_A
+                ]:
                     self.B += 1
                     change_of_number_of_blocks = True
-            self._partition_graph_representation.nodes[to_block][self._NODES_A].add(node)
+            self._partition_graph_representation.nodes[to_block][self._NODES_A].add(
+                node
+            )
         else:
             self._partition_graph_representation.add_node(to_block)
             self._partition_graph_representation.nodes[to_block][self._NODES_A] = {node}
@@ -836,9 +1123,12 @@ class NxPartitionGraphBasedHierarchy(NxPartitionGraphBased):
             change_of_number_of_blocks = True
             if self._save_neighbor_edges:
                 self._partition_graph_representation.nodes[to_block][
-                    self._NEIGHBORING_EDGES_A] = self._neighbor_edge_class()
+                    self._NEIGHBORING_EDGES_A
+                ] = self._neighbor_edge_class()
             if self._save_neighbor_of_blocks:
-                self._partition_graph_representation.nodes[to_block][self._NEIGHBORS_A] = set()
+                self._partition_graph_representation.nodes[to_block][
+                    self._NEIGHBORS_A
+                ] = set()
             if self._save_degree_distributions:
                 self._partition_graph_representation.nodes[to_block][self._DEGREES] = {}
 
@@ -847,7 +1137,9 @@ class NxPartitionGraphBasedHierarchy(NxPartitionGraphBased):
             if self._is_directed:
                 if self._is_weighted:
                     degree = (
-                        self._graph.in_degree(node, weight=self._WA), self._graph.out_degree(node, weight=self._WA))
+                        self._graph.in_degree(node, weight=self._WA),
+                        self._graph.out_degree(node, weight=self._WA),
+                    )
                 else:
                     degree = (self._graph.in_degree(node), self._graph.out_degree(node))
             else:
@@ -856,14 +1148,29 @@ class NxPartitionGraphBasedHierarchy(NxPartitionGraphBased):
                 else:
                     degree = self._graph.degree(node)
             # add new
-            self._partition_graph_representation.nodes[to_block][self._DEGREES][degree] = \
-                self._partition_graph_representation.nodes[to_block][self._DEGREES].get(degree, 0) + 1
+            self._partition_graph_representation.nodes[to_block][self._DEGREES][
+                degree
+            ] = (
+                self._partition_graph_representation.nodes[to_block][self._DEGREES].get(
+                    degree, 0
+                )
+                + 1
+            )
             # remove old
-            if self._partition_graph_representation.nodes[old_block][self._DEGREES][degree] == 1:
+            if (
+                self._partition_graph_representation.nodes[old_block][self._DEGREES][
+                    degree
+                ]
+                == 1
+            ):
                 # to only store those entries which are non zero
-                del self._partition_graph_representation.nodes[old_block][self._DEGREES][degree]
+                del self._partition_graph_representation.nodes[old_block][
+                    self._DEGREES
+                ][degree]
             else:
-                self._partition_graph_representation.nodes[old_block][self._DEGREES][degree] -= 1
+                self._partition_graph_representation.nodes[old_block][self._DEGREES][
+                    degree
+                ] -= 1
 
         # refresh edges
         if self._is_directed:
@@ -875,17 +1182,23 @@ class NxPartitionGraphBasedHierarchy(NxPartitionGraphBased):
                     weight = 1
 
                 if node != to_node:
-                    self._change_edge_count(node, to_node, weight, data,
-                                            old_from_block=old_block)
+                    self._change_edge_count(
+                        node, to_node, weight, data, old_from_block=old_block
+                    )
                     # if needed save block edges
                     if change_of_number_of_blocks or return_edge_changes:
                         old_edges.append((old_block, self.partition[to_node], weight))
                         new_edges.append((to_block, self.partition[to_node], weight))
                 else:
                     #  if selfloop concern that from and to block is changed
-                    self._change_edge_count(node, node, weight, data,
-                                            old_from_block=old_block,
-                                            old_to_block=old_block)
+                    self._change_edge_count(
+                        node,
+                        node,
+                        weight,
+                        data,
+                        old_from_block=old_block,
+                        old_to_block=old_block,
+                    )
                     # if needed save block edges
                     if change_of_number_of_blocks or return_edge_changes:
                         old_edges.append((old_block, old_block, weight))
@@ -899,8 +1212,9 @@ class NxPartitionGraphBasedHierarchy(NxPartitionGraphBased):
                     weight = 1
                 if node != from_node:
                     #  else no change because already changed in successors!
-                    self._change_edge_count(from_node, node, weight, data,
-                                            old_to_block=old_block)
+                    self._change_edge_count(
+                        from_node, node, weight, data, old_to_block=old_block
+                    )
                     # if needed save block edges
                     if change_of_number_of_blocks or return_edge_changes:
                         old_edges.append((self.partition[from_node], old_block, weight))
@@ -914,25 +1228,36 @@ class NxPartitionGraphBasedHierarchy(NxPartitionGraphBased):
                     weight = 1
 
                 if node != to_node:
-                    self._change_edge_count(node, to_node, weight, data,
-                                            old_from_block=old_block)
+                    self._change_edge_count(
+                        node, to_node, weight, data, old_from_block=old_block
+                    )
                     # if needed save edges
                     if change_of_number_of_blocks or return_edge_changes:
                         old_edges.append((old_block, self.partition[to_node], weight))
                         new_edges.append((to_block, self.partition[to_node], weight))
                 else:
                     #  if selfloop concern that from and to block is changed
-                    self._change_edge_count(node, node, weight, data,
-                                            old_from_block=old_block,
-                                            old_to_block=old_block)
+                    self._change_edge_count(
+                        node,
+                        node,
+                        weight,
+                        data,
+                        old_from_block=old_block,
+                        old_to_block=old_block,
+                    )
                     # if needed save edges
                     if change_of_number_of_blocks or return_edge_changes:
                         old_edges.append((old_block, old_block, weight))
                         new_edges.append((to_block, to_block, weight))
 
         # remove old block
-        if len(self._partition_graph_representation.nodes[old_block][self._NODES_A]) > 1:
-            self._partition_graph_representation.nodes[old_block][self._NODES_A].discard(node)
+        if (
+            len(self._partition_graph_representation.nodes[old_block][self._NODES_A])
+            > 1
+        ):
+            self._partition_graph_representation.nodes[old_block][
+                self._NODES_A
+            ].discard(node)
         else:
             self.B -= 1
             if not self.with_empty_blocks:
@@ -943,52 +1268,107 @@ class NxPartitionGraphBasedHierarchy(NxPartitionGraphBased):
                     new_relabeled_edges = []
 
                     if self._is_directed:
-                        for _, to_block, weight in self._partition_graph_representation.out_edges(self.B,
-                                                                                                  data=self._WA):
+                        for (
+                            _,
+                            to_block,
+                            weight,
+                        ) in self._partition_graph_representation.out_edges(
+                            self.B, data=self._WA
+                        ):
                             old_relabeled_edges.append((self.B, to_block, weight))
                             if to_block != self.B:
-                                new_relabeled_edges.append((old_block, to_block, weight))
+                                new_relabeled_edges.append(
+                                    (old_block, to_block, weight)
+                                )
                             else:
-                                new_relabeled_edges.append((old_block, old_block, weight))
-                        for from_block, _, data in self._partition_graph_representation.in_edges(self.B,
-                                                                                                 data=True):
+                                new_relabeled_edges.append(
+                                    (old_block, old_block, weight)
+                                )
+                        for (
+                            from_block,
+                            _,
+                            data,
+                        ) in self._partition_graph_representation.in_edges(
+                            self.B, data=True
+                        ):
                             #  for in edges NetworkX support only full data access therefore this workaround
                             weight = data[self._WA]
                             if from_block != self.B:
                                 old_relabeled_edges.append((from_block, self.B, weight))
-                                new_relabeled_edges.append((from_block, old_block, weight))
+                                new_relabeled_edges.append(
+                                    (from_block, old_block, weight)
+                                )
                             # else:
                             #     new_relabeled_edges.append((old_block, old_block, weight))
                     else:
-                        for from_block, to_block, weight in self._partition_graph_representation.edges(self.B,
-                                                                                                       data=self._WA):
+                        for (
+                            from_block,
+                            to_block,
+                            weight,
+                        ) in self._partition_graph_representation.edges(
+                            self.B, data=self._WA
+                        ):
                             old_relabeled_edges.append((self.B, to_block, weight))
                             if to_block != self.B:
-                                new_relabeled_edges.append((old_block, to_block, weight))
+                                new_relabeled_edges.append(
+                                    (old_block, to_block, weight)
+                                )
                             else:
-                                new_relabeled_edges.append((old_block, old_block, weight))
+                                new_relabeled_edges.append(
+                                    (old_block, old_block, weight)
+                                )
 
                     if self._save_neighbor_of_blocks:
                         # if demanded refresh saved neighbors
-                        for block in self._partition_graph_representation.nodes[self.B][self._NEIGHBORS_A]:
+                        for block in self._partition_graph_representation.nodes[self.B][
+                            self._NEIGHBORS_A
+                        ]:
                             # handle reference to own block later to avoid changing container while iterating
                             if block != self.B and block != old_block:
-                                self._partition_graph_representation.nodes[block][self._NEIGHBORS_A].discard(self.B)
-                                self._partition_graph_representation.nodes[block][self._NEIGHBORS_A].add(old_block)
+                                self._partition_graph_representation.nodes[block][
+                                    self._NEIGHBORS_A
+                                ].discard(self.B)
+                                self._partition_graph_representation.nodes[block][
+                                    self._NEIGHBORS_A
+                                ].add(old_block)
 
                         # refresh self reference
-                        if self.B in self._partition_graph_representation.nodes[self.B][self._NEIGHBORS_A]:
-                            self._partition_graph_representation.nodes[self.B][self._NEIGHBORS_A].discard(self.B)
-                            self._partition_graph_representation.nodes[self.B][self._NEIGHBORS_A].add(old_block)
+                        if (
+                            self.B
+                            in self._partition_graph_representation.nodes[self.B][
+                                self._NEIGHBORS_A
+                            ]
+                        ):
+                            self._partition_graph_representation.nodes[self.B][
+                                self._NEIGHBORS_A
+                            ].discard(self.B)
+                            self._partition_graph_representation.nodes[self.B][
+                                self._NEIGHBORS_A
+                            ].add(old_block)
 
-                    nx.relabel_nodes(self._partition_graph_representation, {self.B: old_block}, copy=False)
-                    for node in self._partition_graph_representation.nodes[old_block][self._NODES_A]:
+                    nx.relabel_nodes(
+                        self._partition_graph_representation,
+                        {self.B: old_block},
+                        copy=False,
+                    )
+                    for node in self._partition_graph_representation.nodes[old_block][
+                        self._NODES_A
+                    ]:
                         self.partition[node] = old_block
 
-                    return False, old_block, old_edges, new_edges, old_relabeled_edges, new_relabeled_edges
+                    return (
+                        False,
+                        old_block,
+                        old_edges,
+                        new_edges,
+                        old_relabeled_edges,
+                        new_relabeled_edges,
+                    )
                 return False, old_block, old_edges, new_edges, None, None
             else:
-                self._partition_graph_representation.nodes[old_block][self._NODES_A].discard(node)
+                self._partition_graph_representation.nodes[old_block][
+                    self._NODES_A
+                ].discard(node)
                 return False, old_block, old_edges, new_edges, None, None
 
         if change_of_number_of_blocks:
@@ -1001,12 +1381,21 @@ class NxPartitionGraphBasedHierarchy(NxPartitionGraphBased):
             raise ValueError()
         # same block assignment
         self.partition[new_node] = self.partition[old_node]
-        self._partition_graph_representation.nodes[self.partition[new_node]][self._NODES_A].add(new_node)
+        self._partition_graph_representation.nodes[self.partition[new_node]][
+            self._NODES_A
+        ].add(new_node)
 
         # refresh edge counts
         self.change_saved_edges(old_edges, new_edges)
 
-    def merge_node(self, removed_node, old_edges, new_edges, old_relabeled_edges, new_relabeled_edges):
+    def merge_node(
+        self,
+        removed_node,
+        old_edges,
+        new_edges,
+        old_relabeled_edges,
+        new_relabeled_edges,
+    ):
         # refresh edge counts
         self.change_saved_edges(old_edges, new_edges)
 
@@ -1014,13 +1403,16 @@ class NxPartitionGraphBasedHierarchy(NxPartitionGraphBased):
             # cleanup mess from relabeling last node to keep node (block) numbers between 0 ... n (B-1)
             relabeled_node = len(self._graph)
             # delete node in container of nodes belonging to a block
-            self._partition_graph_representation.nodes[self.partition[removed_node]][self._NODES_A].discard(
-                removed_node)
+            self._partition_graph_representation.nodes[self.partition[removed_node]][
+                self._NODES_A
+            ].discard(removed_node)
             # update element info of relabeled node
-            self._partition_graph_representation.nodes[self.partition[relabeled_node]][self._NODES_A].discard(
-                relabeled_node)
-            self._partition_graph_representation.nodes[self.partition[relabeled_node]][self._NODES_A].add(
-                removed_node)
+            self._partition_graph_representation.nodes[self.partition[relabeled_node]][
+                self._NODES_A
+            ].discard(relabeled_node)
+            self._partition_graph_representation.nodes[self.partition[relabeled_node]][
+                self._NODES_A
+            ].add(removed_node)
             # keep track of block membership: update removed node with the information from the relabeled node
             self.partition[removed_node] = self.partition[relabeled_node]
             # relabel saved edges
@@ -1028,8 +1420,9 @@ class NxPartitionGraphBasedHierarchy(NxPartitionGraphBased):
             # finally delete last entry of partition
             del self.partition[relabeled_node]
         else:
-            self._partition_graph_representation.nodes[self.partition[removed_node]][self._NODES_A].discard(
-                removed_node)
+            self._partition_graph_representation.nodes[self.partition[removed_node]][
+                self._NODES_A
+            ].discard(removed_node)
             del self.partition[removed_node]
 
     def change_saved_edges(self, old_edges, new_edges):
@@ -1044,19 +1437,23 @@ class NxPartitionGraphBasedHierarchy(NxPartitionGraphBased):
             if self._is_weighted:
                 # insert new
                 for from_node, to_node, weight in new_edges:
-                    self._partition_graph_representation.nodes[self.partition[from_node]][
-                        self._NEIGHBORING_EDGES_A].add((from_node, to_node), weight)
+                    self._partition_graph_representation.nodes[
+                        self.partition[from_node]
+                    ][self._NEIGHBORING_EDGES_A].add((from_node, to_node), weight)
 
                     self._partition_graph_representation.nodes[self.partition[to_node]][
-                        self._NEIGHBORING_EDGES_A].add((to_node, from_node), weight)
+                        self._NEIGHBORING_EDGES_A
+                    ].add((to_node, from_node), weight)
 
                 # remove old
                 for from_node, to_node, weight in old_edges:
-                    self._partition_graph_representation.nodes[self.partition[from_node]][
-                        self._NEIGHBORING_EDGES_A].remove((from_node, to_node), weight)
+                    self._partition_graph_representation.nodes[
+                        self.partition[from_node]
+                    ][self._NEIGHBORING_EDGES_A].remove((from_node, to_node), weight)
 
                     self._partition_graph_representation.nodes[self.partition[to_node]][
-                        self._NEIGHBORING_EDGES_A].remove((to_node, from_node), weight)
+                        self._NEIGHBORING_EDGES_A
+                    ].remove((to_node, from_node), weight)
 
             else:
                 # make no sense for unweighted network because higher level in hierarchy are always weighted
@@ -1139,7 +1536,9 @@ class NxPartitionGraphBasedHierarchy(NxPartitionGraphBased):
         new_representation = {}
         for block in old_lower_partition.get_nodes_iter():
             # create new partition by stepping over the one level
-            new_representation[block] = self.partition[old_lower_partition.get_block_of_node(block)]
+            new_representation[block] = self.partition[
+                old_lower_partition.get_block_of_node(block)
+            ]
 
         self.replace_graph_reference(new_graph_reference)
         self._fill_from_representation(new_representation, only_update_nodes=True)
@@ -1167,32 +1566,46 @@ class NxPartitionGraphBasedHierarchy(NxPartitionGraphBased):
             self._partition_graph_representation.nodes[block][self._NODES_A] = set()
             if self._save_neighbor_edges:
                 self._partition_graph_representation.nodes[block][
-                    self._NEIGHBORING_EDGES_A] = self._neighbor_edge_class()
+                    self._NEIGHBORING_EDGES_A
+                ] = self._neighbor_edge_class()
             if self._save_neighbor_of_blocks and not only_update_nodes:
-                self._partition_graph_representation.nodes[block][self._NEIGHBORS_A] = set()
+                self._partition_graph_representation.nodes[block][self._NEIGHBORS_A] = (
+                    set()
+                )
             if self._save_degree_distributions:
                 self._partition_graph_representation.nodes[block][self._DEGREES] = {}
 
         for node in self._graph:
             self.partition[node] = representation[node]
-            self._partition_graph_representation.nodes[representation[node]][self._NODES_A].add(node)
+            self._partition_graph_representation.nodes[representation[node]][
+                self._NODES_A
+            ].add(node)
 
             if self._save_degree_distributions:
                 if self._is_directed:
                     if self._is_weighted:
                         degree = (
                             self._graph.in_degree(node, weight=self._WA),
-                            self._graph.out_degree(node, weight=self._WA))
+                            self._graph.out_degree(node, weight=self._WA),
+                        )
                     else:
-                        degree = (self._graph.in_degree(node), self._graph.out_degree(node))
+                        degree = (
+                            self._graph.in_degree(node),
+                            self._graph.out_degree(node),
+                        )
                 else:
                     if self._is_weighted:
                         degree = self._graph.degree(node, weight=self._WA)
                     else:
                         degree = self._graph.degree(node)
-                self._partition_graph_representation.nodes[self.partition[node]][self._DEGREES][degree] = \
-                    self._partition_graph_representation.nodes[self.partition[node]][self._DEGREES].get(degree,
-                                                                                                        0) + 1
+                self._partition_graph_representation.nodes[self.partition[node]][
+                    self._DEGREES
+                ][degree] = (
+                    self._partition_graph_representation.nodes[self.partition[node]][
+                        self._DEGREES
+                    ].get(degree, 0)
+                    + 1
+                )
 
         # fill edge counts
         if not only_update_nodes:
@@ -1205,13 +1618,21 @@ class NxPartitionGraphBasedHierarchy(NxPartitionGraphBased):
 
 
 class NxHierarchicalPartition(Partition):
-
-    def __init__(self, graph=nx.DiGraph(), number_of_blocks=None, calculate_degree_of_blocks=True,
-                 save_neighbor_of_blocks=True, fill_random=False, save_neighbor_edges=False,
-                 weighted_graph=False, save_degree_distributions=False, representation=None,
-                 with_covariate=False):
+    def __init__(
+        self,
+        graph=nx.DiGraph(),
+        number_of_blocks=None,
+        calculate_degree_of_blocks=True,
+        save_neighbor_of_blocks=True,
+        fill_random=False,
+        save_neighbor_edges=False,
+        weighted_graph=False,
+        save_degree_distributions=False,
+        representation=None,
+        with_covariate=False,
+    ):
         self._is_weighted = weighted_graph
-        self._WA = 'weight'
+        self._WA = "weight"
         self._graph = graph
         self._single_partition_parameters = {
             # "number_of_blocks": number_of_blocks,
@@ -1220,27 +1641,36 @@ class NxHierarchicalPartition(Partition):
             "save_neighbor_edges": save_neighbor_edges,
             "weighted_graph": weighted_graph,
             "save_degree_distributions": save_degree_distributions,
-            "with_covariate": with_covariate
+            "with_covariate": with_covariate,
         }
         if representation is None:
             if number_of_blocks is None:
                 self.partitions = [
-                    NxPartitionGraphBasedHierarchy(graph=self._graph,
-                                                   fill_random=True,
-                                                   **self._single_partition_parameters)]
+                    NxPartitionGraphBasedHierarchy(
+                        graph=self._graph,
+                        fill_random=True,
+                        **self._single_partition_parameters,
+                    )
+                ]
                 number_of_blocks = self.partitions[0].B
             else:
                 self.partitions = [
-                    NxPartitionGraphBasedHierarchy(graph=self._graph,
-                                                   number_of_blocks=number_of_blocks,
-                                                   fill_random=True,
-                                                   **self._single_partition_parameters)]
+                    NxPartitionGraphBasedHierarchy(
+                        graph=self._graph,
+                        number_of_blocks=number_of_blocks,
+                        fill_random=True,
+                        **self._single_partition_parameters,
+                    )
+                ]
         else:
             self.partitions = [
-                NxPartitionGraphBasedHierarchy(graph=self._graph,
-                                               representation=representation[0],
-                                               fill_random=False,
-                                               **self._single_partition_parameters)]
+                NxPartitionGraphBasedHierarchy(
+                    graph=self._graph,
+                    representation=representation[0],
+                    fill_random=False,
+                    **self._single_partition_parameters,
+                )
+            ]
             number_of_blocks = max(representation[0].values()) + 1
 
         # higher levels all weighted
@@ -1260,13 +1690,19 @@ class NxHierarchicalPartition(Partition):
         #     self.edge_total *= 2
 
         self._with_covariate = with_covariate
-        self._COVARIATE = 'covariate'
+        self._COVARIATE = "covariate"
         if with_covariate:
             self.covariate_total = self._graph.size(weight=self._COVARIATE)
 
-        super(NxHierarchicalPartition, self).__init__(graph, number_of_blocks, calculate_degree_of_blocks,
-                                                      save_neighbor_of_blocks, fill_random,
-                                                      save_neighbor_edges, representation=representation)
+        super(NxHierarchicalPartition, self).__init__(
+            graph,
+            number_of_blocks,
+            calculate_degree_of_blocks,
+            save_neighbor_of_blocks,
+            fill_random,
+            save_neighbor_edges,
+            representation=representation,
+        )
 
     @property
     def B(self):
@@ -1284,20 +1720,34 @@ class NxHierarchicalPartition(Partition):
         # if move is allowed, no additional information need to be updated
         if check_move:
             if not self._is_valid_move(node, to_block):
-                raise ValueError("node" + str(node) + "of block" + str(
-                    self.partitions[self.actual_level].partition[node]) + "->" + str(to_block))
+                raise ValueError(
+                    "node"
+                    + str(node)
+                    + "of block"
+                    + str(self.partitions[self.actual_level].partition[node])
+                    + "->"
+                    + str(to_block)
+                )
         if self.actual_level == self.max_level:
             # on max level no need to care about moves
             self.partitions[self.actual_level].move_node(node, to_block)
         elif self._save_neighbor_edges:
             # if not max level
-            return_value = self.partitions[self.actual_level].move_node(node, to_block, return_edge_changes=True)
+            return_value = self.partitions[self.actual_level].move_node(
+                node, to_block, return_edge_changes=True
+            )
             if return_value is not None:
-                self.partitions[self.actual_level + 1].handle_change_information(*return_value)
+                self.partitions[self.actual_level + 1].handle_change_information(
+                    *return_value
+                )
         else:
-            return_value = self.partitions[self.actual_level].move_node(node, to_block, return_edge_changes=False)
+            return_value = self.partitions[self.actual_level].move_node(
+                node, to_block, return_edge_changes=False
+            )
             if return_value is not None:
-                self.partitions[self.actual_level + 1].handle_change_information(*return_value)
+                self.partitions[self.actual_level + 1].handle_change_information(
+                    *return_value
+                )
 
     def _is_valid_move(self, node, to_block):
         # on maximal level all moves are allowed
@@ -1308,13 +1758,16 @@ class NxHierarchicalPartition(Partition):
             return True
         # else check if from and to block are in the same block
         from_block = self.partitions[self.actual_level].get_block_of_node(node)
-        if self.partitions[self.actual_level + 1].get_block_of_node(from_block) != self.partitions[
-            self.actual_level + 1].get_block_of_node(to_block):
+        if self.partitions[self.actual_level + 1].get_block_of_node(
+            from_block
+        ) != self.partitions[self.actual_level + 1].get_block_of_node(to_block):
             return False
         return True
 
     def get_number_of_nodes_in_block(self, block_number):
-        return self.partitions[self.actual_level].get_number_of_nodes_in_block(block_number)
+        return self.partitions[self.actual_level].get_number_of_nodes_in_block(
+            block_number
+        )
 
     def get_degree_of_block(self, block_number):
         return self.partitions[self.actual_level].get_degree_of_block(block_number)
@@ -1339,7 +1792,9 @@ class NxHierarchicalPartition(Partition):
         :param to_block: to block
         :return: sum of covariates between the two blocks
         """
-        return self.partitions[self.actual_level].get_sum_of_covariates(from_block, to_block)
+        return self.partitions[self.actual_level].get_sum_of_covariates(
+            from_block, to_block
+        )
 
     def random_partition(self, number_of_blocks=None, level=-1):
         # random hierarchical partition is not needed
@@ -1359,7 +1814,9 @@ class NxHierarchicalPartition(Partition):
             # in top partition no restrictions
             if level == self.max_level:
                 # no restrictions -> simply use normal procedure
-                self.partitions[level].random_partition(number_of_blocks=number_of_blocks)
+                self.partitions[level].random_partition(
+                    number_of_blocks=number_of_blocks
+                )
                 return
 
             candidates = additional_types.WeightedListDict()
@@ -1373,9 +1830,11 @@ class NxHierarchicalPartition(Partition):
             for top_block in range(self.partitions[level + 1].B):
                 nodes = []
 
-                min_block = float('inf')
+                min_block = float("inf")
 
-                for block in self.partitions[level + 1].get_elements_of_block(top_block):
+                for block in self.partitions[level + 1].get_elements_of_block(
+                    top_block
+                ):
                     nodes.extend(self.partitions[level].get_elements_of_block(block))
 
                     # determine smallest block number
@@ -1389,9 +1848,13 @@ class NxHierarchicalPartition(Partition):
 
                 # initialise all needed data structures
                 # create init partition
-                partition_grouped_by_top_block.append({node: i for i, node in enumerate(nodes)})
+                partition_grouped_by_top_block.append(
+                    {node: i for i, node in enumerate(nodes)}
+                )
                 # fill structure with nodes per block
-                nodes_in_new_blocks_by_top_block.append({i: [node] for i, node in enumerate(nodes)})
+                nodes_in_new_blocks_by_top_block.append(
+                    {i: [node] for i, node in enumerate(nodes)}
+                )
                 # insert nodes of top block
                 nodes_by_top_block.append(nodes)
                 # insert start value in random select structure
@@ -1399,7 +1862,9 @@ class NxHierarchicalPartition(Partition):
                 # fill structure for random weighted selection
                 candidates.add(top_block, len(nodes) - 1)
 
-            number_of_merges = self.get_number_of_blocks_in_level(level - 1) - number_of_blocks
+            number_of_merges = (
+                self.get_number_of_blocks_in_level(level - 1) - number_of_blocks
+            )
 
             # generate new partition by merging two nodes of a same top block
             for try_counter in range(10 * self.partitions[level].get_number_of_nodes()):
@@ -1413,33 +1878,47 @@ class NxHierarchicalPartition(Partition):
                 node = rd.choice(nodes_by_top_block[chosen_block])
 
                 if possible_node_merge_by_top_block[chosen_block] != -1:
-
                     # check if got different node
                     if node == possible_node_merge_by_top_block[chosen_block]:
                         continue
 
                     second_node = possible_node_merge_by_top_block[chosen_block]
 
-                    if partition_grouped_by_top_block[chosen_block][node] < \
-                            partition_grouped_by_top_block[chosen_block][second_node]:
+                    if (
+                        partition_grouped_by_top_block[chosen_block][node]
+                        < partition_grouped_by_top_block[chosen_block][second_node]
+                    ):
                         lower_block = partition_grouped_by_top_block[chosen_block][node]
-                        higher_block = partition_grouped_by_top_block[chosen_block][second_node]
+                        higher_block = partition_grouped_by_top_block[chosen_block][
+                            second_node
+                        ]
 
-                    elif partition_grouped_by_top_block[chosen_block][node] > \
-                            partition_grouped_by_top_block[chosen_block][second_node]:
-                        lower_block = partition_grouped_by_top_block[chosen_block][second_node]
-                        higher_block = partition_grouped_by_top_block[chosen_block][node]
+                    elif (
+                        partition_grouped_by_top_block[chosen_block][node]
+                        > partition_grouped_by_top_block[chosen_block][second_node]
+                    ):
+                        lower_block = partition_grouped_by_top_block[chosen_block][
+                            second_node
+                        ]
+                        higher_block = partition_grouped_by_top_block[chosen_block][
+                            node
+                        ]
                     else:
                         # both are equal -> skip
                         continue
 
                     # update all members of higher block
-                    for node_in_higher_block in nodes_in_new_blocks_by_top_block[chosen_block][higher_block]:
-                        partition_grouped_by_top_block[chosen_block][node_in_higher_block] = lower_block
+                    for node_in_higher_block in nodes_in_new_blocks_by_top_block[
+                        chosen_block
+                    ][higher_block]:
+                        partition_grouped_by_top_block[chosen_block][
+                            node_in_higher_block
+                        ] = lower_block
 
                     # update node list
                     nodes_in_new_blocks_by_top_block[chosen_block][lower_block].extend(
-                        nodes_in_new_blocks_by_top_block[chosen_block][higher_block])
+                        nodes_in_new_blocks_by_top_block[chosen_block][higher_block]
+                    )
 
                     # for security and memory saving delete higher block
                     del nodes_in_new_blocks_by_top_block[chosen_block][higher_block]
@@ -1454,15 +1933,30 @@ class NxHierarchicalPartition(Partition):
                     # perform merge only after two hits on same block
                     possible_node_merge_by_top_block[chosen_block] = node
             else:
-                message = "Aimed number of merges: " + str(self.get_number_of_blocks_in_level(level - 1)
-                                                           - number_of_blocks) + "\n calculated number of merges: " \
-                          + str(self.get_number_of_blocks_in_level(level - 1) - number_of_blocks - number_of_merges) \
-                          + "\n missing number of mergers" + str(number_of_merges) \
-                          + "\n actual number of blocks: " + str(self.partitions[level].B)
+                message = (
+                    "Aimed number of merges: "
+                    + str(
+                        self.get_number_of_blocks_in_level(level - 1) - number_of_blocks
+                    )
+                    + "\n calculated number of merges: "
+                    + str(
+                        self.get_number_of_blocks_in_level(level - 1)
+                        - number_of_blocks
+                        - number_of_merges
+                    )
+                    + "\n missing number of mergers"
+                    + str(number_of_merges)
+                    + "\n actual number of blocks: "
+                    + str(self.partitions[level].B)
+                )
                 if level < self.max_level:
-                    message += "\nNumber of blocks above: " + str(self.partitions[level + 1].B)
+                    message += "\nNumber of blocks above: " + str(
+                        self.partitions[level + 1].B
+                    )
                 if level > 0:
-                    message += "\nNumber of blocks below: " + str(self.partitions[level - 1].B)
+                    message += "\nNumber of blocks below: " + str(
+                        self.partitions[level - 1].B
+                    )
                 message += "\n demanded level: " + str(level)
                 message += "\n candidates:" + str(candidates)
                 message += "\n number of tries: " + str(candidates)
@@ -1502,9 +1996,14 @@ class NxHierarchicalPartition(Partition):
         if not only_movable_nodes or self.actual_level == self.max_level:
             return node
         # check if node can not be moved
-        if self.partitions[self.actual_level + 1].get_number_of_nodes_in_block(
+        if (
+            self.partitions[self.actual_level + 1].get_number_of_nodes_in_block(
                 self.partitions[self.actual_level + 1].get_block_of_node(
-                    self.partitions[self.actual_level].get_block_of_node(node))) == 1:
+                    self.partitions[self.actual_level].get_block_of_node(node)
+                )
+            )
+            == 1
+        ):
             # singleton found try others
             # retrieve all possible nodes
             if self.actual_level == 0:
@@ -1515,15 +2014,28 @@ class NxHierarchicalPartition(Partition):
             # check all nodes and select every time a new random one
             while unchecked_nodes:
                 node = rd.choice(unchecked_nodes)
-                actual_block = self.partitions[self.actual_level].get_block_of_node(node)
+                actual_block = self.partitions[self.actual_level].get_block_of_node(
+                    node
+                )
                 # first check no single
-                if no_single and self.partitions[self.actual_level].get_number_of_nodes_in_block(actual_block) == 1:
+                if (
+                    no_single
+                    and self.partitions[self.actual_level].get_number_of_nodes_in_block(
+                        actual_block
+                    )
+                    == 1
+                ):
                     unchecked_nodes.remove(node)
                     continue
                 # check if node can be moved
-                if self.partitions[self.actual_level + 1].get_number_of_nodes_in_block(
+                if (
+                    self.partitions[self.actual_level + 1].get_number_of_nodes_in_block(
                         self.partitions[self.actual_level + 1].get_block_of_node(
-                            actual_block)) > 1:
+                            actual_block
+                        )
+                    )
+                    > 1
+                ):
                     break
                 # remove node to only select from possible nodes
                 unchecked_nodes.remove(node)
@@ -1540,8 +2052,11 @@ class NxHierarchicalPartition(Partition):
             # retrieve possible blocks and select another one
             actual_block = self.partitions[self.actual_level].get_block_of_node(node)
             # retrieve other blocks in that top level block
-            possible_blocks = self.partitions[self.actual_level + 1].get_elements_of_block(
-                self.partitions[self.actual_level + 1].get_block_of_node(actual_block))
+            possible_blocks = self.partitions[
+                self.actual_level + 1
+            ].get_elements_of_block(
+                self.partitions[self.actual_level + 1].get_block_of_node(actual_block)
+            )
             # first greedy
             next_block = rd.choice(list(possible_blocks))
             if next_block == actual_block:
@@ -1555,11 +2070,15 @@ class NxHierarchicalPartition(Partition):
             return self.partitions[self.actual_level].get_random_move()
 
     def get_random_neighboring_edge_of_block(self, block_number):
-        return self.partitions[self.actual_level].get_random_neighboring_edge_of_block(block_number)
+        return self.partitions[self.actual_level].get_random_neighboring_edge_of_block(
+            block_number
+        )
 
     def precalc_move(self, move_candidate, objective_function):
         # if correct move no change above
-        return self.partitions[self.actual_level].precalc_move(move_candidate, objective_function)
+        return self.partitions[self.actual_level].precalc_move(
+            move_candidate, objective_function
+        )
 
     def get_neighbors_of_block(self, block_number):
         return self.partitions[self.actual_level].get_neighbors_of_block(block_number)
@@ -1580,7 +2099,10 @@ class NxHierarchicalPartition(Partition):
         # delete all but not first partition to later have correct graphs below
         same_levels = 1
         for same_levels in range(1, min(self.max_level + 1, len(representation))):
-            if self.partitions[same_levels].get_representation() != representation[same_levels]:
+            if (
+                self.partitions[same_levels].get_representation()
+                != representation[same_levels]
+            ):
                 break
         del self.partitions[same_levels:]
         self.max_level = same_levels - 1
@@ -1595,29 +2117,37 @@ class NxHierarchicalPartition(Partition):
     def add_level_from_representation(self, level_representation):
         """Create new partition level at the top of the hierarchy"""
         self.partitions.append(
-            NxPartitionGraphBasedHierarchy(graph=self.partitions[self.max_level].get_partition_as_a_graph(),
-                                           representation=level_representation,
-                                           **self._single_partition_parameters))
+            NxPartitionGraphBasedHierarchy(
+                graph=self.partitions[self.max_level].get_partition_as_a_graph(),
+                representation=level_representation,
+                **self._single_partition_parameters,
+            )
+        )
         # refresh counter
         self.max_level += 1
         # reset actual level
         self.actual_level = 0
 
     def copy(self):
-        new = NxHierarchicalPartition(self._graph, number_of_blocks=self.B,
-                                      calculate_degree_of_blocks=self._calculate_degree_of_blocks,
-                                      save_neighbor_of_blocks=self._save_neighbor_of_blocks,
-                                      save_neighbor_edges=self._save_neighbor_edges,
-                                      fill_random=False,
-                                      weighted_graph=self._is_weighted,
-                                      with_covariate=self._with_covariate)
+        new = NxHierarchicalPartition(
+            self._graph,
+            number_of_blocks=self.B,
+            calculate_degree_of_blocks=self._calculate_degree_of_blocks,
+            save_neighbor_of_blocks=self._save_neighbor_of_blocks,
+            save_neighbor_edges=self._save_neighbor_edges,
+            fill_random=False,
+            weighted_graph=self._is_weighted,
+            with_covariate=self._with_covariate,
+        )
         partitions = []
         for level, partition in enumerate(self.partitions):
             new_partition = partition.copy()
             if level > 0:
                 # be sure that the internal graphs of the new partitions of the higher levels point to the right
                 # graphs below
-                new_partition.replace_graph_reference(partitions[level - 1].get_partition_as_a_graph())
+                new_partition.replace_graph_reference(
+                    partitions[level - 1].get_partition_as_a_graph()
+                )
             partitions.append(new_partition)
         new.partitions = partitions
         new.actual_level = self.actual_level
@@ -1650,7 +2180,13 @@ class NxHierarchicalPartition(Partition):
         node_mergers = []
         for block in sorted(merges.keys(), reverse=True):
             node_mergers.append(
-                (self.partitions[self.actual_level].get_elements_of_block(block).copy(), merges[block]))
+                (
+                    self.partitions[self.actual_level]
+                    .get_elements_of_block(block)
+                    .copy(),
+                    merges[block],
+                )
+            )
 
         for nodes, to_block in node_mergers:
             for node in nodes:
@@ -1660,7 +2196,9 @@ class NxHierarchicalPartition(Partition):
         return self.partitions[self.actual_level].get_number_of_nodes()
 
     def get_degree_distribution_of_blocks(self, probability=True):
-        return self.partitions[self.actual_level].get_degree_distribution_of_blocks(probability)
+        return self.partitions[self.actual_level].get_degree_distribution_of_blocks(
+            probability
+        )
 
     def get_graph_matrix_representation(self, with_weights=True):
         return self.partitions[self.actual_level].get_graph_matrix_representation()
@@ -1681,10 +2219,14 @@ class NxHierarchicalPartition(Partition):
         return self.partitions[self.actual_level].get_edge_iter_with_covariate()
 
     def get_joint_in_out_degree_distribution_of_blocks(self):
-        return self.partitions[self.actual_level].get_joint_in_out_degree_distribution_of_blocks()
+        return self.partitions[
+            self.actual_level
+        ].get_joint_in_out_degree_distribution_of_blocks()
 
     def get_number_of_nodes_with_same_degree_in_block(self, block, degree):
-        return self.partitions[self.actual_level].get_number_of_nodes_with_same_degree_in_block(block, degree)
+        return self.partitions[
+            self.actual_level
+        ].get_number_of_nodes_with_same_degree_in_block(block, degree)
 
     def get_elements_of_block(self, block):
         return self.partitions[self.actual_level].get_elements_of_block(block)
@@ -1693,7 +2235,9 @@ class NxHierarchicalPartition(Partition):
         """
         Returns degree distribution of a block. For a directed graph returns the joint degree distribution of a block.
         """
-        return self.partitions[self.actual_level].get_degree_distribution_of_single_block(block)
+        return self.partitions[
+            self.actual_level
+        ].get_degree_distribution_of_single_block(block)
 
     def iter_levels(self):
         """Return level iterator"""
@@ -1713,9 +2257,13 @@ class NxHierarchicalPartition(Partition):
         else:
             if with_in_operation:
                 return self.partitions[self.actual_level + 1].get_elements_of_block(
-                    self.partitions[self.actual_level + 1].get_block_of_node(block))
-            return list(self.partitions[self.actual_level + 1].get_elements_of_block(
-                self.partitions[self.actual_level + 1].get_block_of_node(block)))
+                    self.partitions[self.actual_level + 1].get_block_of_node(block)
+                )
+            return list(
+                self.partitions[self.actual_level + 1].get_elements_of_block(
+                    self.partitions[self.actual_level + 1].get_block_of_node(block)
+                )
+            )
 
     def delete_actual_level(self):
         if self.actual_level == 0:
@@ -1737,7 +2285,9 @@ class NxHierarchicalPartition(Partition):
             #     self.actual_level].get_partition_as_a_graph()
 
             self.partitions[self.actual_level + 1].switch_graph_delete_lower_level(
-                self.partitions[self.actual_level - 1].get_partition_as_a_graph(), self.partitions[self.actual_level])
+                self.partitions[self.actual_level - 1].get_partition_as_a_graph(),
+                self.partitions[self.actual_level],
+            )
 
             # perform cleaning
             del self.partitions[self.actual_level]
@@ -1748,13 +2298,17 @@ class NxHierarchicalPartition(Partition):
         # create new partition based on below graph and each block as a singleton
         new_level_partition = NxPartitionGraphBasedHierarchy(
             graph=self.partitions[self.actual_level].get_partition_as_a_graph(),
-            representation={block: block for block in range(self.partitions[self.actual_level].B)},
-            **self._single_partition_parameters)
+            representation={
+                block: block for block in range(self.partitions[self.actual_level].B)
+            },
+            **self._single_partition_parameters,
+        )
 
         if self.actual_level != self.max_level:
             # if above level is present, exchange graph reference
             self.partitions[self.actual_level + 1].replace_graph_reference(
-                new_level_partition.get_partition_as_a_graph())
+                new_level_partition.get_partition_as_a_graph()
+            )
 
         self.partitions.insert(self.actual_level + 1, new_level_partition)
         self.max_level += 1

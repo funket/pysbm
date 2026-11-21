@@ -9,15 +9,22 @@ from .peixotos_hierarchical_sbm import NxHierarchicalPartition
 
 class HierarchicalInference(Inference):
     """
-     Hierarchical Inference based on Peixotos agglomerate algorithm and
-     a search of the complete range of possible number of blocks via an adaption of the golden section search
-     """
+    Hierarchical Inference based on Peixotos agglomerate algorithm and
+    a search of the complete range of possible number of blocks via an adaption of the golden section search
+    """
+
     short_title = "HINF"
     title = "Hierarchical Inference"
 
-    def __init__(self, graph, objective_function, hierarchical_partition, delta_objective_function_for_level_removal,
-                 inference_class=KarrerInferenceNoNegativeMove,
-                 inference_class_instance_parameters=None):
+    def __init__(
+        self,
+        graph,
+        objective_function,
+        hierarchical_partition,
+        delta_objective_function_for_level_removal,
+        inference_class=KarrerInferenceNoNegativeMove,
+        inference_class_instance_parameters=None,
+    ):
         """
         :param graph:
         :type graph nx.Digraph
@@ -27,14 +34,25 @@ class HierarchicalInference(Inference):
         :param inference_class:
         :type inference_class class SBMInference
         """
-        super(HierarchicalInference, self).__init__(graph, objective_function, hierarchical_partition)
+        super(HierarchicalInference, self).__init__(
+            graph, objective_function, hierarchical_partition
+        )
         self.inference_class = inference_class
-        if inference_class == KarrerInferenceNoNegativeMove and inference_class_instance_parameters is None:
+        if (
+            inference_class == KarrerInferenceNoNegativeMove
+            and inference_class_instance_parameters is None
+        ):
             self.inference_class_instance_parameters = {"limit_possible_blocks": True}
         else:
-            self.inference_class_instance_parameters = inference_class_instance_parameters
-        self._level_status = [False for _ in range(hierarchical_partition.max_level + 1)]
-        self.delta_objective_function_for_level_removal = delta_objective_function_for_level_removal
+            self.inference_class_instance_parameters = (
+                inference_class_instance_parameters
+            )
+        self._level_status = [
+            False for _ in range(hierarchical_partition.max_level + 1)
+        ]
+        self.delta_objective_function_for_level_removal = (
+            delta_objective_function_for_level_removal
+        )
 
         self._inference_algorithm_parameters = []
         self.actual_likelihood = self.objective_function.calculate(self.partition)
@@ -53,8 +71,11 @@ class HierarchicalInference(Inference):
             for _ in range(100):
                 self.infer_stepwise()
             else:
-                raise Exception("Could not find minimum in 100 steps" + str(self.partition.get_representation()) + str(
-                    self.partition.graph.edges()))
+                raise Exception(
+                    "Could not find minimum in 100 steps"
+                    + str(self.partition.get_representation())
+                    + str(self.partition.graph.edges())
+                )
         except StopIteration:
             pass
 
@@ -120,7 +141,10 @@ class HierarchicalInference(Inference):
                 if self.viewed_level < self.partition.max_level:
                     self._level_status[self.viewed_level] = False
 
-        if any_move_successful and self.viewed_level + move_levels_up <= self.partition.max_level:
+        if (
+            any_move_successful
+            and self.viewed_level + move_levels_up <= self.partition.max_level
+        ):
             self.viewed_level += move_levels_up
         elif self.viewed_level > 0:
             if self.viewed_level < len(self._level_status):
@@ -137,8 +161,9 @@ class HierarchicalInference(Inference):
 
         # todo thing about performance improvement by finding a way to work with level partition only
 
-        new_likelihood, optimal_representation, optimal_is_actual_partition = \
+        new_likelihood, optimal_representation, optimal_is_actual_partition = (
             self.optimize_single_level(level, self.actual_likelihood)
+        )
 
         # if partition has changed, be on the save site and set from complete representation
         # may allow some worsening?
@@ -156,8 +181,12 @@ class HierarchicalInference(Inference):
         max_representation = self.partition.get_representation()
         max_likelihood = actual_likelihood
 
-        inference = self.inference_class(self.graph, self.objective_function, self.partition,
-                                         **self.inference_class_instance_parameters)
+        inference = self.inference_class(
+            self.graph,
+            self.objective_function,
+            self.partition,
+            **self.inference_class_instance_parameters,
+        )
 
         # try some group sizes and test
         upper_bound = self.partition.get_number_of_blocks_in_level(level - 1)
@@ -186,7 +215,9 @@ class HierarchicalInference(Inference):
 
             # do until no block number is between upper and lower bound
             while upper_bound - lower_bound > 1:
-                top_third_quarter = int((upper_bound - middle_of_interval) / 2) + middle_of_interval
+                top_third_quarter = (
+                    int((upper_bound - middle_of_interval) / 2) + middle_of_interval
+                )
 
                 if top_third_quarter not in likelihoods:
                     if self._merging_inference:
@@ -195,7 +226,9 @@ class HierarchicalInference(Inference):
                         inference.partition.random_partition(top_third_quarter, level)
                     inference.infer_stochastic_block_model()
 
-                    likelihoods[top_third_quarter] = self.objective_function.calculate(self.partition)
+                    likelihoods[top_third_quarter] = self.objective_function.calculate(
+                        self.partition
+                    )
                     partitions[top_third_quarter] = self.partition.get_representation()
 
                 if middle_of_interval not in likelihoods:
@@ -205,12 +238,16 @@ class HierarchicalInference(Inference):
                         inference.partition.random_partition(middle_of_interval, level)
                     inference.infer_stochastic_block_model()
 
-                    likelihoods[middle_of_interval] = self.objective_function.calculate(self.partition)
+                    likelihoods[middle_of_interval] = self.objective_function.calculate(
+                        self.partition
+                    )
                     partitions[middle_of_interval] = self.partition.get_representation()
 
                 if likelihoods[middle_of_interval] > likelihoods[top_third_quarter]:
                     upper_bound = middle_of_interval
-                    middle_of_interval = int((upper_bound - lower_bound) / 2) + lower_bound
+                    middle_of_interval = (
+                        int((upper_bound - lower_bound) / 2) + lower_bound
+                    )
                 else:
                     lower_bound = middle_of_interval
                     if self._merging_inference:
@@ -253,12 +290,13 @@ class HierarchicalInference(Inference):
         self.partition.actual_level += 1
 
         # find optimal partition with new level
-        new_likelihood, optimal_representation, optimal_is_actual_partition = \
+        new_likelihood, optimal_representation, optimal_is_actual_partition = (
             self.optimize_single_level(
                 level + 1,
-                -float('inf'),
+                -float("inf"),
                 # number_of_tries=2,
             )
+        )
 
         # if partition has changed, be on the save site and set from complete representation
         # may allow some worsening?
@@ -281,19 +319,32 @@ class PeixotoHierarchicalInference(HierarchicalInference):
     title = "Hierarchical Inference with Peixotos Agglomorative Heuristic"
     short_title = "HPAH"
 
-    def __init__(self, graph, objective_function, hierarchical_partition, delta_objective_function_for_level_removal,
-                 inference_class_instance_parameters=None):
+    def __init__(
+        self,
+        graph,
+        objective_function,
+        hierarchical_partition,
+        delta_objective_function_for_level_removal,
+        inference_class_instance_parameters=None,
+    ):
         inference_class = PeixotoInference
         if inference_class_instance_parameters is None:
-            inference_class_instance_parameters = {"no_partition_reset": True,
-                                                   "limit_possible_blocks": True,
-                                                   "add_additional_mergers": False,
-                                                   "mcmc_steps": 100}
+            inference_class_instance_parameters = {
+                "no_partition_reset": True,
+                "limit_possible_blocks": True,
+                "add_additional_mergers": False,
+                "mcmc_steps": 100,
+            }
         else:
             inference_class_instance_parameters = inference_class_instance_parameters
-        super(PeixotoHierarchicalInference, self).__init__(graph, objective_function, hierarchical_partition,
-                                                           delta_objective_function_for_level_removal,
-                                                           inference_class, inference_class_instance_parameters)
+        super(PeixotoHierarchicalInference, self).__init__(
+            graph,
+            objective_function,
+            hierarchical_partition,
+            delta_objective_function_for_level_removal,
+            inference_class,
+            inference_class_instance_parameters,
+        )
 
 
 class PeixotoHierarchicalInference1k(PeixotoHierarchicalInference):
@@ -302,11 +353,23 @@ class PeixotoHierarchicalInference1k(PeixotoHierarchicalInference):
     title = "Hierarchical Inference with Peixotos Agglomorative Heuristic 1k steps"
     short_title = "HPAH1k"
 
-    def __init__(self, graph, objective_function, hierarchical_partition, delta_objective_function_for_level_removal):
-        inference_class_instance_parameters = {"no_partition_reset": True,
-                                               "limit_possible_blocks": True,
-                                               "add_additional_mergers": False,
-                                               "mcmc_steps": 1000}
-        super(PeixotoHierarchicalInference1k, self).__init__(graph, objective_function, hierarchical_partition,
-                                                             delta_objective_function_for_level_removal,
-                                                             inference_class_instance_parameters)
+    def __init__(
+        self,
+        graph,
+        objective_function,
+        hierarchical_partition,
+        delta_objective_function_for_level_removal,
+    ):
+        inference_class_instance_parameters = {
+            "no_partition_reset": True,
+            "limit_possible_blocks": True,
+            "add_additional_mergers": False,
+            "mcmc_steps": 1000,
+        }
+        super(PeixotoHierarchicalInference1k, self).__init__(
+            graph,
+            objective_function,
+            hierarchical_partition,
+            delta_objective_function_for_level_removal,
+            inference_class_instance_parameters,
+        )

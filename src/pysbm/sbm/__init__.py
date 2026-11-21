@@ -8,15 +8,29 @@ from .objective_functions import TraditionalUnnormalizedLogLikelyhood
 from .objective_functions import TraditionalMicrocanonicalEntropy
 from .objective_functions import DegreeCorrectedUnnormalizedLogLikelyhood
 from .objective_functions import DegreeCorrectedMicrocanonicalEntropy
-from .peixotos_flat_sbm import LogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmWrapper
+from .peixotos_flat_sbm import (
+    LogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmWrapper,
+)
 from .peixotos_flat_sbm import LogLikelihoodOfFlatMicrocanonicalNonDegreeCorrected
 from .peixotos_flat_sbm import LogLikelihoodOfFlatMicrocanonicalDegreeCorrectedUniform
-from .peixotos_flat_sbm import LogLikelihoodOfFlatMicrocanonicalDegreeCorrectedUniformHyperprior
-from .peixotos_hierarchical_sbm import LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper
-from .peixotos_hierarchical_sbm import LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper
-from .peixotos_hierarchical_sbm import LogLikelihoodOfHierarchicalMicrocanonicalNonDegreeCorrected
-from .peixotos_hierarchical_sbm import LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedUniform
-from .peixotos_hierarchical_sbm import LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedUniformHyperprior
+from .peixotos_flat_sbm import (
+    LogLikelihoodOfFlatMicrocanonicalDegreeCorrectedUniformHyperprior,
+)
+from .peixotos_hierarchical_sbm import (
+    LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper,
+)
+from .peixotos_hierarchical_sbm import (
+    LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper,
+)
+from .peixotos_hierarchical_sbm import (
+    LogLikelihoodOfHierarchicalMicrocanonicalNonDegreeCorrected,
+)
+from .peixotos_hierarchical_sbm import (
+    LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedUniform,
+)
+from .peixotos_hierarchical_sbm import (
+    LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedUniformHyperprior,
+)
 from .objective_function_iclex import IntegratedCompleteLikelihoodExact
 from .objective_function_iclex import IntegratedCompleteLikelihoodExactJeffrey
 from .objective_function_iclex import IntegratedCompleteLikelihoodExactUniform

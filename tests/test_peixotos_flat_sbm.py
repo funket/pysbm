@@ -9,10 +9,18 @@ import networkx as nx
 
 from pysbm import sbm
 from pysbm.sbm.nxpartitiongraphbased import NxPartitionGraphBased
-from pysbm.sbm.peixotos_flat_sbm import DeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm
-from pysbm.sbm.peixotos_flat_sbm import LogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmWrapper
-from pysbm.sbm.peixotos_flat_sbm_full import ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm
-from pysbm.sbm.peixotos_flat_sbm import ModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm
+from pysbm.sbm.peixotos_flat_sbm import (
+    DeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm,
+)
+from pysbm.sbm.peixotos_flat_sbm import (
+    LogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmWrapper,
+)
+from pysbm.sbm.peixotos_flat_sbm_full import (
+    ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm,
+)
+from pysbm.sbm.peixotos_flat_sbm import (
+    ModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm,
+)
 
 
 class TestModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirected(TestCase):
@@ -32,7 +40,9 @@ class TestModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirected(Tes
         for graph in self.graphs:
             partition = sbm.NxPartition(graph=graph, number_of_blocks=2)
             self.partitions.append(partition)
-            partition.set_from_representation({node: node % partition.B for node in graph})
+            partition.set_from_representation(
+                {node: node % partition.B for node in graph}
+            )
 
         # information about graphs below
         self.likelihood = ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm()
@@ -41,63 +51,118 @@ class TestModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirected(Tes
     def test_calculate_p_adjacency_undirected(self):
 
         for i, partition in enumerate(self.partitions):
-            self.assertAlmostEqual(math.log(self.likelihood._calculate_p_adjacency_undirected(partition)),
-                                   self.log_likelihood._calculate_p_adjacency_undirected(partition),
-                                   msg="Difference in partition:" + str(i))
+            self.assertAlmostEqual(
+                math.log(self.likelihood._calculate_p_adjacency_undirected(partition)),
+                self.log_likelihood._calculate_p_adjacency_undirected(partition),
+                msg="Difference in partition:" + str(i),
+            )
 
     def test_calculate_non_degree_corrected_undirected(self):
 
         for i, partition in enumerate(self.partitions):
-            self.assertAlmostEqual(math.log(self.likelihood._calculate_non_degree_corrected_undirected(partition)),
-                                   self.log_likelihood._calculate_non_degree_corrected_undirected(partition),
-                                   msg="Difference in partition:" + str(i))
+            self.assertAlmostEqual(
+                math.log(
+                    self.likelihood._calculate_non_degree_corrected_undirected(
+                        partition
+                    )
+                ),
+                self.log_likelihood._calculate_non_degree_corrected_undirected(
+                    partition
+                ),
+                msg="Difference in partition:" + str(i),
+            )
 
     def test_calculate_p_degree_sequence_uniform_undirected(self):
 
         for i, partition in enumerate(self.partitions):
-            self.assertAlmostEqual(math.log(self.likelihood._calculate_p_degree_sequence_uniform_undirected(partition)),
-                                   self.log_likelihood._calculate_p_degree_sequence_uniform_undirected(partition),
-                                   msg="Difference in partition:" + str(i))
+            self.assertAlmostEqual(
+                math.log(
+                    self.likelihood._calculate_p_degree_sequence_uniform_undirected(
+                        partition
+                    )
+                ),
+                self.log_likelihood._calculate_p_degree_sequence_uniform_undirected(
+                    partition
+                ),
+                msg="Difference in partition:" + str(i),
+            )
 
     def test_calculate_p_degree_sequence_uniform_hyperprior_undirected(self):
 
         for i, partition in enumerate(self.partitions):
             self.assertAlmostEqual(
-                math.log(self.likelihood._calculate_p_degree_sequence_uniform_hyperprior_undirected(partition)),
-                self.log_likelihood._calculate_p_degree_sequence_uniform_hyperprior_undirected(partition),
-                msg="Difference in partition:" + str(i))
+                math.log(
+                    self.likelihood._calculate_p_degree_sequence_uniform_hyperprior_undirected(
+                        partition
+                    )
+                ),
+                self.log_likelihood._calculate_p_degree_sequence_uniform_hyperprior_undirected(
+                    partition
+                ),
+                msg="Difference in partition:" + str(i),
+            )
 
     def test_calculate_p_edge_counts_undirected(self):
         for i, partition in enumerate(self.partitions):
-            self.assertAlmostEqual(math.log(self.likelihood._calculate_p_edge_counts_undirected(partition)),
-                                   self.log_likelihood._calculate_p_edge_counts_undirected(partition),
-                                   msg="Difference in partition:" + str(i) + "\ntrue value" + str(math.log(
-                                       self.likelihood._calculate_p_edge_counts_undirected(
-                                           partition))) + "\nincorrect value" + str(
-                                       self.log_likelihood._calculate_p_edge_counts_undirected(partition)))
+            self.assertAlmostEqual(
+                math.log(
+                    self.likelihood._calculate_p_edge_counts_undirected(partition)
+                ),
+                self.log_likelihood._calculate_p_edge_counts_undirected(partition),
+                msg="Difference in partition:"
+                + str(i)
+                + "\ntrue value"
+                + str(
+                    math.log(
+                        self.likelihood._calculate_p_edge_counts_undirected(partition)
+                    )
+                )
+                + "\nincorrect value"
+                + str(
+                    self.log_likelihood._calculate_p_edge_counts_undirected(partition)
+                ),
+            )
 
     def test_calculate_complete_uniform_hyperprior_undirected(self):
 
         for i, partition in enumerate(self.partitions):
             self.assertAlmostEqual(
-                math.log(self.likelihood.calculate_complete_uniform_hyperprior_undirected(partition)),
-                self.log_likelihood.calculate_complete_uniform_hyperprior_undirected(partition),
-                msg="Difference in partition:" + str(i))
+                math.log(
+                    self.likelihood.calculate_complete_uniform_hyperprior_undirected(
+                        partition
+                    )
+                ),
+                self.log_likelihood.calculate_complete_uniform_hyperprior_undirected(
+                    partition
+                ),
+                msg="Difference in partition:" + str(i),
+            )
 
     def test_calculate_complete_uniform_undirected(self):
 
         for i, partition in enumerate(self.partitions):
-            self.assertAlmostEqual(math.log(self.likelihood.calculate_complete_uniform_undirected(partition)),
-                                   self.log_likelihood.calculate_complete_uniform_undirected(partition),
-                                   msg="Difference in partition:" + str(i))
+            self.assertAlmostEqual(
+                math.log(
+                    self.likelihood.calculate_complete_uniform_undirected(partition)
+                ),
+                self.log_likelihood.calculate_complete_uniform_undirected(partition),
+                msg="Difference in partition:" + str(i),
+            )
 
     def test_calculate_complete_non_degree_corrected_undirected(self):
 
         for i, partition in enumerate(self.partitions):
             self.assertAlmostEqual(
-                math.log(self.likelihood.calculate_complete_non_degree_corrected_undirected(partition)),
-                self.log_likelihood.calculate_complete_non_degree_corrected_undirected(partition),
-                msg="Difference in partition:" + str(i))
+                math.log(
+                    self.likelihood.calculate_complete_non_degree_corrected_undirected(
+                        partition
+                    )
+                ),
+                self.log_likelihood.calculate_complete_non_degree_corrected_undirected(
+                    partition
+                ),
+                msg="Difference in partition:" + str(i),
+            )
 
 
 class TestModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(TestCase):
@@ -119,7 +184,9 @@ class TestModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(TestC
         for graph in self.digraphs:
             partition = sbm.NxPartition(graph=graph, number_of_blocks=2)
             self.partitions.append(partition)
-            partition.set_from_representation({node: node % partition.B for node in graph})
+            partition.set_from_representation(
+                {node: node % partition.B for node in graph}
+            )
 
         # information about graphs below
         self.likelihood = ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm()
@@ -128,63 +195,107 @@ class TestModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(TestC
     def test_calculate_p_adjacency_directed(self):
 
         for i, partition in enumerate(self.partitions):
-            self.assertAlmostEqual(math.log(self.likelihood._calculate_p_adjacency_directed(partition)),
-                                   self.log_likelihood._calculate_p_adjacency_directed(partition),
-                                   msg="Difference in partition:" + str(i))
+            self.assertAlmostEqual(
+                math.log(self.likelihood._calculate_p_adjacency_directed(partition)),
+                self.log_likelihood._calculate_p_adjacency_directed(partition),
+                msg="Difference in partition:" + str(i),
+            )
 
     def test_calculate_non_degree_corrected_directed(self):
 
         for i, partition in enumerate(self.partitions):
-            self.assertAlmostEqual(math.log(self.likelihood._calculate_non_degree_corrected_directed(partition)),
-                                   self.log_likelihood._calculate_non_degree_corrected_directed(partition),
-                                   msg="Difference in partition:" + str(i))
+            self.assertAlmostEqual(
+                math.log(
+                    self.likelihood._calculate_non_degree_corrected_directed(partition)
+                ),
+                self.log_likelihood._calculate_non_degree_corrected_directed(partition),
+                msg="Difference in partition:" + str(i),
+            )
 
     def test_calculate_p_degree_sequence_uniform_directed(self):
 
         for i, partition in enumerate(self.partitions):
-            self.assertAlmostEqual(math.log(self.likelihood._calculate_p_degree_sequence_uniform_directed(partition)),
-                                   self.log_likelihood._calculate_p_degree_sequence_uniform_directed(partition),
-                                   msg="Difference in partition:" + str(i))
+            self.assertAlmostEqual(
+                math.log(
+                    self.likelihood._calculate_p_degree_sequence_uniform_directed(
+                        partition
+                    )
+                ),
+                self.log_likelihood._calculate_p_degree_sequence_uniform_directed(
+                    partition
+                ),
+                msg="Difference in partition:" + str(i),
+            )
 
     def test_calculate_p_degree_sequence_uniform_hyperprior_directed(self):
 
         for i, partition in enumerate(self.partitions):
             self.assertAlmostEqual(
-                math.log(self.likelihood._calculate_p_degree_sequence_uniform_hyperprior_directed(partition)),
-                self.log_likelihood._calculate_p_degree_sequence_uniform_hyperprior_directed(partition),
-                msg="Difference in partition:" + str(i))
+                math.log(
+                    self.likelihood._calculate_p_degree_sequence_uniform_hyperprior_directed(
+                        partition
+                    )
+                ),
+                self.log_likelihood._calculate_p_degree_sequence_uniform_hyperprior_directed(
+                    partition
+                ),
+                msg="Difference in partition:" + str(i),
+            )
 
     def test_calculate_p_edge_counts_directed(self):
 
         for i, partition in enumerate(self.partitions):
-            self.assertAlmostEqual(math.log(self.likelihood._calculate_p_edge_counts_directed(partition)),
-                                   self.log_likelihood._calculate_p_edge_counts_directed(partition),
-                                   msg="Difference in partition:" + str(i))
+            self.assertAlmostEqual(
+                math.log(self.likelihood._calculate_p_edge_counts_directed(partition)),
+                self.log_likelihood._calculate_p_edge_counts_directed(partition),
+                msg="Difference in partition:" + str(i),
+            )
 
     def test_calculate_complete_uniform_hyperprior_directed(self):
 
         for i, partition in enumerate(self.partitions):
-            self.assertAlmostEqual(math.log(self.likelihood.calculate_complete_uniform_hyperprior_directed(partition)),
-                                   self.log_likelihood.calculate_complete_uniform_hyperprior_directed(partition),
-                                   msg="Difference in partition:" + str(i))
+            self.assertAlmostEqual(
+                math.log(
+                    self.likelihood.calculate_complete_uniform_hyperprior_directed(
+                        partition
+                    )
+                ),
+                self.log_likelihood.calculate_complete_uniform_hyperprior_directed(
+                    partition
+                ),
+                msg="Difference in partition:" + str(i),
+            )
 
     def test_calculate_complete_uniform_directed(self):
 
         for i, partition in enumerate(self.partitions):
-            self.assertAlmostEqual(math.log(self.likelihood.calculate_complete_uniform_directed(partition)),
-                                   self.log_likelihood.calculate_complete_uniform_directed(partition),
-                                   msg="Difference in partition:" + str(i))
+            self.assertAlmostEqual(
+                math.log(
+                    self.likelihood.calculate_complete_uniform_directed(partition)
+                ),
+                self.log_likelihood.calculate_complete_uniform_directed(partition),
+                msg="Difference in partition:" + str(i),
+            )
 
     def test_calculate_complete_non_degree_corrected_directed(self):
 
         for i, partition in enumerate(self.partitions):
             self.assertAlmostEqual(
-                math.log(self.likelihood.calculate_complete_non_degree_corrected_directed(partition)),
-                self.log_likelihood.calculate_complete_non_degree_corrected_directed(partition),
-                msg="Difference in partition:" + str(i))
+                math.log(
+                    self.likelihood.calculate_complete_non_degree_corrected_directed(
+                        partition
+                    )
+                ),
+                self.log_likelihood.calculate_complete_non_degree_corrected_directed(
+                    partition
+                ),
+                msg="Difference in partition:" + str(i),
+            )
 
 
-class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirected(TestCase):
+class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirected(
+    TestCase
+):
     """Test case of Log Version of ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm (undirected)"""
 
     def setUp(self):
@@ -198,34 +309,40 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirecte
         # beside complete circle add one edge to connect all blocks
         graph.add_edge(0, 2)
         # here first without selfloops and undirected
-        partition = NxPartitionGraphBased(graph=graph,
-                                          number_of_blocks=2,
-                                          calculate_degree_of_blocks=True,
-                                          save_neighbor_edges=True,
-                                          save_neighbor_of_blocks=True,
-                                          save_degree_distributions=True)
+        partition = NxPartitionGraphBased(
+            graph=graph,
+            number_of_blocks=2,
+            calculate_degree_of_blocks=True,
+            save_neighbor_edges=True,
+            save_neighbor_of_blocks=True,
+            save_degree_distributions=True,
+        )
         partition.set_from_representation({node: node % partition.B for node in graph})
         self.partitions.append(partition)
 
         # now with another block != from, to block
-        partition = NxPartitionGraphBased(graph=graph,
-                                          number_of_blocks=3,
-                                          calculate_degree_of_blocks=True,
-                                          save_neighbor_edges=True,
-                                          save_neighbor_of_blocks=True,
-                                          save_degree_distributions=True)
+        partition = NxPartitionGraphBased(
+            graph=graph,
+            number_of_blocks=3,
+            calculate_degree_of_blocks=True,
+            save_neighbor_edges=True,
+            save_neighbor_of_blocks=True,
+            save_degree_distributions=True,
+        )
         partition.set_from_representation({node: node % partition.B for node in graph})
         self.partitions.append(partition)
 
         # now one with selfloop
         graph = self.graphs[1] = graph.copy()
         graph.add_edge(0, 0)
-        partition = NxPartitionGraphBased(graph=graph,
-                                          number_of_blocks=3,
-                                          calculate_degree_of_blocks=True,
-                                          save_neighbor_edges=True,
-                                          save_neighbor_of_blocks=True,
-                                          save_degree_distributions=True)
+        partition = NxPartitionGraphBased(
+            graph=graph,
+            number_of_blocks=3,
+            calculate_degree_of_blocks=True,
+            save_neighbor_edges=True,
+            save_neighbor_of_blocks=True,
+            save_degree_distributions=True,
+        )
         partition.set_from_representation({node: node % partition.B for node in graph})
         self.partitions.append(partition)
 
@@ -238,26 +355,53 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirecte
         nx.add_cycle(self.graphs[7], range(20))
 
         for graph in self.graphs:
-            partition = NxPartitionGraphBased(graph=graph, number_of_blocks=3, save_degree_distributions=True)
+            partition = NxPartitionGraphBased(
+                graph=graph, number_of_blocks=3, save_degree_distributions=True
+            )
             self.partitions.append(partition)
-            partition.set_from_representation({node: node % partition.B for node in graph})
+            partition.set_from_representation(
+                {node: node % partition.B for node in graph}
+            )
 
         # information about graphs below
         self.log_likelihood = ModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm()
-        self.delta_likelihood = DeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm()
-        self._replace_likelihood = LogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmWrapper(is_directed=False)
+        self.delta_likelihood = (
+            DeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm()
+        )
+        self._replace_likelihood = (
+            LogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmWrapper(
+                is_directed=False
+            )
+        )
 
-    def _general_comparision_single(self, delta_function, normal_function, partition, move=None,
-                                    delta_uses_degree=False, delta_uses_kit=False, delta_uses_selfloops=False,
-                                    delta_uses_nodes_remaining=False, call_with_args=False,
-                                    partition_number=0, move_number=0, delta_uses_to_block_exists=False):
+    def _general_comparision_single(
+        self,
+        delta_function,
+        normal_function,
+        partition,
+        move=None,
+        delta_uses_degree=False,
+        delta_uses_kit=False,
+        delta_uses_selfloops=False,
+        delta_uses_nodes_remaining=False,
+        call_with_args=False,
+        partition_number=0,
+        move_number=0,
+        delta_uses_to_block_exists=False,
+    ):
         if move is None:
             move = partition.get_random_move()
         node, old_block, new_block = move
-        precalc = kit, selfloops, degree = partition.precalc_move(move, self._replace_likelihood)
+        precalc = kit, selfloops, degree = partition.precalc_move(
+            move, self._replace_likelihood
+        )
 
         # build parameters for delta call
-        parameters = {"partition": partition, "from_block": old_block, "to_block": new_block}
+        parameters = {
+            "partition": partition,
+            "from_block": old_block,
+            "to_block": new_block,
+        }
         # always include partition, from and to block
         # other like demanded
         if delta_uses_kit:
@@ -289,26 +433,53 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirecte
         # move node back
         partition.move_node(node, old_block)
 
-        self.assertAlmostEqual(delta_value,
-                               end_value - start_value,
-                               msg="Difference in partition: " + str(partition_number) + "\n " + str(
-                                   move_number) + "th move " + "\n actual partition " + str(
-                                   partition.get_representation()) + "\n next partition" + str(
-                                   new_representation) + "\n move " + str(
-                                   move) + "\n precalc " + str(precalc))
+        self.assertAlmostEqual(
+            delta_value,
+            end_value - start_value,
+            msg="Difference in partition: "
+            + str(partition_number)
+            + "\n "
+            + str(move_number)
+            + "th move "
+            + "\n actual partition "
+            + str(partition.get_representation())
+            + "\n next partition"
+            + str(new_representation)
+            + "\n move "
+            + str(move)
+            + "\n precalc "
+            + str(precalc),
+        )
 
-    def _general_not_existing_to_block(self, delta_function, normal_function, partition, move=None,
-                                       delta_uses_degree=False, delta_uses_kit=False, delta_uses_selfloops=False,
-                                       delta_uses_nodes_remaining=False, call_with_args=False,
-                                       partition_number=0, move_number=0, delta_uses_to_block_exists=True):
+    def _general_not_existing_to_block(
+        self,
+        delta_function,
+        normal_function,
+        partition,
+        move=None,
+        delta_uses_degree=False,
+        delta_uses_kit=False,
+        delta_uses_selfloops=False,
+        delta_uses_nodes_remaining=False,
+        call_with_args=False,
+        partition_number=0,
+        move_number=0,
+        delta_uses_to_block_exists=True,
+    ):
         if move is None:
             node = partition.get_random_node()
             move = (node, partition.get_block_of_node(node), partition.B)
         node, old_block, new_block = move
-        precalc = kit, selfloops, degree = partition.precalc_move(move, self._replace_likelihood)
+        precalc = kit, selfloops, degree = partition.precalc_move(
+            move, self._replace_likelihood
+        )
 
         # build parameters for delta call
-        parameters = {"partition": partition, "from_block": old_block, "to_block": new_block}
+        parameters = {
+            "partition": partition,
+            "from_block": old_block,
+            "to_block": new_block,
+        }
         # always include partition, from and to block
         # other like demanded
         if delta_uses_kit:
@@ -340,18 +511,41 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirecte
         # move node back
         partition.move_node(node, old_block)
 
-        self.assertAlmostEqual(delta_value,
-                               end_value - start_value,
-                               msg="Difference in partition: " + str(partition_number) + "\n " + str(
-                                   move_number) + "th move " + "\n actual partition " + str(
-                                   partition.get_representation()) + "\n next partition" + str(
-                                   new_representation) + "\n move " + str(
-                                   move) + "\n precalc " + str(precalc))
+        self.assertAlmostEqual(
+            delta_value,
+            end_value - start_value,
+            msg="Difference in partition: "
+            + str(partition_number)
+            + "\n "
+            + str(move_number)
+            + "th move "
+            + "\n actual partition "
+            + str(partition.get_representation())
+            + "\n next partition"
+            + str(new_representation)
+            + "\n move "
+            + str(move)
+            + "\n precalc "
+            + str(precalc),
+        )
 
-    def _general_remove_blocks(self, delta_function, normal_function, partition, control_partition, peixoto_inference,
-                               from_block=None, to_block=None, delta_uses_degree=False, delta_uses_kit=False,
-                               delta_uses_selfloops=False, call_with_args=False, partition_number=0, move_number=0,
-                               delta_uses_to_block_exists=False):
+    def _general_remove_blocks(
+        self,
+        delta_function,
+        normal_function,
+        partition,
+        control_partition,
+        peixoto_inference,
+        from_block=None,
+        to_block=None,
+        delta_uses_degree=False,
+        delta_uses_kit=False,
+        delta_uses_selfloops=False,
+        call_with_args=False,
+        partition_number=0,
+        move_number=0,
+        delta_uses_to_block_exists=False,
+    ):
         if from_block is None:
             node = partition.get_random_node(no_single=False)
             from_block = partition.get_block_of_node(node)
@@ -366,7 +560,11 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirecte
         kit, selfloops, degree, nodes_moved, _ = parameter
 
         # build parameters for delta call
-        parameters = {"partition": partition, "from_block": from_block, "to_block": to_block}
+        parameters = {
+            "partition": partition,
+            "from_block": from_block,
+            "to_block": to_block,
+        }
         # always include partition, from and to block
         # other like demanded
         if delta_uses_kit:
@@ -400,13 +598,25 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirecte
         # roll back everything
         control_partition.set_from_representation(partition.get_representation())
 
-        self.assertAlmostEqual(delta_value,
-                               end_value - start_value,
-                               msg="Difference in partition: " + str(partition_number) + "\n " + str(
-                                   move_number) + "th move " + "\n actual partition " + str(
-                                   partition.get_representation()) + "\n next partition" + str(
-                                   new_representation) + "\n move " + str(
-                                   from_block) + "->" + str(to_block) + "\n precalc " + str(parameter))
+        self.assertAlmostEqual(
+            delta_value,
+            end_value - start_value,
+            msg="Difference in partition: "
+            + str(partition_number)
+            + "\n "
+            + str(move_number)
+            + "th move "
+            + "\n actual partition "
+            + str(partition.get_representation())
+            + "\n next partition"
+            + str(new_representation)
+            + "\n move "
+            + str(from_block)
+            + "->"
+            + str(to_block)
+            + "\n precalc "
+            + str(parameter),
+        )
 
     def test_calculate_p_adjacency_undirected(self):
 
@@ -422,7 +632,7 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirecte
                     delta_uses_selfloops=True,
                     delta_uses_to_block_exists=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_p_adjacency_undirected_not_existing_to_block(self):
@@ -439,7 +649,7 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirecte
                     delta_uses_selfloops=True,
                     delta_uses_to_block_exists=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_non_degree_corrected_undirected(self):
@@ -457,7 +667,7 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirecte
                     delta_uses_nodes_remaining=True,
                     delta_uses_to_block_exists=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_non_degree_corrected_undirected_not_existing_to_block(self):
@@ -475,15 +685,19 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirecte
                     delta_uses_nodes_remaining=True,
                     delta_uses_to_block_exists=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_delta_non_degree_corrected_undirected_merge(self):
         # merge two blocks
         for i, partition in enumerate(self.partitions):
             control_partition = partition.copy()
-            inference = sbm.PeixotoInference(partition.graph, self._replace_likelihood, partition,
-                                             no_partition_reset=True)
+            inference = sbm.PeixotoInference(
+                partition.graph,
+                self._replace_likelihood,
+                partition,
+                no_partition_reset=True,
+            )
             # try random merges
             for move_number in range(10):
                 self._general_remove_blocks(
@@ -497,7 +711,7 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirecte
                     delta_uses_selfloops=True,
                     delta_uses_to_block_exists=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_p_degree_sequence_uniform_undirected(self):
@@ -513,7 +727,7 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirecte
                     delta_uses_nodes_remaining=True,
                     delta_uses_to_block_exists=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_p_degree_sequence_uniform_undirected_not_existing_to_block(self):
@@ -529,15 +743,19 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirecte
                     delta_uses_nodes_remaining=True,
                     delta_uses_to_block_exists=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_p_degree_sequence_uniform_undirected_merge(self):
         # merge two blocks
         for i, partition in enumerate(self.partitions):
             control_partition = partition.copy()
-            inference = sbm.PeixotoInference(partition.graph, self._replace_likelihood, partition,
-                                             no_partition_reset=True)
+            inference = sbm.PeixotoInference(
+                partition.graph,
+                self._replace_likelihood,
+                partition,
+                no_partition_reset=True,
+            )
             # try random merges
             for move_number in range(10):
                 self._general_remove_blocks(
@@ -549,7 +767,7 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirecte
                     delta_uses_degree=True,
                     delta_uses_to_block_exists=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_p_degree_sequence_uniform_hyperprior_undirected(self):
@@ -565,10 +783,12 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirecte
                     delta_uses_nodes_remaining=True,
                     delta_uses_to_block_exists=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
-    def test_calculate_p_degree_sequence_uniform_hyperprior_undirected_not_existing_to_block(self):
+    def test_calculate_p_degree_sequence_uniform_hyperprior_undirected_not_existing_to_block(
+        self,
+    ):
 
         for i, partition in enumerate(self.partitions):
             # first classic moves
@@ -581,15 +801,19 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirecte
                     delta_uses_nodes_remaining=True,
                     delta_uses_to_block_exists=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_p_degree_sequence_uniform_hyperprior_undirected_merge(self):
         # merge two blocks
         for i, partition in enumerate(self.partitions):
             control_partition = partition.copy()
-            inference = sbm.PeixotoInference(partition.graph, self._replace_likelihood, partition,
-                                             no_partition_reset=True)
+            inference = sbm.PeixotoInference(
+                partition.graph,
+                self._replace_likelihood,
+                partition,
+                no_partition_reset=True,
+            )
             # try random merges
             for move_number in range(10):
                 self._general_remove_blocks(
@@ -601,7 +825,7 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirecte
                     delta_uses_degree=True,
                     delta_uses_to_block_exists=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_p_edge_counts_undirected(self):
@@ -616,7 +840,7 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirecte
                     delta_uses_nodes_remaining=True,
                     delta_uses_to_block_exists=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_p_edge_counts_undirected_not_existing_to_block(self):
@@ -630,7 +854,7 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirecte
                     partition,
                     delta_uses_nodes_remaining=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_p_edge_counts_undirected_merge(self):
@@ -638,8 +862,12 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirecte
         for i, partition in enumerate(self.partitions):
             partition.actual_level = 0
             control_partition = partition.copy()
-            inference = sbm.PeixotoInference(partition.graph, self._replace_likelihood, partition,
-                                             no_partition_reset=True)
+            inference = sbm.PeixotoInference(
+                partition.graph,
+                self._replace_likelihood,
+                partition,
+                no_partition_reset=True,
+            )
             # first classic moves
             for move_number in range(10):
                 self._general_remove_blocks(
@@ -650,7 +878,7 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirecte
                     inference,
                     delta_uses_to_block_exists=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_complete_uniform_hyperprior_undirected(self):
@@ -667,15 +895,19 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirecte
                     delta_uses_selfloops=True,
                     delta_uses_degree=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_complete_uniform_hyperprior_undirected_merge(self):
         for i, partition in enumerate(self.partitions):
             partition.actual_level = 0
             control_partition = partition.copy()
-            inference = sbm.PeixotoInference(partition.graph, self._replace_likelihood, partition,
-                                             no_partition_reset=True)
+            inference = sbm.PeixotoInference(
+                partition.graph,
+                self._replace_likelihood,
+                partition,
+                no_partition_reset=True,
+            )
             # # first classic moves
             for move_number in range(10):
                 self._general_remove_blocks(
@@ -689,10 +921,12 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirecte
                     delta_uses_selfloops=True,
                     delta_uses_degree=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
-    def test_calculate_complete_uniform_hyperprior_undirected_not_existing_to_block(self):
+    def test_calculate_complete_uniform_hyperprior_undirected_not_existing_to_block(
+        self,
+    ):
         for i, partition in enumerate(self.partitions):
             partition.actual_level = 0
             # # first classic moves
@@ -707,7 +941,7 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirecte
                     delta_uses_degree=True,
                     delta_uses_to_block_exists=False,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_complete_uniform_undirected(self):
@@ -724,15 +958,19 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirecte
                     delta_uses_selfloops=True,
                     delta_uses_degree=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_complete_uniform_undirected_merge(self):
         for i, partition in enumerate(self.partitions):
             partition.actual_level = 0
             control_partition = partition.copy()
-            inference = sbm.PeixotoInference(partition.graph, self._replace_likelihood, partition,
-                                             no_partition_reset=True)
+            inference = sbm.PeixotoInference(
+                partition.graph,
+                self._replace_likelihood,
+                partition,
+                no_partition_reset=True,
+            )
             # # first classic moves
             for move_number in range(10):
                 self._general_remove_blocks(
@@ -746,7 +984,7 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirecte
                     delta_uses_selfloops=True,
                     delta_uses_degree=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_complete_uniform_undirected_not_existing_to_block(self):
@@ -764,7 +1002,7 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirecte
                     delta_uses_degree=True,
                     delta_uses_to_block_exists=False,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_complete_non_degree_corrected_undirected(self):
@@ -781,15 +1019,19 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirecte
                     delta_uses_selfloops=True,
                     delta_uses_degree=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_complete_non_degree_corrected_undirected_merge(self):
         for i, partition in enumerate(self.partitions):
             partition.actual_level = 0
             control_partition = partition.copy()
-            inference = sbm.PeixotoInference(partition.graph, self._replace_likelihood, partition,
-                                             no_partition_reset=True)
+            inference = sbm.PeixotoInference(
+                partition.graph,
+                self._replace_likelihood,
+                partition,
+                no_partition_reset=True,
+            )
             # # first classic moves
             for move_number in range(10):
                 self._general_remove_blocks(
@@ -803,10 +1045,12 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirecte
                     delta_uses_selfloops=True,
                     delta_uses_degree=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
-    def test_calculate_complete_non_degree_corrected_undirected_not_existing_to_block(self):
+    def test_calculate_complete_non_degree_corrected_undirected_not_existing_to_block(
+        self,
+    ):
         for i, partition in enumerate(self.partitions):
             partition.actual_level = 0
             # # first classic moves
@@ -821,39 +1065,77 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmUndirecte
                     delta_uses_degree=True,
                     delta_uses_to_block_exists=False,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_null_move(self):
         """Test moving within the same block"""
-        self.assertEqual(0, self.delta_likelihood.calculate_delta_complete_non_degree_corrected_undirected(
-            self.partitions[0], 0, 0))
+        self.assertEqual(
+            0,
+            self.delta_likelihood.calculate_delta_complete_non_degree_corrected_undirected(
+                self.partitions[0], 0, 0
+            ),
+        )
 
-        self.assertEqual(0, self.delta_likelihood.calculate_delta_complete_uniform_undirected(
-            self.partitions[0], 0, 0))
+        self.assertEqual(
+            0,
+            self.delta_likelihood.calculate_delta_complete_uniform_undirected(
+                self.partitions[0], 0, 0
+            ),
+        )
 
-        self.assertEqual(0, self.delta_likelihood.calculate_delta_complete_uniform_hyperprior_undirected(
-            self.partitions[0], 0, 0))
+        self.assertEqual(
+            0,
+            self.delta_likelihood.calculate_delta_complete_uniform_hyperprior_undirected(
+                self.partitions[0], 0, 0
+            ),
+        )
 
     def test_creating_and_deleting_block(self):
         """Move last node of a block into a new block"""
         node = self.partitions[0].get_random_node()
         self.partitions[0].move_node(node, self.partitions[0].B)
 
-        self.assertEqual(0, self.delta_likelihood.calculate_delta_complete_non_degree_corrected_undirected(
-            self.partitions[0], self.partitions[0].B - 1, self.partitions[0].B,
-            0, 0, 0))
+        self.assertEqual(
+            0,
+            self.delta_likelihood.calculate_delta_complete_non_degree_corrected_undirected(
+                self.partitions[0],
+                self.partitions[0].B - 1,
+                self.partitions[0].B,
+                0,
+                0,
+                0,
+            ),
+        )
 
-        self.assertEqual(0, self.delta_likelihood.calculate_delta_complete_uniform_undirected(
-            self.partitions[0], self.partitions[0].B - 1, self.partitions[0].B,
-            0, 0, 0))
+        self.assertEqual(
+            0,
+            self.delta_likelihood.calculate_delta_complete_uniform_undirected(
+                self.partitions[0],
+                self.partitions[0].B - 1,
+                self.partitions[0].B,
+                0,
+                0,
+                0,
+            ),
+        )
 
-        self.assertEqual(0, self.delta_likelihood.calculate_delta_complete_uniform_hyperprior_undirected(
-            self.partitions[0], self.partitions[0].B - 1, self.partitions[0].B,
-            0, 0, 0))
+        self.assertEqual(
+            0,
+            self.delta_likelihood.calculate_delta_complete_uniform_hyperprior_undirected(
+                self.partitions[0],
+                self.partitions[0].B - 1,
+                self.partitions[0].B,
+                0,
+                0,
+                0,
+            ),
+        )
 
 
-class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(TestCase):
+class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(
+    TestCase
+):
     """Test case of Log Version of ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm (directed)"""
 
     def setUp(self):
@@ -867,34 +1149,40 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(
         # beside complete circle add one edge to connect all blocks
         graph.add_edge(0, 2)
         # here first without selfloops and directed
-        partition = NxPartitionGraphBased(graph=graph,
-                                          number_of_blocks=2,
-                                          calculate_degree_of_blocks=True,
-                                          save_neighbor_edges=True,
-                                          save_neighbor_of_blocks=True,
-                                          save_degree_distributions=True)
+        partition = NxPartitionGraphBased(
+            graph=graph,
+            number_of_blocks=2,
+            calculate_degree_of_blocks=True,
+            save_neighbor_edges=True,
+            save_neighbor_of_blocks=True,
+            save_degree_distributions=True,
+        )
         partition.set_from_representation({node: node % partition.B for node in graph})
         self.partitions.append(partition)
 
         # now with another block != from, to block
-        partition = NxPartitionGraphBased(graph=graph,
-                                          number_of_blocks=3,
-                                          calculate_degree_of_blocks=True,
-                                          save_neighbor_edges=True,
-                                          save_neighbor_of_blocks=True,
-                                          save_degree_distributions=True)
+        partition = NxPartitionGraphBased(
+            graph=graph,
+            number_of_blocks=3,
+            calculate_degree_of_blocks=True,
+            save_neighbor_edges=True,
+            save_neighbor_of_blocks=True,
+            save_degree_distributions=True,
+        )
         partition.set_from_representation({node: node % partition.B for node in graph})
         self.partitions.append(partition)
 
         # now one with selfloop
         graph = self.graphs[1] = graph.copy()
         graph.add_edge(0, 0)
-        partition = NxPartitionGraphBased(graph=graph,
-                                          number_of_blocks=3,
-                                          calculate_degree_of_blocks=True,
-                                          save_neighbor_edges=True,
-                                          save_neighbor_of_blocks=True,
-                                          save_degree_distributions=True)
+        partition = NxPartitionGraphBased(
+            graph=graph,
+            number_of_blocks=3,
+            calculate_degree_of_blocks=True,
+            save_neighbor_edges=True,
+            save_neighbor_of_blocks=True,
+            save_degree_distributions=True,
+        )
         partition.set_from_representation({node: node % partition.B for node in graph})
         self.partitions.append(partition)
 
@@ -907,26 +1195,51 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(
         nx.add_cycle(self.graphs[7], range(20))
 
         for graph in self.graphs:
-            partition = NxPartitionGraphBased(graph=graph, number_of_blocks=3, save_degree_distributions=True)
+            partition = NxPartitionGraphBased(
+                graph=graph, number_of_blocks=3, save_degree_distributions=True
+            )
             self.partitions.append(partition)
-            partition.set_from_representation({node: node % partition.B for node in graph})
+            partition.set_from_representation(
+                {node: node % partition.B for node in graph}
+            )
 
         # information about graphs below
         self.log_likelihood = ModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm()
-        self.delta_likelihood = DeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm()
-        self._replace_likelihood = LogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmWrapper(is_directed=True)
+        self.delta_likelihood = (
+            DeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm()
+        )
+        self._replace_likelihood = (
+            LogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmWrapper(is_directed=True)
+        )
 
-    def _general_comparision_single(self, delta_function, normal_function, partition, move=None,
-                                    delta_uses_degree=False, delta_uses_kit=False, delta_uses_selfloops=False,
-                                    delta_uses_nodes_remaining=False, delta_uses_to_block_exists=False,
-                                    call_with_args=False, partition_number=0, move_number=0):
+    def _general_comparision_single(
+        self,
+        delta_function,
+        normal_function,
+        partition,
+        move=None,
+        delta_uses_degree=False,
+        delta_uses_kit=False,
+        delta_uses_selfloops=False,
+        delta_uses_nodes_remaining=False,
+        delta_uses_to_block_exists=False,
+        call_with_args=False,
+        partition_number=0,
+        move_number=0,
+    ):
         if move is None:
             move = partition.get_random_move()
         node, old_block, new_block = move
-        precalc = kit, kti, selfloops, in_degree, out_degree = partition.precalc_move(move, self._replace_likelihood)
+        precalc = kit, kti, selfloops, in_degree, out_degree = partition.precalc_move(
+            move, self._replace_likelihood
+        )
 
         # build parameters for delta call
-        parameters = {"partition": partition, "from_block": old_block, "to_block": new_block}
+        parameters = {
+            "partition": partition,
+            "from_block": old_block,
+            "to_block": new_block,
+        }
         # always include partition, from and to block
         # other like demanded
         if delta_uses_kit:
@@ -960,26 +1273,53 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(
         # move node back
         partition.move_node(node, old_block)
 
-        self.assertAlmostEqual(delta_value,
-                               end_value - start_value,
-                               msg="Difference in partition: " + str(partition_number) + "\n " + str(
-                                   move_number) + "th move " + "\n actual partition " + str(
-                                   partition.get_representation()) + "\n next partition" + str(
-                                   new_representation) + "\n move " + str(
-                                   move) + "\n precalc " + str(precalc))
+        self.assertAlmostEqual(
+            delta_value,
+            end_value - start_value,
+            msg="Difference in partition: "
+            + str(partition_number)
+            + "\n "
+            + str(move_number)
+            + "th move "
+            + "\n actual partition "
+            + str(partition.get_representation())
+            + "\n next partition"
+            + str(new_representation)
+            + "\n move "
+            + str(move)
+            + "\n precalc "
+            + str(precalc),
+        )
 
-    def _general_not_existing_to_block(self, delta_function, normal_function, partition, move=None,
-                                       delta_uses_degree=False, delta_uses_kit=False, delta_uses_selfloops=False,
-                                       delta_uses_nodes_remaining=False, delta_uses_to_block_exists=True,
-                                       call_with_args=False, partition_number=0, move_number=0):
+    def _general_not_existing_to_block(
+        self,
+        delta_function,
+        normal_function,
+        partition,
+        move=None,
+        delta_uses_degree=False,
+        delta_uses_kit=False,
+        delta_uses_selfloops=False,
+        delta_uses_nodes_remaining=False,
+        delta_uses_to_block_exists=True,
+        call_with_args=False,
+        partition_number=0,
+        move_number=0,
+    ):
         if move is None:
             node = partition.get_random_node()
             move = (node, partition.get_block_of_node(node), partition.B)
         node, old_block, new_block = move
-        precalc = kit, kti, selfloops, in_degree, out_degree = partition.precalc_move(move, self._replace_likelihood)
+        precalc = kit, kti, selfloops, in_degree, out_degree = partition.precalc_move(
+            move, self._replace_likelihood
+        )
 
         # build parameters for delta call
-        parameters = {"partition": partition, "from_block": old_block, "to_block": new_block}
+        parameters = {
+            "partition": partition,
+            "from_block": old_block,
+            "to_block": new_block,
+        }
         # always include partition, from and to block
         # other like demanded
         if delta_uses_kit:
@@ -1013,18 +1353,41 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(
         # move node back
         partition.move_node(node, old_block)
 
-        self.assertAlmostEqual(delta_value,
-                               end_value - start_value,
-                               msg="Difference in partition: " + str(partition_number) + "\n " + str(
-                                   move_number) + "th move " + "\n actual partition " + str(
-                                   partition.get_representation()) + "\n next partition" + str(
-                                   new_representation) + "\n move " + str(
-                                   move) + "\n precalc " + str(precalc))
+        self.assertAlmostEqual(
+            delta_value,
+            end_value - start_value,
+            msg="Difference in partition: "
+            + str(partition_number)
+            + "\n "
+            + str(move_number)
+            + "th move "
+            + "\n actual partition "
+            + str(partition.get_representation())
+            + "\n next partition"
+            + str(new_representation)
+            + "\n move "
+            + str(move)
+            + "\n precalc "
+            + str(precalc),
+        )
 
-    def _general_remove_blocks(self, delta_function, normal_function, partition, control_partition, peixoto_inference,
-                               from_block=None, to_block=None, delta_uses_degree=False, delta_uses_kit=False,
-                               delta_uses_selfloops=False, call_with_args=False, partition_number=0, move_number=0,
-                               delta_uses_to_block_exists=False):
+    def _general_remove_blocks(
+        self,
+        delta_function,
+        normal_function,
+        partition,
+        control_partition,
+        peixoto_inference,
+        from_block=None,
+        to_block=None,
+        delta_uses_degree=False,
+        delta_uses_kit=False,
+        delta_uses_selfloops=False,
+        call_with_args=False,
+        partition_number=0,
+        move_number=0,
+        delta_uses_to_block_exists=False,
+    ):
         if from_block is None:
             node = partition.get_random_node(no_single=False)
             from_block = partition.get_block_of_node(node)
@@ -1039,7 +1402,11 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(
         kit, kti, selfloops, in_degree, out_degree, nodes_moved, _ = parameter
 
         # build parameters for delta call
-        parameters = {"partition": partition, "from_block": from_block, "to_block": to_block}
+        parameters = {
+            "partition": partition,
+            "from_block": from_block,
+            "to_block": to_block,
+        }
         # always include partition, from and to block
         # other like demanded
         if delta_uses_kit:
@@ -1074,13 +1441,25 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(
         # roll back everything
         control_partition.set_from_representation(partition.get_representation())
 
-        self.assertAlmostEqual(delta_value,
-                               end_value - start_value,
-                               msg="Difference in partition: " + str(partition_number) + "\n " + str(
-                                   move_number) + "th move " + "\n actual partition " + str(
-                                   partition.get_representation()) + "\n next partition" + str(
-                                   new_representation) + "\n move " + str(
-                                   from_block) + "->" + str(to_block) + "\n precalc " + str(parameter))
+        self.assertAlmostEqual(
+            delta_value,
+            end_value - start_value,
+            msg="Difference in partition: "
+            + str(partition_number)
+            + "\n "
+            + str(move_number)
+            + "th move "
+            + "\n actual partition "
+            + str(partition.get_representation())
+            + "\n next partition"
+            + str(new_representation)
+            + "\n move "
+            + str(from_block)
+            + "->"
+            + str(to_block)
+            + "\n precalc "
+            + str(parameter),
+        )
 
     def test_calculate_delta_p_adjacency_directed(self):
         # import random as rd
@@ -1099,7 +1478,7 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(
                     delta_uses_selfloops=True,
                     delta_uses_to_block_exists=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_delta_p_adjacency_directed_not_existing_to_block(self):
@@ -1119,7 +1498,7 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(
                     delta_uses_selfloops=True,
                     delta_uses_to_block_exists=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_delta_non_degree_corrected_directed(self):
@@ -1137,7 +1516,7 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(
                     delta_uses_nodes_remaining=True,
                     delta_uses_to_block_exists=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_delta_non_degree_corrected_directed_not_existing_to_block(self):
@@ -1155,15 +1534,19 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(
                     delta_uses_nodes_remaining=True,
                     delta_uses_to_block_exists=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_delta_non_degree_corrected_directed_merge(self):
         # merge two blocks
         for i, partition in enumerate(self.partitions):
             control_partition = partition.copy()
-            inference = sbm.PeixotoInference(partition.graph, self._replace_likelihood, partition,
-                                             no_partition_reset=True)
+            inference = sbm.PeixotoInference(
+                partition.graph,
+                self._replace_likelihood,
+                partition,
+                no_partition_reset=True,
+            )
             # try random merges
             for move_number in range(10):
                 self._general_remove_blocks(
@@ -1177,7 +1560,7 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(
                     delta_uses_selfloops=True,
                     delta_uses_to_block_exists=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_delta_p_degree_sequence_uniform_directed(self):
@@ -1193,10 +1576,12 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(
                     delta_uses_nodes_remaining=True,
                     delta_uses_to_block_exists=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
-    def test_calculate_delta_p_degree_sequence_uniform_directed_not_existing_to_block(self):
+    def test_calculate_delta_p_degree_sequence_uniform_directed_not_existing_to_block(
+        self,
+    ):
 
         for i, partition in enumerate(self.partitions):
             # first classic moves
@@ -1209,15 +1594,19 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(
                     delta_uses_nodes_remaining=True,
                     delta_uses_to_block_exists=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_delta_p_degree_sequence_uniform_directed_merge(self):
         # merge two blocks
         for i, partition in enumerate(self.partitions):
             control_partition = partition.copy()
-            inference = sbm.PeixotoInference(partition.graph, self._replace_likelihood, partition,
-                                             no_partition_reset=True)
+            inference = sbm.PeixotoInference(
+                partition.graph,
+                self._replace_likelihood,
+                partition,
+                no_partition_reset=True,
+            )
             # try random merges
             for move_number in range(10):
                 self._general_remove_blocks(
@@ -1229,7 +1618,7 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(
                     delta_uses_degree=True,
                     delta_uses_to_block_exists=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_delta_p_degree_sequence_uniform_hyperprior_directed(self):
@@ -1245,10 +1634,12 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(
                     delta_uses_nodes_remaining=True,
                     delta_uses_to_block_exists=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
-    def test_calculate_delta_p_degree_sequence_uniform_hyperprior_directed_not_existing_to_block(self):
+    def test_calculate_delta_p_degree_sequence_uniform_hyperprior_directed_not_existing_to_block(
+        self,
+    ):
 
         for i, partition in enumerate(self.partitions):
             # first classic moves
@@ -1261,15 +1652,19 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(
                     delta_uses_nodes_remaining=True,
                     delta_uses_to_block_exists=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_delta_p_degree_sequence_uniform_hyperprior_directed_merge(self):
         # merge two blocks
         for i, partition in enumerate(self.partitions):
             control_partition = partition.copy()
-            inference = sbm.PeixotoInference(partition.graph, self._replace_likelihood, partition,
-                                             no_partition_reset=True)
+            inference = sbm.PeixotoInference(
+                partition.graph,
+                self._replace_likelihood,
+                partition,
+                no_partition_reset=True,
+            )
             # try random merges
             for move_number in range(10):
                 self._general_remove_blocks(
@@ -1281,7 +1676,7 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(
                     delta_uses_degree=True,
                     delta_uses_to_block_exists=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_delta_p_edge_counts_directed(self):
@@ -1296,7 +1691,7 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(
                     delta_uses_nodes_remaining=True,
                     delta_uses_to_block_exists=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_delta_p_edge_counts_directed_not_existing_to_block(self):
@@ -1310,7 +1705,7 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(
                     partition,
                     delta_uses_nodes_remaining=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_p_edge_counts_directed_merge(self):
@@ -1318,8 +1713,12 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(
         for i, partition in enumerate(self.partitions):
             partition.actual_level = 0
             control_partition = partition.copy()
-            inference = sbm.PeixotoInference(partition.graph, self._replace_likelihood, partition,
-                                             no_partition_reset=True)
+            inference = sbm.PeixotoInference(
+                partition.graph,
+                self._replace_likelihood,
+                partition,
+                no_partition_reset=True,
+            )
             # first classic moves
             for move_number in range(10):
                 self._general_remove_blocks(
@@ -1330,7 +1729,7 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(
                     inference,
                     delta_uses_to_block_exists=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_delta_complete_uniform_hyperprior_directed(self):
@@ -1347,15 +1746,19 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(
                     delta_uses_selfloops=True,
                     delta_uses_degree=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_delta_complete_uniform_hyperprior_directed_merge(self):
         for i, partition in enumerate(self.partitions):
             partition.actual_level = 0
             control_partition = partition.copy()
-            inference = sbm.PeixotoInference(partition.graph, self._replace_likelihood, partition,
-                                             no_partition_reset=True)
+            inference = sbm.PeixotoInference(
+                partition.graph,
+                self._replace_likelihood,
+                partition,
+                no_partition_reset=True,
+            )
             # # first classic moves
             for move_number in range(10):
                 self._general_remove_blocks(
@@ -1369,10 +1772,12 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(
                     delta_uses_selfloops=True,
                     delta_uses_degree=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
-    def test_calculate_delta_complete_uniform_hyperprior_directed_not_existing_to_block(self):
+    def test_calculate_delta_complete_uniform_hyperprior_directed_not_existing_to_block(
+        self,
+    ):
         for i, partition in enumerate(self.partitions):
             partition.actual_level = 0
             # # first classic moves
@@ -1387,7 +1792,7 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(
                     delta_uses_degree=True,
                     delta_uses_to_block_exists=False,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_delta_complete_uniform_directed(self):
@@ -1404,15 +1809,19 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(
                     delta_uses_selfloops=True,
                     delta_uses_degree=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_delta_complete_uniform_directed_merge(self):
         for i, partition in enumerate(self.partitions):
             partition.actual_level = 0
             control_partition = partition.copy()
-            inference = sbm.PeixotoInference(partition.graph, self._replace_likelihood, partition,
-                                             no_partition_reset=True)
+            inference = sbm.PeixotoInference(
+                partition.graph,
+                self._replace_likelihood,
+                partition,
+                no_partition_reset=True,
+            )
             # # first classic moves
             for move_number in range(10):
                 self._general_remove_blocks(
@@ -1426,7 +1835,7 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(
                     delta_uses_selfloops=True,
                     delta_uses_degree=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_delta_complete_uniform_directed_not_existing_to_block(self):
@@ -1444,7 +1853,7 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(
                     delta_uses_degree=True,
                     delta_uses_to_block_exists=False,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_delta_complete_non_degree_corrected_directed(self):
@@ -1461,15 +1870,19 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(
                     delta_uses_selfloops=True,
                     delta_uses_degree=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_calculate_delta_complete_non_degree_corrected_directed_merge(self):
         for i, partition in enumerate(self.partitions):
             partition.actual_level = 0
             control_partition = partition.copy()
-            inference = sbm.PeixotoInference(partition.graph, self._replace_likelihood, partition,
-                                             no_partition_reset=True)
+            inference = sbm.PeixotoInference(
+                partition.graph,
+                self._replace_likelihood,
+                partition,
+                no_partition_reset=True,
+            )
             # # first classic moves
             for move_number in range(10):
                 self._general_remove_blocks(
@@ -1483,10 +1896,12 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(
                     delta_uses_selfloops=True,
                     delta_uses_degree=True,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
-    def test_calculate_delta_complete_non_degree_corrected_directed_not_existing_to_block(self):
+    def test_calculate_delta_complete_non_degree_corrected_directed_not_existing_to_block(
+        self,
+    ):
         for i, partition in enumerate(self.partitions):
             partition.actual_level = 0
             # # first classic moves
@@ -1501,33 +1916,75 @@ class TestDeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmDirected(
                     delta_uses_degree=True,
                     delta_uses_to_block_exists=False,
                     partition_number=i,
-                    move_number=move_number
+                    move_number=move_number,
                 )
 
     def test_null_move(self):
         """Test moving within the same block"""
-        self.assertEqual(0, self.delta_likelihood.calculate_delta_complete_non_degree_corrected_directed(
-            self.partitions[0], 0, 0))
+        self.assertEqual(
+            0,
+            self.delta_likelihood.calculate_delta_complete_non_degree_corrected_directed(
+                self.partitions[0], 0, 0
+            ),
+        )
 
-        self.assertEqual(0, self.delta_likelihood.calculate_delta_complete_uniform_directed(
-            self.partitions[0], 0, 0))
+        self.assertEqual(
+            0,
+            self.delta_likelihood.calculate_delta_complete_uniform_directed(
+                self.partitions[0], 0, 0
+            ),
+        )
 
-        self.assertEqual(0, self.delta_likelihood.calculate_delta_complete_uniform_hyperprior_directed(
-            self.partitions[0], 0, 0))
+        self.assertEqual(
+            0,
+            self.delta_likelihood.calculate_delta_complete_uniform_hyperprior_directed(
+                self.partitions[0], 0, 0
+            ),
+        )
 
     def test_creating_and_deleting_block(self):
         """Move last node of a block into a new block"""
         node = self.partitions[0].get_random_node()
         self.partitions[0].move_node(node, self.partitions[0].B)
 
-        self.assertEqual(0, self.delta_likelihood.calculate_delta_complete_non_degree_corrected_directed(
-            self.partitions[0], self.partitions[0].B - 1, self.partitions[0].B,
-            0, 0, 0, 0, 0))
+        self.assertEqual(
+            0,
+            self.delta_likelihood.calculate_delta_complete_non_degree_corrected_directed(
+                self.partitions[0],
+                self.partitions[0].B - 1,
+                self.partitions[0].B,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ),
+        )
 
-        self.assertEqual(0, self.delta_likelihood.calculate_delta_complete_uniform_directed(
-            self.partitions[0], self.partitions[0].B - 1, self.partitions[0].B,
-            0, 0, 0, 0, 0))
+        self.assertEqual(
+            0,
+            self.delta_likelihood.calculate_delta_complete_uniform_directed(
+                self.partitions[0],
+                self.partitions[0].B - 1,
+                self.partitions[0].B,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ),
+        )
 
-        self.assertEqual(0, self.delta_likelihood.calculate_delta_complete_uniform_hyperprior_directed(
-            self.partitions[0], self.partitions[0].B - 1, self.partitions[0].B,
-            0, 0, 0, 0, 0))
+        self.assertEqual(
+            0,
+            self.delta_likelihood.calculate_delta_complete_uniform_hyperprior_directed(
+                self.partitions[0],
+                self.partitions[0].B - 1,
+                self.partitions[0].B,
+                0,
+                0,
+                0,
+                0,
+                0,
+            ),
+        )

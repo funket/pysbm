@@ -7,7 +7,9 @@
 import math
 
 from scipy.special import binom
-from .peixotos_hierarchical_sbm_tools import NUMBER_OF_RESTRICTED_PARTITIONS_PRECOMPUTED_LIMIT
+from .peixotos_hierarchical_sbm_tools import (
+    NUMBER_OF_RESTRICTED_PARTITIONS_PRECOMPUTED_LIMIT,
+)
 from .peixotos_hierarchical_sbm_tools import spence
 from .peixotos_hierarchical_sbm_tools import init_number_of_restricted_partitions
 
@@ -40,17 +42,22 @@ def get_number_of_restricted_partitions(m, n):
                 # formula from Peixoto's implementation
                 # https://git.skewed.de/count0/graph-tool/blob/master/src/graph/inference/support/int_part.cc
                 v_new = u * math.sqrt(spence(math.exp(-v)))
-                if math.fabs(v - v_new) < .0001:
+                if math.fabs(v - v_new) < 0.0001:
                     v = v_new
                     break
                 v = v_new
             else:
-                raise Exception("Fix Point iteration as search for v not converged in 100 steps:", v)
+                raise Exception(
+                    "Fix Point iteration as search for v not converged in 100 steps:", v
+                )
 
-            f_u = v / (2 ** 1.5 * math.pi * u * math.sqrt(1 - (1 + u * u / 2) * math.exp(-v)))
+            f_u = v / (
+                2**1.5 * math.pi * u * math.sqrt(1 - (1 + u * u / 2) * math.exp(-v))
+            )
             g_u = 2 * v / u - u * math.log(1 - math.exp(-v))
             return f_u / m * math.exp(math.sqrt(m) * g_u)
 
 
-NUMBER_OF_RESTRICTED_PARTITIONS_MATRIX = \
-    init_number_of_restricted_partitions(NUMBER_OF_RESTRICTED_PARTITIONS_PRECOMPUTED_LIMIT)
+NUMBER_OF_RESTRICTED_PARTITIONS_MATRIX = init_number_of_restricted_partitions(
+    NUMBER_OF_RESTRICTED_PARTITIONS_PRECOMPUTED_LIMIT
+)

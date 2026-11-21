@@ -307,7 +307,7 @@ class LinkedList(object):
         self.head = node
 
     def pop(self):
-        """ Return first data and remove it from the list"""
+        """Return first data and remove it from the list"""
         if self.head is None:
             raise IndexError
         value = self.head.data
@@ -400,7 +400,7 @@ class Observed(object):
         return hash(self.value)
 
     def __repr__(self):
-        return str(self.value) + ' :-> ' + str(self.observers)
+        return str(self.value) + " :-> " + str(self.observers)
 
 
 @functools.total_ordering

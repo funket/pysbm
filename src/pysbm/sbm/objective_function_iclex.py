@@ -33,28 +33,42 @@ def calculate_icl_ex_jeffrey_hyperprior_directed(partition):
     """
     likelihood = 0
 
-    eta_kl_zero = .5
-    zeta_kl_zero = .5
-    n_k_zero = .5
+    eta_kl_zero = 0.5
+    zeta_kl_zero = 0.5
+    n_k_zero = 0.5
 
     for from_block in range(partition.B):
         number_of_nodes_in_from_block = partition.get_number_of_nodes_in_block(
-            from_block)
+            from_block
+        )
         for to_block in range(partition.B):
             # first term
             eta_kl = eta_kl_zero + partition.get_edge_count(from_block, to_block)
-            zeta_kl = zeta_kl_zero + number_of_nodes_in_from_block * partition.get_number_of_nodes_in_block(to_block) \
+            zeta_kl = (
+                zeta_kl_zero
+                + number_of_nodes_in_from_block
+                * partition.get_number_of_nodes_in_block(to_block)
                 - partition.get_edge_count(from_block, to_block)
+            )
 
             # math.lgamma(eta_kl_zero + zeta_kl_zero) = math.lgamma(1) = 0
-            likelihood += math.lgamma(eta_kl) + math.lgamma(zeta_kl) \
-                - math.lgamma(eta_kl + zeta_kl) - math.lgamma(eta_kl_zero) - math.lgamma(zeta_kl_zero)
+            likelihood += (
+                math.lgamma(eta_kl)
+                + math.lgamma(zeta_kl)
+                - math.lgamma(eta_kl + zeta_kl)
+                - math.lgamma(eta_kl_zero)
+                - math.lgamma(zeta_kl_zero)
+            )
 
         # calculate second term
-        likelihood += math.lgamma(n_k_zero + number_of_nodes_in_from_block) - math.lgamma(n_k_zero)
+        likelihood += math.lgamma(
+            n_k_zero + number_of_nodes_in_from_block
+        ) - math.lgamma(n_k_zero)
 
     # add "global" terms of second term
-    likelihood += math.lgamma(n_k_zero * partition.B) - math.lgamma(n_k_zero * partition.B + partition.get_number_of_nodes())
+    likelihood += math.lgamma(n_k_zero * partition.B) - math.lgamma(
+        n_k_zero * partition.B + partition.get_number_of_nodes()
+    )
 
     return likelihood
 
@@ -84,23 +98,33 @@ def calculate_icl_ex_uniform_hyperprior_directed(partition):
 
     for from_block in range(partition.B):
         number_of_nodes_in_from_block = partition.get_number_of_nodes_in_block(
-            from_block)
+            from_block
+        )
         for to_block in range(partition.B):
             # first term
             eta_kl = eta_kl_zero + partition.get_edge_count(from_block, to_block)
-            zeta_kl = zeta_kl_zero + number_of_nodes_in_from_block * partition.get_number_of_nodes_in_block(to_block) \
+            zeta_kl = (
+                zeta_kl_zero
+                + number_of_nodes_in_from_block
+                * partition.get_number_of_nodes_in_block(to_block)
                 - partition.get_edge_count(from_block, to_block)
+            )
 
             # math.lgamma(eta_kl_zero + zeta_kl_zero) = math.lgamma(2) = 0
             # math.lgamma(eta_kl_zero) = math.lgamma(zeta_kl_zero) = math.lgamma(1) = 0
-            likelihood += + math.lgamma(eta_kl) + math.lgamma(zeta_kl) \
+            likelihood += (
+                +math.lgamma(eta_kl)
+                + math.lgamma(zeta_kl)
                 - math.lgamma(eta_kl + zeta_kl)
+            )
 
         # calculate second term
         likelihood += math.lgamma(1 + number_of_nodes_in_from_block)
 
     # add "global" terms of second term
-    likelihood += math.lgamma(partition.B) - math.lgamma(partition.B + partition.get_number_of_nodes())
+    likelihood += math.lgamma(partition.B) - math.lgamma(
+        partition.B + partition.get_number_of_nodes()
+    )
 
     return likelihood
 
@@ -125,38 +149,60 @@ def calculate_icl_ex_jeffrey_hyperprior_undirected(partition):
     """
     likelihood = 0
 
-    eta_kl_zero = .5
-    zeta_kl_zero = .5
-    n_k_zero = .5
+    eta_kl_zero = 0.5
+    zeta_kl_zero = 0.5
+    n_k_zero = 0.5
 
     for from_block in range(partition.B):
         number_of_nodes_in_from_block = partition.get_number_of_nodes_in_block(
-            from_block)
+            from_block
+        )
         for to_block in range(from_block + 1, partition.B):
             # first term
             eta_kl = eta_kl_zero + partition.get_edge_count(from_block, to_block)
-            zeta_kl = zeta_kl_zero + number_of_nodes_in_from_block * partition.get_number_of_nodes_in_block(to_block) \
+            zeta_kl = (
+                zeta_kl_zero
+                + number_of_nodes_in_from_block
+                * partition.get_number_of_nodes_in_block(to_block)
                 - partition.get_edge_count(from_block, to_block)
+            )
 
             # math.lgamma(eta_kl_zero + zeta_kl_zero) = math.lgamma(1) = 0
-            likelihood += math.lgamma(eta_kl) + math.lgamma(zeta_kl) \
-                - math.lgamma(eta_kl + zeta_kl) - math.lgamma(eta_kl_zero) - math.lgamma(zeta_kl_zero)
+            likelihood += (
+                math.lgamma(eta_kl)
+                + math.lgamma(zeta_kl)
+                - math.lgamma(eta_kl + zeta_kl)
+                - math.lgamma(eta_kl_zero)
+                - math.lgamma(zeta_kl_zero)
+            )
 
         # add term for from_block->from_block
         # in undirected case those edges are counted twice cover this
         eta_kl = eta_kl_zero + partition.get_edge_count(from_block, from_block) / 2
         # and reduce the number of possibilities accordingly
-        zeta_kl = zeta_kl_zero + number_of_nodes_in_from_block * (number_of_nodes_in_from_block + 1) / 2 \
+        zeta_kl = (
+            zeta_kl_zero
+            + number_of_nodes_in_from_block * (number_of_nodes_in_from_block + 1) / 2
             - partition.get_edge_count(from_block, from_block) / 2
+        )
 
-        likelihood += math.lgamma(eta_kl) + math.lgamma(zeta_kl) \
-            - math.lgamma(eta_kl + zeta_kl) - math.lgamma(eta_kl_zero) - math.lgamma(zeta_kl_zero)
+        likelihood += (
+            math.lgamma(eta_kl)
+            + math.lgamma(zeta_kl)
+            - math.lgamma(eta_kl + zeta_kl)
+            - math.lgamma(eta_kl_zero)
+            - math.lgamma(zeta_kl_zero)
+        )
 
         # calculate second term
-        likelihood += math.lgamma(n_k_zero + number_of_nodes_in_from_block) - math.lgamma(n_k_zero)
+        likelihood += math.lgamma(
+            n_k_zero + number_of_nodes_in_from_block
+        ) - math.lgamma(n_k_zero)
 
     # add "global" terms of second term
-    likelihood += math.lgamma(n_k_zero * partition.B) - math.lgamma(n_k_zero * partition.B + partition.get_number_of_nodes())
+    likelihood += math.lgamma(n_k_zero * partition.B) - math.lgamma(
+        n_k_zero * partition.B + partition.get_number_of_nodes()
+    )
 
     return likelihood
 
@@ -186,43 +232,61 @@ def calculate_icl_ex_uniform_hyperprior_undirected(partition):
 
     for from_block in range(partition.B):
         number_of_nodes_in_from_block = partition.get_number_of_nodes_in_block(
-            from_block)
+            from_block
+        )
         for to_block in range(from_block + 1, partition.B):
             # first term
             eta_kl = eta_kl_zero + partition.get_edge_count(from_block, to_block)
-            zeta_kl = zeta_kl_zero + number_of_nodes_in_from_block * partition.get_number_of_nodes_in_block(to_block) \
+            zeta_kl = (
+                zeta_kl_zero
+                + number_of_nodes_in_from_block
+                * partition.get_number_of_nodes_in_block(to_block)
                 - partition.get_edge_count(from_block, to_block)
+            )
 
             # math.lgamma(eta_kl_zero + zeta_kl_zero) = math.lgamma(2) = 0
             # math.lgamma(eta_kl_zero) = math.lgamma(zeta_kl_zero) = math.lgamma(1) = 0
-            likelihood += + math.lgamma(eta_kl) + math.lgamma(zeta_kl) \
+            likelihood += (
+                +math.lgamma(eta_kl)
+                + math.lgamma(zeta_kl)
                 - math.lgamma(eta_kl + zeta_kl)
+            )
 
         # add term for from_block->from_block
         # in undirected case those edges are counted twice cover this
         eta_kl = eta_kl_zero + partition.get_edge_count(from_block, from_block) / 2
         # and reduce the number of possibilities accordingly
-        zeta_kl = zeta_kl_zero + number_of_nodes_in_from_block * (number_of_nodes_in_from_block + 1) / 2 \
+        zeta_kl = (
+            zeta_kl_zero
+            + number_of_nodes_in_from_block * (number_of_nodes_in_from_block + 1) / 2
             - partition.get_edge_count(from_block, from_block) / 2
+        )
 
-        likelihood += + math.lgamma(eta_kl) + math.lgamma(zeta_kl) \
-            - math.lgamma(eta_kl + zeta_kl)
+        likelihood += (
+            +math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        )
 
         # calculate second term
         likelihood += math.lgamma(1 + number_of_nodes_in_from_block)
 
     # add "global" terms of second term
-    likelihood += math.lgamma(partition.B) - math.lgamma(partition.B + partition.get_number_of_nodes())
+    likelihood += math.lgamma(partition.B) - math.lgamma(
+        partition.B + partition.get_number_of_nodes()
+    )
 
     return likelihood
 
 
-def delta_calculate_icl_ex_jeffrey_hyperprior_undirected(partition, from_block, to_block, *args):
+def delta_calculate_icl_ex_jeffrey_hyperprior_undirected(
+    partition, from_block, to_block, *args
+):
     #     distinguish by given parameters
     if len(args) == 3:
         kit, selfloops, _ = args
         nodes_moved = 1
-        nodes_remaining = not (partition.get_number_of_nodes_in_block(from_block) == nodes_moved)
+        nodes_remaining = not (
+            partition.get_number_of_nodes_in_block(from_block) == nodes_moved
+        )
     elif len(args) == 5:
         kit, selfloops, _, nodes_moved, nodes_remaining = args
     else:
@@ -236,9 +300,9 @@ def delta_calculate_icl_ex_jeffrey_hyperprior_undirected(partition, from_block, 
     if not to_block_exists and not nodes_remaining:
         return delta
 
-    eta_kl_zero = .5
-    zeta_kl_zero = .5
-    n_k_zero = .5
+    eta_kl_zero = 0.5
+    zeta_kl_zero = 0.5
+    n_k_zero = 0.5
 
     number_of_nodes_in_from_block = partition.get_number_of_nodes_in_block(from_block)
     if to_block_exists:
@@ -253,15 +317,26 @@ def delta_calculate_icl_ex_jeffrey_hyperprior_undirected(partition, from_block, 
             # from_block -> block
             # old value
             eta_kl = eta_kl_zero + partition.get_edge_count(from_block, block)
-            zeta_kl = zeta_kl_zero + number_of_nodes_in_from_block * number_of_nodes_in_block \
+            zeta_kl = (
+                zeta_kl_zero
+                + number_of_nodes_in_from_block * number_of_nodes_in_block
                 - partition.get_edge_count(from_block, block)
-            delta -= math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+            )
+            delta -= (
+                math.lgamma(eta_kl)
+                + math.lgamma(zeta_kl)
+                - math.lgamma(eta_kl + zeta_kl)
+            )
 
             if nodes_remaining:
                 # new value
                 eta_kl -= kit.get(block, 0)
                 zeta_kl -= nodes_moved * number_of_nodes_in_block - kit.get(block, 0)
-                delta += math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+                delta += (
+                    math.lgamma(eta_kl)
+                    + math.lgamma(zeta_kl)
+                    - math.lgamma(eta_kl + zeta_kl)
+                )
             else:
                 # add missing terms from old value, which else cancel out
                 delta += math.lgamma(eta_kl_zero) + math.lgamma(zeta_kl_zero)
@@ -270,9 +345,16 @@ def delta_calculate_icl_ex_jeffrey_hyperprior_undirected(partition, from_block, 
             if to_block_exists:
                 # old value
                 eta_kl = eta_kl_zero + partition.get_edge_count(to_block, block)
-                zeta_kl = zeta_kl_zero + number_of_nodes_in_to_block * number_of_nodes_in_block \
+                zeta_kl = (
+                    zeta_kl_zero
+                    + number_of_nodes_in_to_block * number_of_nodes_in_block
                     - partition.get_edge_count(to_block, block)
-                delta -= math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+                )
+                delta -= (
+                    math.lgamma(eta_kl)
+                    + math.lgamma(zeta_kl)
+                    - math.lgamma(eta_kl + zeta_kl)
+                )
             else:
                 eta_kl = eta_kl_zero
                 zeta_kl = zeta_kl_zero
@@ -282,15 +364,24 @@ def delta_calculate_icl_ex_jeffrey_hyperprior_undirected(partition, from_block, 
             # new value
             eta_kl += kit.get(block, 0)
             zeta_kl += nodes_moved * number_of_nodes_in_block - kit.get(block, 0)
-            delta += math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+            delta += (
+                math.lgamma(eta_kl)
+                + math.lgamma(zeta_kl)
+                - math.lgamma(eta_kl + zeta_kl)
+            )
 
     # add terms for from_block -> to_block
     if to_block_exists:
         # old value
         eta_kl = eta_kl_zero + partition.get_edge_count(from_block, to_block)
-        zeta_kl = zeta_kl_zero + number_of_nodes_in_from_block * number_of_nodes_in_to_block \
+        zeta_kl = (
+            zeta_kl_zero
+            + number_of_nodes_in_from_block * number_of_nodes_in_to_block
             - partition.get_edge_count(from_block, to_block)
-        delta -= math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        )
+        delta -= (
+            math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        )
     else:
         eta_kl = eta_kl_zero
         zeta_kl = zeta_kl_zero
@@ -300,10 +391,16 @@ def delta_calculate_icl_ex_jeffrey_hyperprior_undirected(partition, from_block, 
     if nodes_remaining:
         # new value
         eta_kl += kit[from_block] - kit[to_block]
-        zeta_kl -= number_of_nodes_in_from_block * number_of_nodes_in_to_block \
-            - (number_of_nodes_in_from_block - nodes_moved) * (number_of_nodes_in_to_block + nodes_moved) \
-            + kit[from_block] - kit[to_block]
-        delta += math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        zeta_kl -= (
+            number_of_nodes_in_from_block * number_of_nodes_in_to_block
+            - (number_of_nodes_in_from_block - nodes_moved)
+            * (number_of_nodes_in_to_block + nodes_moved)
+            + kit[from_block]
+            - kit[to_block]
+        )
+        delta += (
+            math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        )
     else:
         # add missing terms from old value, which else cancel out
         delta += math.lgamma(eta_kl_zero) + math.lgamma(zeta_kl_zero)
@@ -312,9 +409,14 @@ def delta_calculate_icl_ex_jeffrey_hyperprior_undirected(partition, from_block, 
     if to_block_exists:
         # old value
         eta_kl = eta_kl_zero + partition.get_edge_count(to_block, to_block) / 2
-        zeta_kl = zeta_kl_zero + number_of_nodes_in_to_block * (number_of_nodes_in_to_block + 1) / 2\
+        zeta_kl = (
+            zeta_kl_zero
+            + number_of_nodes_in_to_block * (number_of_nodes_in_to_block + 1) / 2
             - partition.get_edge_count(to_block, to_block) / 2
-        delta -= math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        )
+        delta -= (
+            math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        )
     else:
         eta_kl = eta_kl_zero
         zeta_kl = zeta_kl_zero
@@ -323,25 +425,40 @@ def delta_calculate_icl_ex_jeffrey_hyperprior_undirected(partition, from_block, 
 
     # new value
     eta_kl += kit[to_block] + selfloops
-    zeta_kl -= number_of_nodes_in_to_block * (number_of_nodes_in_to_block + 1) / 2 \
-        - (number_of_nodes_in_to_block + nodes_moved) * (number_of_nodes_in_to_block + nodes_moved + 1) / 2 \
-        + kit[to_block] + selfloops
+    zeta_kl -= (
+        number_of_nodes_in_to_block * (number_of_nodes_in_to_block + 1) / 2
+        - (number_of_nodes_in_to_block + nodes_moved)
+        * (number_of_nodes_in_to_block + nodes_moved + 1)
+        / 2
+        + kit[to_block]
+        + selfloops
+    )
     delta += math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
 
     # from_block -> from_block
     # old value
     eta_kl = eta_kl_zero + partition.get_edge_count(from_block, from_block) / 2
-    zeta_kl = zeta_kl_zero + number_of_nodes_in_from_block * (number_of_nodes_in_from_block + 1) / 2\
+    zeta_kl = (
+        zeta_kl_zero
+        + number_of_nodes_in_from_block * (number_of_nodes_in_from_block + 1) / 2
         - partition.get_edge_count(from_block, from_block) / 2
+    )
     delta -= math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
 
     # new value
     if nodes_remaining:
         eta_kl -= kit[from_block] + selfloops
-        zeta_kl -= number_of_nodes_in_from_block * (number_of_nodes_in_from_block + 1) / 2 \
-            - (number_of_nodes_in_from_block - nodes_moved) * (number_of_nodes_in_from_block - nodes_moved + 1) / 2 \
-            - kit[from_block] - selfloops
-        delta += math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        zeta_kl -= (
+            number_of_nodes_in_from_block * (number_of_nodes_in_from_block + 1) / 2
+            - (number_of_nodes_in_from_block - nodes_moved)
+            * (number_of_nodes_in_from_block - nodes_moved + 1)
+            / 2
+            - kit[from_block]
+            - selfloops
+        )
+        delta += (
+            math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        )
     else:
         # add missing terms from old value, which else cancel out
         delta += math.lgamma(eta_kl_zero) + math.lgamma(zeta_kl_zero)
@@ -354,9 +471,15 @@ def delta_calculate_icl_ex_jeffrey_hyperprior_undirected(partition, from_block, 
     else:
         # decrease of block count
         # handle term \Gamma(\sum n_k^0) and add one \gamma(n_k^0) for the reduced count in the denominator
-        delta += math.lgamma((partition.B - 1) * n_k_zero) - math.lgamma(partition.B * n_k_zero) + math.lgamma(n_k_zero) \
-                 - math.lgamma(n_k_zero * (partition.B - 1) + partition.get_number_of_nodes()) \
-                 + math.lgamma(n_k_zero * partition.B + partition.get_number_of_nodes())
+        delta += (
+            math.lgamma((partition.B - 1) * n_k_zero)
+            - math.lgamma(partition.B * n_k_zero)
+            + math.lgamma(n_k_zero)
+            - math.lgamma(
+                n_k_zero * (partition.B - 1) + partition.get_number_of_nodes()
+            )
+            + math.lgamma(n_k_zero * partition.B + partition.get_number_of_nodes())
+        )
 
     if to_block_exists:
         # subtract term of \prod \gamma(n_k)
@@ -364,23 +487,34 @@ def delta_calculate_icl_ex_jeffrey_hyperprior_undirected(partition, from_block, 
     else:
         # increase of block count
         # handle term \Gamma(\sum n_k^0) and subtract one \gamma(n_k^0) for the increased count in the denominator
-        delta += math.lgamma((partition.B + 1) * n_k_zero) - math.lgamma(partition.B * n_k_zero) - math.lgamma(n_k_zero) \
-            - math.lgamma(n_k_zero * (partition.B + 1) + partition.get_number_of_nodes()) \
+        delta += (
+            math.lgamma((partition.B + 1) * n_k_zero)
+            - math.lgamma(partition.B * n_k_zero)
+            - math.lgamma(n_k_zero)
+            - math.lgamma(
+                n_k_zero * (partition.B + 1) + partition.get_number_of_nodes()
+            )
             + math.lgamma(n_k_zero * partition.B + partition.get_number_of_nodes())
+        )
 
     # handle term \prod \gamma(n_k)
-    delta += math.lgamma(n_k_zero + number_of_nodes_in_to_block + nodes_moved) \
-        - math.lgamma(n_k_zero + number_of_nodes_in_from_block)
+    delta += math.lgamma(
+        n_k_zero + number_of_nodes_in_to_block + nodes_moved
+    ) - math.lgamma(n_k_zero + number_of_nodes_in_from_block)
 
     return delta
 
 
-def delta_calculate_icl_ex_uniform_hyperprior_undirected(partition, from_block, to_block, *args):
+def delta_calculate_icl_ex_uniform_hyperprior_undirected(
+    partition, from_block, to_block, *args
+):
     #     distinguish by given parameters
     if len(args) == 3:
         kit, selfloops, _ = args
         nodes_moved = 1
-        nodes_remaining = not (partition.get_number_of_nodes_in_block(from_block) == nodes_moved)
+        nodes_remaining = not (
+            partition.get_number_of_nodes_in_block(from_block) == nodes_moved
+        )
     elif len(args) == 5:
         kit, selfloops, _, nodes_moved, nodes_remaining = args
     else:
@@ -411,24 +545,42 @@ def delta_calculate_icl_ex_uniform_hyperprior_undirected(partition, from_block, 
             # from_block -> block
             # old value
             eta_kl = eta_kl_zero + partition.get_edge_count(from_block, block)
-            zeta_kl = zeta_kl_zero + number_of_nodes_in_from_block * number_of_nodes_in_block \
+            zeta_kl = (
+                zeta_kl_zero
+                + number_of_nodes_in_from_block * number_of_nodes_in_block
                 - partition.get_edge_count(from_block, block)
-            delta -= math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+            )
+            delta -= (
+                math.lgamma(eta_kl)
+                + math.lgamma(zeta_kl)
+                - math.lgamma(eta_kl + zeta_kl)
+            )
 
             if nodes_remaining:
                 # new value
                 eta_kl -= kit.get(block, 0)
                 zeta_kl -= nodes_moved * number_of_nodes_in_block - kit.get(block, 0)
-                delta += math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+                delta += (
+                    math.lgamma(eta_kl)
+                    + math.lgamma(zeta_kl)
+                    - math.lgamma(eta_kl + zeta_kl)
+                )
             # no extra handling needed because both terms are zero
 
             # to_block -> block
             if to_block_exists:
                 # old value
                 eta_kl = eta_kl_zero + partition.get_edge_count(to_block, block)
-                zeta_kl = zeta_kl_zero + number_of_nodes_in_to_block * number_of_nodes_in_block \
+                zeta_kl = (
+                    zeta_kl_zero
+                    + number_of_nodes_in_to_block * number_of_nodes_in_block
                     - partition.get_edge_count(to_block, block)
-                delta -= math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+                )
+                delta -= (
+                    math.lgamma(eta_kl)
+                    + math.lgamma(zeta_kl)
+                    - math.lgamma(eta_kl + zeta_kl)
+                )
             else:
                 eta_kl = eta_kl_zero
                 zeta_kl = zeta_kl_zero
@@ -437,15 +589,24 @@ def delta_calculate_icl_ex_uniform_hyperprior_undirected(partition, from_block, 
             # new value
             eta_kl += kit.get(block, 0)
             zeta_kl += nodes_moved * number_of_nodes_in_block - kit.get(block, 0)
-            delta += math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+            delta += (
+                math.lgamma(eta_kl)
+                + math.lgamma(zeta_kl)
+                - math.lgamma(eta_kl + zeta_kl)
+            )
 
     # add terms for from_block -> to_block
     if to_block_exists:
         # old value
         eta_kl = eta_kl_zero + partition.get_edge_count(from_block, to_block)
-        zeta_kl = zeta_kl_zero + number_of_nodes_in_from_block * number_of_nodes_in_to_block \
+        zeta_kl = (
+            zeta_kl_zero
+            + number_of_nodes_in_from_block * number_of_nodes_in_to_block
             - partition.get_edge_count(from_block, to_block)
-        delta -= math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        )
+        delta -= (
+            math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        )
     else:
         eta_kl = eta_kl_zero
         zeta_kl = zeta_kl_zero
@@ -455,19 +616,30 @@ def delta_calculate_icl_ex_uniform_hyperprior_undirected(partition, from_block, 
     if nodes_remaining:
         # new value
         eta_kl += kit[from_block] - kit[to_block]
-        zeta_kl -= number_of_nodes_in_from_block * number_of_nodes_in_to_block \
-            - (number_of_nodes_in_from_block - nodes_moved) * (number_of_nodes_in_to_block + nodes_moved) \
-            + kit[from_block] - kit[to_block]
-        delta += math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        zeta_kl -= (
+            number_of_nodes_in_from_block * number_of_nodes_in_to_block
+            - (number_of_nodes_in_from_block - nodes_moved)
+            * (number_of_nodes_in_to_block + nodes_moved)
+            + kit[from_block]
+            - kit[to_block]
+        )
+        delta += (
+            math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        )
     # no extra handling needed because both terms are zero
 
     # to_block -> to_block
     if to_block_exists:
         # old value
         eta_kl = eta_kl_zero + partition.get_edge_count(to_block, to_block) / 2
-        zeta_kl = zeta_kl_zero + number_of_nodes_in_to_block * (number_of_nodes_in_to_block + 1) / 2\
+        zeta_kl = (
+            zeta_kl_zero
+            + number_of_nodes_in_to_block * (number_of_nodes_in_to_block + 1) / 2
             - partition.get_edge_count(to_block, to_block) / 2
-        delta -= math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        )
+        delta -= (
+            math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        )
     else:
         eta_kl = eta_kl_zero
         zeta_kl = zeta_kl_zero
@@ -475,25 +647,40 @@ def delta_calculate_icl_ex_uniform_hyperprior_undirected(partition, from_block, 
 
     # new value
     eta_kl += kit[to_block] + selfloops
-    zeta_kl -= number_of_nodes_in_to_block * (number_of_nodes_in_to_block + 1) / 2 \
-        - (number_of_nodes_in_to_block + nodes_moved) * (number_of_nodes_in_to_block + nodes_moved + 1) / 2 \
-        + kit[to_block] + selfloops
+    zeta_kl -= (
+        number_of_nodes_in_to_block * (number_of_nodes_in_to_block + 1) / 2
+        - (number_of_nodes_in_to_block + nodes_moved)
+        * (number_of_nodes_in_to_block + nodes_moved + 1)
+        / 2
+        + kit[to_block]
+        + selfloops
+    )
     delta += math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
 
     # from_block -> from_block
     # old value
     eta_kl = eta_kl_zero + partition.get_edge_count(from_block, from_block) / 2
-    zeta_kl = zeta_kl_zero + number_of_nodes_in_from_block * (number_of_nodes_in_from_block + 1) / 2\
+    zeta_kl = (
+        zeta_kl_zero
+        + number_of_nodes_in_from_block * (number_of_nodes_in_from_block + 1) / 2
         - partition.get_edge_count(from_block, from_block) / 2
+    )
     delta -= math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
 
     # new value
     if nodes_remaining:
         eta_kl -= kit[from_block] + selfloops
-        zeta_kl -= number_of_nodes_in_from_block * (number_of_nodes_in_from_block + 1) / 2 \
-            - (number_of_nodes_in_from_block - nodes_moved) * (number_of_nodes_in_from_block - nodes_moved + 1) / 2 \
-            - kit[from_block] - selfloops
-        delta += math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        zeta_kl -= (
+            number_of_nodes_in_from_block * (number_of_nodes_in_from_block + 1) / 2
+            - (number_of_nodes_in_from_block - nodes_moved)
+            * (number_of_nodes_in_from_block - nodes_moved + 1)
+            / 2
+            - kit[from_block]
+            - selfloops
+        )
+        delta += (
+            math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        )
     # no extra handling needed because both terms are zero
     # ---- end first term
 
@@ -505,9 +692,12 @@ def delta_calculate_icl_ex_uniform_hyperprior_undirected(partition, from_block, 
         # decrease of block count
         # handle term \Gamma(\sum n_k^0) and add one \gamma(n_k^0) for the reduced count in the denominator
         # gamma(n_k^0) = gamma(1) = 0
-        delta += math.lgamma(partition.B - 1) - math.lgamma(partition.B) \
-                 - math.lgamma(partition.B - 1 + partition.get_number_of_nodes()) \
-                 + math.lgamma(partition.B + partition.get_number_of_nodes())
+        delta += (
+            math.lgamma(partition.B - 1)
+            - math.lgamma(partition.B)
+            - math.lgamma(partition.B - 1 + partition.get_number_of_nodes())
+            + math.lgamma(partition.B + partition.get_number_of_nodes())
+        )
 
     if to_block_exists:
         # subtract term of \prod \gamma(n_k)
@@ -516,23 +706,31 @@ def delta_calculate_icl_ex_uniform_hyperprior_undirected(partition, from_block, 
         # increase of block count
         # handle term \Gamma(\sum n_k^0) and subtract one \gamma(n_k^0) for the increased count in the denominator
         # gamma(n_k^0) = gamma(1) = 0
-        delta += math.lgamma(partition.B + 1) - math.lgamma(partition.B) \
-            - math.lgamma(partition.B + 1 + partition.get_number_of_nodes()) \
+        delta += (
+            math.lgamma(partition.B + 1)
+            - math.lgamma(partition.B)
+            - math.lgamma(partition.B + 1 + partition.get_number_of_nodes())
             + math.lgamma(partition.B + partition.get_number_of_nodes())
+        )
 
     # handle term \prod \gamma(n_k)
-    delta += math.lgamma(1 + number_of_nodes_in_to_block + nodes_moved) \
-        - math.lgamma(1 + number_of_nodes_in_from_block)
+    delta += math.lgamma(1 + number_of_nodes_in_to_block + nodes_moved) - math.lgamma(
+        1 + number_of_nodes_in_from_block
+    )
 
     return delta
 
 
-def delta_calculate_icl_ex_jeffrey_hyperprior_directed(partition, from_block, to_block, *args):
+def delta_calculate_icl_ex_jeffrey_hyperprior_directed(
+    partition, from_block, to_block, *args
+):
     #     distinguish by given parameters
     if len(args) == 5:
         kit, kti, selfloops, _, _ = args
         nodes_moved = 1
-        nodes_remaining = not (partition.get_number_of_nodes_in_block(from_block) == nodes_moved)
+        nodes_remaining = not (
+            partition.get_number_of_nodes_in_block(from_block) == nodes_moved
+        )
     elif len(args) == 7:
         kit, kti, selfloops, _, _, nodes_moved, nodes_remaining = args
     else:
@@ -546,9 +744,9 @@ def delta_calculate_icl_ex_jeffrey_hyperprior_directed(partition, from_block, to
     if not to_block_exists and not nodes_remaining:
         return delta
 
-    eta_kl_zero = .5
-    zeta_kl_zero = .5
-    n_k_zero = .5
+    eta_kl_zero = 0.5
+    zeta_kl_zero = 0.5
+    n_k_zero = 0.5
 
     number_of_nodes_in_from_block = partition.get_number_of_nodes_in_block(from_block)
     if to_block_exists:
@@ -563,15 +761,26 @@ def delta_calculate_icl_ex_jeffrey_hyperprior_directed(partition, from_block, to
             # from_block -> block
             # old value
             eta_kl = eta_kl_zero + partition.get_edge_count(from_block, block)
-            zeta_kl = zeta_kl_zero + number_of_nodes_in_from_block * number_of_nodes_in_block \
+            zeta_kl = (
+                zeta_kl_zero
+                + number_of_nodes_in_from_block * number_of_nodes_in_block
                 - partition.get_edge_count(from_block, block)
-            delta -= math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+            )
+            delta -= (
+                math.lgamma(eta_kl)
+                + math.lgamma(zeta_kl)
+                - math.lgamma(eta_kl + zeta_kl)
+            )
 
             if nodes_remaining:
                 # new value
                 eta_kl -= kit.get(block, 0)
                 zeta_kl -= nodes_moved * number_of_nodes_in_block - kit.get(block, 0)
-                delta += math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+                delta += (
+                    math.lgamma(eta_kl)
+                    + math.lgamma(zeta_kl)
+                    - math.lgamma(eta_kl + zeta_kl)
+                )
             else:
                 # add missing terms from old value, which else cancel out
                 delta += math.lgamma(eta_kl_zero) + math.lgamma(zeta_kl_zero)
@@ -580,9 +789,16 @@ def delta_calculate_icl_ex_jeffrey_hyperprior_directed(partition, from_block, to
             if to_block_exists:
                 # old value
                 eta_kl = eta_kl_zero + partition.get_edge_count(to_block, block)
-                zeta_kl = zeta_kl_zero + number_of_nodes_in_to_block * number_of_nodes_in_block \
+                zeta_kl = (
+                    zeta_kl_zero
+                    + number_of_nodes_in_to_block * number_of_nodes_in_block
                     - partition.get_edge_count(to_block, block)
-                delta -= math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+                )
+                delta -= (
+                    math.lgamma(eta_kl)
+                    + math.lgamma(zeta_kl)
+                    - math.lgamma(eta_kl + zeta_kl)
+                )
             else:
                 eta_kl = eta_kl_zero
                 zeta_kl = zeta_kl_zero
@@ -592,21 +808,36 @@ def delta_calculate_icl_ex_jeffrey_hyperprior_directed(partition, from_block, to
             # new value
             eta_kl += kit.get(block, 0)
             zeta_kl += nodes_moved * number_of_nodes_in_block - kit.get(block, 0)
-            delta += math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+            delta += (
+                math.lgamma(eta_kl)
+                + math.lgamma(zeta_kl)
+                - math.lgamma(eta_kl + zeta_kl)
+            )
 
             # ----- other directions
             # block -> from_block
             # old value
             eta_kl = eta_kl_zero + partition.get_edge_count(block, from_block)
-            zeta_kl = zeta_kl_zero + number_of_nodes_in_from_block * number_of_nodes_in_block \
+            zeta_kl = (
+                zeta_kl_zero
+                + number_of_nodes_in_from_block * number_of_nodes_in_block
                 - partition.get_edge_count(block, from_block)
-            delta -= math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+            )
+            delta -= (
+                math.lgamma(eta_kl)
+                + math.lgamma(zeta_kl)
+                - math.lgamma(eta_kl + zeta_kl)
+            )
 
             if nodes_remaining:
                 # new value
                 eta_kl -= kti.get(block, 0)
                 zeta_kl -= nodes_moved * number_of_nodes_in_block - kti.get(block, 0)
-                delta += math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+                delta += (
+                    math.lgamma(eta_kl)
+                    + math.lgamma(zeta_kl)
+                    - math.lgamma(eta_kl + zeta_kl)
+                )
             else:
                 # add missing terms from old value, which else cancel out
                 delta += math.lgamma(eta_kl_zero) + math.lgamma(zeta_kl_zero)
@@ -615,9 +846,16 @@ def delta_calculate_icl_ex_jeffrey_hyperprior_directed(partition, from_block, to
             if to_block_exists:
                 # old value
                 eta_kl = eta_kl_zero + partition.get_edge_count(block, to_block)
-                zeta_kl = zeta_kl_zero + number_of_nodes_in_to_block * number_of_nodes_in_block \
+                zeta_kl = (
+                    zeta_kl_zero
+                    + number_of_nodes_in_to_block * number_of_nodes_in_block
                     - partition.get_edge_count(block, to_block)
-                delta -= math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+                )
+                delta -= (
+                    math.lgamma(eta_kl)
+                    + math.lgamma(zeta_kl)
+                    - math.lgamma(eta_kl + zeta_kl)
+                )
             else:
                 eta_kl = eta_kl_zero
                 zeta_kl = zeta_kl_zero
@@ -627,15 +865,24 @@ def delta_calculate_icl_ex_jeffrey_hyperprior_directed(partition, from_block, to
             # new value
             eta_kl += kti.get(block, 0)
             zeta_kl += nodes_moved * number_of_nodes_in_block - kti.get(block, 0)
-            delta += math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+            delta += (
+                math.lgamma(eta_kl)
+                + math.lgamma(zeta_kl)
+                - math.lgamma(eta_kl + zeta_kl)
+            )
 
     # add terms for from_block -> to_block
     if to_block_exists:
         # old value
         eta_kl = eta_kl_zero + partition.get_edge_count(from_block, to_block)
-        zeta_kl = zeta_kl_zero + number_of_nodes_in_from_block * number_of_nodes_in_to_block \
+        zeta_kl = (
+            zeta_kl_zero
+            + number_of_nodes_in_from_block * number_of_nodes_in_to_block
             - partition.get_edge_count(from_block, to_block)
-        delta -= math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        )
+        delta -= (
+            math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        )
     else:
         eta_kl = eta_kl_zero
         zeta_kl = zeta_kl_zero
@@ -645,10 +892,16 @@ def delta_calculate_icl_ex_jeffrey_hyperprior_directed(partition, from_block, to
     if nodes_remaining:
         # new value
         eta_kl += kti[from_block] - kit[to_block]
-        zeta_kl -= number_of_nodes_in_from_block * number_of_nodes_in_to_block \
-            - (number_of_nodes_in_from_block - nodes_moved) * (number_of_nodes_in_to_block + nodes_moved) \
-            + kti[from_block] - kit[to_block]
-        delta += math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        zeta_kl -= (
+            number_of_nodes_in_from_block * number_of_nodes_in_to_block
+            - (number_of_nodes_in_from_block - nodes_moved)
+            * (number_of_nodes_in_to_block + nodes_moved)
+            + kti[from_block]
+            - kit[to_block]
+        )
+        delta += (
+            math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        )
     else:
         # add missing terms from old value, which else cancel out
         delta += math.lgamma(eta_kl_zero) + math.lgamma(zeta_kl_zero)
@@ -657,9 +910,14 @@ def delta_calculate_icl_ex_jeffrey_hyperprior_directed(partition, from_block, to
     if to_block_exists:
         # old value
         eta_kl = eta_kl_zero + partition.get_edge_count(to_block, from_block)
-        zeta_kl = zeta_kl_zero + number_of_nodes_in_from_block * number_of_nodes_in_to_block \
+        zeta_kl = (
+            zeta_kl_zero
+            + number_of_nodes_in_from_block * number_of_nodes_in_to_block
             - partition.get_edge_count(to_block, from_block)
-        delta -= math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        )
+        delta -= (
+            math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        )
     else:
         eta_kl = eta_kl_zero
         zeta_kl = zeta_kl_zero
@@ -669,10 +927,16 @@ def delta_calculate_icl_ex_jeffrey_hyperprior_directed(partition, from_block, to
     if nodes_remaining:
         # new value
         eta_kl += kit[from_block] - kti[to_block]
-        zeta_kl -= number_of_nodes_in_from_block * number_of_nodes_in_to_block \
-            - (number_of_nodes_in_from_block - nodes_moved) * (number_of_nodes_in_to_block + nodes_moved) \
-            + kit[from_block] - kti[to_block]
-        delta += math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        zeta_kl -= (
+            number_of_nodes_in_from_block * number_of_nodes_in_to_block
+            - (number_of_nodes_in_from_block - nodes_moved)
+            * (number_of_nodes_in_to_block + nodes_moved)
+            + kit[from_block]
+            - kti[to_block]
+        )
+        delta += (
+            math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        )
     else:
         # add missing terms from old value, which else cancel out
         delta += math.lgamma(eta_kl_zero) + math.lgamma(zeta_kl_zero)
@@ -681,9 +945,14 @@ def delta_calculate_icl_ex_jeffrey_hyperprior_directed(partition, from_block, to
     if to_block_exists:
         # old value
         eta_kl = eta_kl_zero + partition.get_edge_count(to_block, to_block)
-        zeta_kl = zeta_kl_zero + number_of_nodes_in_to_block * number_of_nodes_in_to_block \
+        zeta_kl = (
+            zeta_kl_zero
+            + number_of_nodes_in_to_block * number_of_nodes_in_to_block
             - partition.get_edge_count(to_block, to_block)
-        delta -= math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        )
+        delta -= (
+            math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        )
     else:
         eta_kl = eta_kl_zero
         zeta_kl = zeta_kl_zero
@@ -692,25 +961,40 @@ def delta_calculate_icl_ex_jeffrey_hyperprior_directed(partition, from_block, to
 
     # new value
     eta_kl += kit[to_block] + kti[to_block] + selfloops
-    zeta_kl -= number_of_nodes_in_to_block * number_of_nodes_in_to_block \
-        - (number_of_nodes_in_to_block + nodes_moved) * (number_of_nodes_in_to_block + nodes_moved) \
-        + kit[to_block] + kti[to_block] + selfloops
+    zeta_kl -= (
+        number_of_nodes_in_to_block * number_of_nodes_in_to_block
+        - (number_of_nodes_in_to_block + nodes_moved)
+        * (number_of_nodes_in_to_block + nodes_moved)
+        + kit[to_block]
+        + kti[to_block]
+        + selfloops
+    )
     delta += math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
 
     # from_block -> from_block
     # old value
     eta_kl = eta_kl_zero + partition.get_edge_count(from_block, from_block)
-    zeta_kl = zeta_kl_zero + number_of_nodes_in_from_block * number_of_nodes_in_from_block \
+    zeta_kl = (
+        zeta_kl_zero
+        + number_of_nodes_in_from_block * number_of_nodes_in_from_block
         - partition.get_edge_count(from_block, from_block)
+    )
     delta -= math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
 
     # new value
     if nodes_remaining:
         eta_kl -= kit[from_block] + kti[from_block] + selfloops
-        zeta_kl -= number_of_nodes_in_from_block * number_of_nodes_in_from_block \
-            - (number_of_nodes_in_from_block - nodes_moved) * (number_of_nodes_in_from_block - nodes_moved) \
-            - kit[from_block] - kti[from_block] - selfloops
-        delta += math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        zeta_kl -= (
+            number_of_nodes_in_from_block * number_of_nodes_in_from_block
+            - (number_of_nodes_in_from_block - nodes_moved)
+            * (number_of_nodes_in_from_block - nodes_moved)
+            - kit[from_block]
+            - kti[from_block]
+            - selfloops
+        )
+        delta += (
+            math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        )
     else:
         # add missing terms from old value, which else cancel out
         delta += math.lgamma(eta_kl_zero) + math.lgamma(zeta_kl_zero)
@@ -723,9 +1007,15 @@ def delta_calculate_icl_ex_jeffrey_hyperprior_directed(partition, from_block, to
     else:
         # decrease of block count
         # handle term \Gamma(\sum n_k^0) and add one \gamma(n_k^0) for the reduced count in the denominator
-        delta += math.lgamma((partition.B - 1) * n_k_zero) - math.lgamma(partition.B * n_k_zero) + math.lgamma(n_k_zero) \
-                 - math.lgamma(n_k_zero * (partition.B - 1) + partition.get_number_of_nodes()) \
-                 + math.lgamma(n_k_zero * partition.B + partition.get_number_of_nodes())
+        delta += (
+            math.lgamma((partition.B - 1) * n_k_zero)
+            - math.lgamma(partition.B * n_k_zero)
+            + math.lgamma(n_k_zero)
+            - math.lgamma(
+                n_k_zero * (partition.B - 1) + partition.get_number_of_nodes()
+            )
+            + math.lgamma(n_k_zero * partition.B + partition.get_number_of_nodes())
+        )
 
     if to_block_exists:
         # subtract term of \prod \gamma(n_k)
@@ -733,23 +1023,34 @@ def delta_calculate_icl_ex_jeffrey_hyperprior_directed(partition, from_block, to
     else:
         # increase of block count
         # handle term \Gamma(\sum n_k^0) and subtract one \gamma(n_k^0) for the increased count in the denominator
-        delta += math.lgamma((partition.B + 1) * n_k_zero) - math.lgamma(partition.B * n_k_zero) - math.lgamma(n_k_zero) \
-            - math.lgamma(n_k_zero * (partition.B + 1) + partition.get_number_of_nodes()) \
+        delta += (
+            math.lgamma((partition.B + 1) * n_k_zero)
+            - math.lgamma(partition.B * n_k_zero)
+            - math.lgamma(n_k_zero)
+            - math.lgamma(
+                n_k_zero * (partition.B + 1) + partition.get_number_of_nodes()
+            )
             + math.lgamma(n_k_zero * partition.B + partition.get_number_of_nodes())
+        )
 
     # handle term \prod \gamma(n_k)
-    delta += math.lgamma(n_k_zero + number_of_nodes_in_to_block + nodes_moved) \
-        - math.lgamma(n_k_zero + number_of_nodes_in_from_block)
+    delta += math.lgamma(
+        n_k_zero + number_of_nodes_in_to_block + nodes_moved
+    ) - math.lgamma(n_k_zero + number_of_nodes_in_from_block)
 
     return delta
 
 
-def delta_calculate_icl_ex_uniform_hyperprior_directed(partition, from_block, to_block, *args):
+def delta_calculate_icl_ex_uniform_hyperprior_directed(
+    partition, from_block, to_block, *args
+):
     #     distinguish by given parameters
     if len(args) == 5:
         kit, kti, selfloops, _, _ = args
         nodes_moved = 1
-        nodes_remaining = not (partition.get_number_of_nodes_in_block(from_block) == nodes_moved)
+        nodes_remaining = not (
+            partition.get_number_of_nodes_in_block(from_block) == nodes_moved
+        )
     elif len(args) == 7:
         kit, kti, selfloops, _, _, nodes_moved, nodes_remaining = args
     else:
@@ -780,24 +1081,42 @@ def delta_calculate_icl_ex_uniform_hyperprior_directed(partition, from_block, to
             # from_block -> block
             # old value
             eta_kl = eta_kl_zero + partition.get_edge_count(from_block, block)
-            zeta_kl = zeta_kl_zero + number_of_nodes_in_from_block * number_of_nodes_in_block \
+            zeta_kl = (
+                zeta_kl_zero
+                + number_of_nodes_in_from_block * number_of_nodes_in_block
                 - partition.get_edge_count(from_block, block)
-            delta -= math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+            )
+            delta -= (
+                math.lgamma(eta_kl)
+                + math.lgamma(zeta_kl)
+                - math.lgamma(eta_kl + zeta_kl)
+            )
 
             if nodes_remaining:
                 # new value
                 eta_kl -= kit.get(block, 0)
                 zeta_kl -= nodes_moved * number_of_nodes_in_block - kit.get(block, 0)
-                delta += math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+                delta += (
+                    math.lgamma(eta_kl)
+                    + math.lgamma(zeta_kl)
+                    - math.lgamma(eta_kl + zeta_kl)
+                )
             # no extra handling needed because both terms are zero
 
             # to_block -> block
             if to_block_exists:
                 # old value
                 eta_kl = eta_kl_zero + partition.get_edge_count(to_block, block)
-                zeta_kl = zeta_kl_zero + number_of_nodes_in_to_block * number_of_nodes_in_block \
+                zeta_kl = (
+                    zeta_kl_zero
+                    + number_of_nodes_in_to_block * number_of_nodes_in_block
                     - partition.get_edge_count(to_block, block)
-                delta -= math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+                )
+                delta -= (
+                    math.lgamma(eta_kl)
+                    + math.lgamma(zeta_kl)
+                    - math.lgamma(eta_kl + zeta_kl)
+                )
             else:
                 eta_kl = eta_kl_zero
                 zeta_kl = zeta_kl_zero
@@ -806,30 +1125,52 @@ def delta_calculate_icl_ex_uniform_hyperprior_directed(partition, from_block, to
             # new value
             eta_kl += kit.get(block, 0)
             zeta_kl += nodes_moved * number_of_nodes_in_block - kit.get(block, 0)
-            delta += math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+            delta += (
+                math.lgamma(eta_kl)
+                + math.lgamma(zeta_kl)
+                - math.lgamma(eta_kl + zeta_kl)
+            )
 
             # --- other direction
             # block -> from_block
             # old value
             eta_kl = eta_kl_zero + partition.get_edge_count(block, from_block)
-            zeta_kl = zeta_kl_zero + number_of_nodes_in_from_block * number_of_nodes_in_block \
+            zeta_kl = (
+                zeta_kl_zero
+                + number_of_nodes_in_from_block * number_of_nodes_in_block
                 - partition.get_edge_count(block, from_block)
-            delta -= math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+            )
+            delta -= (
+                math.lgamma(eta_kl)
+                + math.lgamma(zeta_kl)
+                - math.lgamma(eta_kl + zeta_kl)
+            )
 
             if nodes_remaining:
                 # new value
                 eta_kl -= kti.get(block, 0)
                 zeta_kl -= nodes_moved * number_of_nodes_in_block - kti.get(block, 0)
-                delta += math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+                delta += (
+                    math.lgamma(eta_kl)
+                    + math.lgamma(zeta_kl)
+                    - math.lgamma(eta_kl + zeta_kl)
+                )
             # no extra handling needed because both terms are zero
 
             # to_block -> block
             if to_block_exists:
                 # old value
                 eta_kl = eta_kl_zero + partition.get_edge_count(block, to_block)
-                zeta_kl = zeta_kl_zero + number_of_nodes_in_to_block * number_of_nodes_in_block \
+                zeta_kl = (
+                    zeta_kl_zero
+                    + number_of_nodes_in_to_block * number_of_nodes_in_block
                     - partition.get_edge_count(block, to_block)
-                delta -= math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+                )
+                delta -= (
+                    math.lgamma(eta_kl)
+                    + math.lgamma(zeta_kl)
+                    - math.lgamma(eta_kl + zeta_kl)
+                )
             else:
                 eta_kl = eta_kl_zero
                 zeta_kl = zeta_kl_zero
@@ -838,15 +1179,24 @@ def delta_calculate_icl_ex_uniform_hyperprior_directed(partition, from_block, to
             # new value
             eta_kl += kti.get(block, 0)
             zeta_kl += nodes_moved * number_of_nodes_in_block - kti.get(block, 0)
-            delta += math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+            delta += (
+                math.lgamma(eta_kl)
+                + math.lgamma(zeta_kl)
+                - math.lgamma(eta_kl + zeta_kl)
+            )
 
     # add terms for from_block -> to_block
     if to_block_exists:
         # old value
         eta_kl = eta_kl_zero + partition.get_edge_count(from_block, to_block)
-        zeta_kl = zeta_kl_zero + number_of_nodes_in_from_block * number_of_nodes_in_to_block \
+        zeta_kl = (
+            zeta_kl_zero
+            + number_of_nodes_in_from_block * number_of_nodes_in_to_block
             - partition.get_edge_count(from_block, to_block)
-        delta -= math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        )
+        delta -= (
+            math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        )
     else:
         eta_kl = eta_kl_zero
         zeta_kl = zeta_kl_zero
@@ -856,19 +1206,30 @@ def delta_calculate_icl_ex_uniform_hyperprior_directed(partition, from_block, to
     if nodes_remaining:
         # new value
         eta_kl += kti[from_block] - kit[to_block]
-        zeta_kl -= number_of_nodes_in_from_block * number_of_nodes_in_to_block \
-            - (number_of_nodes_in_from_block - nodes_moved) * (number_of_nodes_in_to_block + nodes_moved) \
-            + kti[from_block] - kit[to_block]
-        delta += math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        zeta_kl -= (
+            number_of_nodes_in_from_block * number_of_nodes_in_to_block
+            - (number_of_nodes_in_from_block - nodes_moved)
+            * (number_of_nodes_in_to_block + nodes_moved)
+            + kti[from_block]
+            - kit[to_block]
+        )
+        delta += (
+            math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        )
     # no extra handling needed because both terms are zero
 
     # add terms for to_block -> from_block
     if to_block_exists:
         # old value
         eta_kl = eta_kl_zero + partition.get_edge_count(to_block, from_block)
-        zeta_kl = zeta_kl_zero + number_of_nodes_in_from_block * number_of_nodes_in_to_block \
+        zeta_kl = (
+            zeta_kl_zero
+            + number_of_nodes_in_from_block * number_of_nodes_in_to_block
             - partition.get_edge_count(to_block, from_block)
-        delta -= math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        )
+        delta -= (
+            math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        )
     else:
         eta_kl = eta_kl_zero
         zeta_kl = zeta_kl_zero
@@ -878,19 +1239,30 @@ def delta_calculate_icl_ex_uniform_hyperprior_directed(partition, from_block, to
     if nodes_remaining:
         # new value
         eta_kl += kit[from_block] - kti[to_block]
-        zeta_kl -= number_of_nodes_in_from_block * number_of_nodes_in_to_block \
-            - (number_of_nodes_in_from_block - nodes_moved) * (number_of_nodes_in_to_block + nodes_moved) \
-            + kit[from_block] - kti[to_block]
-        delta += math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        zeta_kl -= (
+            number_of_nodes_in_from_block * number_of_nodes_in_to_block
+            - (number_of_nodes_in_from_block - nodes_moved)
+            * (number_of_nodes_in_to_block + nodes_moved)
+            + kit[from_block]
+            - kti[to_block]
+        )
+        delta += (
+            math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        )
     # no extra handling needed because both terms are zero
 
     # to_block -> to_block
     if to_block_exists:
         # old value
         eta_kl = eta_kl_zero + partition.get_edge_count(to_block, to_block)
-        zeta_kl = zeta_kl_zero + number_of_nodes_in_to_block * number_of_nodes_in_to_block\
+        zeta_kl = (
+            zeta_kl_zero
+            + number_of_nodes_in_to_block * number_of_nodes_in_to_block
             - partition.get_edge_count(to_block, to_block)
-        delta -= math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        )
+        delta -= (
+            math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        )
     else:
         eta_kl = eta_kl_zero
         zeta_kl = zeta_kl_zero
@@ -898,25 +1270,40 @@ def delta_calculate_icl_ex_uniform_hyperprior_directed(partition, from_block, to
 
     # new value
     eta_kl += kit[to_block] + kti[to_block] + selfloops
-    zeta_kl -= number_of_nodes_in_to_block * number_of_nodes_in_to_block \
-        - (number_of_nodes_in_to_block + nodes_moved) * (number_of_nodes_in_to_block + nodes_moved) \
-        + kit[to_block] + kti[to_block] + selfloops
+    zeta_kl -= (
+        number_of_nodes_in_to_block * number_of_nodes_in_to_block
+        - (number_of_nodes_in_to_block + nodes_moved)
+        * (number_of_nodes_in_to_block + nodes_moved)
+        + kit[to_block]
+        + kti[to_block]
+        + selfloops
+    )
     delta += math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
 
     # from_block -> from_block
     # old value
     eta_kl = eta_kl_zero + partition.get_edge_count(from_block, from_block)
-    zeta_kl = zeta_kl_zero + number_of_nodes_in_from_block * number_of_nodes_in_from_block \
+    zeta_kl = (
+        zeta_kl_zero
+        + number_of_nodes_in_from_block * number_of_nodes_in_from_block
         - partition.get_edge_count(from_block, from_block)
+    )
     delta -= math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
 
     # new value
     if nodes_remaining:
         eta_kl -= kit[from_block] + kti[from_block] + selfloops
-        zeta_kl -= number_of_nodes_in_from_block * number_of_nodes_in_from_block \
-            - (number_of_nodes_in_from_block - nodes_moved) * (number_of_nodes_in_from_block - nodes_moved) \
-            - kit[from_block] - kti[from_block] - selfloops
-        delta += math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        zeta_kl -= (
+            number_of_nodes_in_from_block * number_of_nodes_in_from_block
+            - (number_of_nodes_in_from_block - nodes_moved)
+            * (number_of_nodes_in_from_block - nodes_moved)
+            - kit[from_block]
+            - kti[from_block]
+            - selfloops
+        )
+        delta += (
+            math.lgamma(eta_kl) + math.lgamma(zeta_kl) - math.lgamma(eta_kl + zeta_kl)
+        )
     # no extra handling needed because both terms are zero
     # ---- end first term
 
@@ -928,9 +1315,12 @@ def delta_calculate_icl_ex_uniform_hyperprior_directed(partition, from_block, to
         # decrease of block count
         # handle term \Gamma(\sum n_k^0) and add one \gamma(n_k^0) for the reduced count in the denominator
         # gamma(n_k^0) = gamma(1) = 0
-        delta += math.lgamma(partition.B - 1) - math.lgamma(partition.B) \
-                 - math.lgamma(partition.B - 1 + partition.get_number_of_nodes()) \
-                 + math.lgamma(partition.B + partition.get_number_of_nodes())
+        delta += (
+            math.lgamma(partition.B - 1)
+            - math.lgamma(partition.B)
+            - math.lgamma(partition.B - 1 + partition.get_number_of_nodes())
+            + math.lgamma(partition.B + partition.get_number_of_nodes())
+        )
 
     if to_block_exists:
         # subtract term of \prod \gamma(n_k)
@@ -939,15 +1329,20 @@ def delta_calculate_icl_ex_uniform_hyperprior_directed(partition, from_block, to
         # increase of block count
         # handle term \Gamma(\sum n_k^0) and subtract one \gamma(n_k^0) for the increased count in the denominator
         # gamma(n_k^0) = gamma(1) = 0
-        delta += math.lgamma(partition.B + 1) - math.lgamma(partition.B) \
-            - math.lgamma(partition.B + 1 + partition.get_number_of_nodes()) \
+        delta += (
+            math.lgamma(partition.B + 1)
+            - math.lgamma(partition.B)
+            - math.lgamma(partition.B + 1 + partition.get_number_of_nodes())
             + math.lgamma(partition.B + partition.get_number_of_nodes())
+        )
 
     # handle term \prod \gamma(n_k)
-    delta += math.lgamma(1 + number_of_nodes_in_to_block + nodes_moved) \
-        - math.lgamma(1 + number_of_nodes_in_from_block)
+    delta += math.lgamma(1 + number_of_nodes_in_to_block + nodes_moved) - math.lgamma(
+        1 + number_of_nodes_in_from_block
+    )
 
     return delta
+
 
 # ----------------------------------------------
 # As Objective Function Class
@@ -955,42 +1350,55 @@ def delta_calculate_icl_ex_uniform_hyperprior_directed(partition, from_block, to
 
 
 class IntegratedCompleteLikelihoodExact(ObjectiveFunction):
-    
     JEFFREY_HYPERPRIOR = "jeffrey"
     UNIFORM_HYPERPRIOR = "uniform"
-    
+
     def __init__(self, is_directed, hyperprior=None):
         if hyperprior is None:
             hyperprior = self.JEFFREY_HYPERPRIOR
-            
+
         self._hyperprior = hyperprior
-        
+
         if hyperprior == self.JEFFREY_HYPERPRIOR:
-            function_calculate_undirected = calculate_icl_ex_jeffrey_hyperprior_undirected
+            function_calculate_undirected = (
+                calculate_icl_ex_jeffrey_hyperprior_undirected
+            )
             function_calculate_directed = calculate_icl_ex_jeffrey_hyperprior_directed
-            function_calculate_delta_undirected = delta_calculate_icl_ex_jeffrey_hyperprior_undirected
-            function_calculate_delta_directed = delta_calculate_icl_ex_jeffrey_hyperprior_directed
+            function_calculate_delta_undirected = (
+                delta_calculate_icl_ex_jeffrey_hyperprior_undirected
+            )
+            function_calculate_delta_directed = (
+                delta_calculate_icl_ex_jeffrey_hyperprior_directed
+            )
         else:
-            function_calculate_undirected = calculate_icl_ex_uniform_hyperprior_undirected
+            function_calculate_undirected = (
+                calculate_icl_ex_uniform_hyperprior_undirected
+            )
             function_calculate_directed = calculate_icl_ex_uniform_hyperprior_directed
-            function_calculate_delta_undirected = delta_calculate_icl_ex_uniform_hyperprior_undirected
-            function_calculate_delta_directed = delta_calculate_icl_ex_uniform_hyperprior_directed
-        
+            function_calculate_delta_undirected = (
+                delta_calculate_icl_ex_uniform_hyperprior_undirected
+            )
+            function_calculate_delta_directed = (
+                delta_calculate_icl_ex_uniform_hyperprior_directed
+            )
+
         super(IntegratedCompleteLikelihoodExact, self).__init__(
-            is_directed, 
-            function_calculate_undirected, 
-            function_calculate_directed, 
-            function_calculate_delta_undirected, 
-            function_calculate_delta_directed
+            is_directed,
+            function_calculate_undirected,
+            function_calculate_directed,
+            function_calculate_delta_undirected,
+            function_calculate_delta_directed,
         )
 
 
 class IntegratedCompleteLikelihoodExactJeffrey(IntegratedCompleteLikelihoodExact):
     title = "ICLex Jeffrey"
-    short_title ="ICLexJ"
+    short_title = "ICLexJ"
 
     def __init__(self, is_directed):
-        super(IntegratedCompleteLikelihoodExactJeffrey, self).__init__(is_directed, hyperprior=self.JEFFREY_HYPERPRIOR)
+        super(IntegratedCompleteLikelihoodExactJeffrey, self).__init__(
+            is_directed, hyperprior=self.JEFFREY_HYPERPRIOR
+        )
 
 
 class IntegratedCompleteLikelihoodExactUniform(IntegratedCompleteLikelihoodExact):
@@ -998,4 +1406,6 @@ class IntegratedCompleteLikelihoodExactUniform(IntegratedCompleteLikelihoodExact
     short_title = "ICLexU"
 
     def __init__(self, is_directed):
-        super(IntegratedCompleteLikelihoodExactUniform, self).__init__(is_directed, hyperprior=self.UNIFORM_HYPERPRIOR)
+        super(IntegratedCompleteLikelihoodExactUniform, self).__init__(
+            is_directed, hyperprior=self.UNIFORM_HYPERPRIOR
+        )

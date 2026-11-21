@@ -9,10 +9,10 @@ from pysbm import additional_types as at
 
 
 class TestSetDict(ut.TestCase):
-    """ Test Class SetDict """
+    """Test Class SetDict"""
 
     # noinspection PyPep8Naming
-    def __init__(self, methodName='runTest'):
+    def __init__(self, methodName="runTest"):
         super(TestSetDict, self).__init__(methodName)
 
     def setUp(self):
@@ -22,7 +22,7 @@ class TestSetDict(ut.TestCase):
         self.list.add(3)
 
     def test_remove(self):
-        """ Test removing elements"""
+        """Test removing elements"""
         with self.assertRaises(KeyError):
             self.list.remove(4)
 
@@ -100,10 +100,10 @@ class TestSetDict(ut.TestCase):
 
 
 class TestListDict(TestSetDict):
-    """ Test Class ListDict """
+    """Test Class ListDict"""
 
     # noinspection PyPep8Naming
-    def __init__(self, methodName='runTest'):
+    def __init__(self, methodName="runTest"):
         super(TestListDict, self).__init__(methodName)
 
     def setUp(self):
@@ -165,7 +165,7 @@ class TestWeightedListDict(TestListDict):
     """Test weighted ListDict implementation"""
 
     # noinspection PyPep8Naming
-    def __init__(self, methodName='runTest'):
+    def __init__(self, methodName="runTest"):
         super(TestWeightedListDict, self).__init__(methodName)
 
     def setUp(self):
@@ -184,7 +184,7 @@ class TestWeightedListDict(TestListDict):
         six.assertCountEqual(self, [1, 2, 3, 4], self.list.items)
         six.assertCountEqual(self, [1, 1, 1, 2], self.list.weights)
 
-        self.list.add(2, .5)
+        self.list.add(2, 0.5)
         six.assertCountEqual(self, [1, 2, 3, 4], self.list.items)
         six.assertCountEqual(self, [1, 1, 1.5, 2], self.list.weights)
 
@@ -205,18 +205,18 @@ class TestWeightedListDict(TestListDict):
         self.assertAlmostEqual(hits[4], 0.5, delta=0.1)
 
         #        test separate remove
-        self.list.remove(4, .5)
+        self.list.remove(4, 0.5)
         self.list.remove(4, 1)
         self.list.remove(4, 1)
-        self.list.remove(4, .5)
+        self.list.remove(4, 0.5)
 
 
 # noinspection SpellCheckingInspection
 class TestnHeap(ut.TestCase):
-    """ Test Class nHeap """
+    """Test Class nHeap"""
 
     # noinspection PyPep8Naming
-    def __init__(self, methodName='runTest'):
+    def __init__(self, methodName="runTest"):
         super(TestnHeap, self).__init__(methodName)
 
     def setUp(self):
@@ -240,7 +240,7 @@ class TestnHeap(ut.TestCase):
         six.assertCountEqual(self, [(2.1, "Test"), (2, 2), (3, 3)], self.heap.data)
 
     def test_len(self):
-        """ Test len method """
+        """Test len method"""
         for i in range(0, 5):
             self.assertEqual(min(i, 3), len(self.heap))
             self.heap.push_try((i, i))
@@ -257,17 +257,17 @@ class TestnHeap(ut.TestCase):
 
 
 class TestNode(ut.TestCase):
-    """ Test Class for Node """
+    """Test Class for Node"""
 
     # noinspection PyPep8Naming
-    def __init__(self, methodName='runTest'):
+    def __init__(self, methodName="runTest"):
         super(TestNode, self).__init__(methodName)
 
     def setUp(self):
         self.node = at.Node()
 
     def test_node(self):
-        """ Test setting and getting next_node and get data """
+        """Test setting and getting next_node and get data"""
 
         new_node = at.Node(data=10, next_node=self.node)
         self.assertEqual(new_node.data, 10)
@@ -279,17 +279,17 @@ class TestNode(ut.TestCase):
 
 
 class TestLinkedList(ut.TestCase):
-    """ Test Class for Linked List and LinkedListIterator"""
+    """Test Class for Linked List and LinkedListIterator"""
 
     # noinspection PyPep8Naming
-    def __init__(self, methodName='runTest'):
+    def __init__(self, methodName="runTest"):
         super(TestLinkedList, self).__init__(methodName)
 
     def setUp(self):
         self.list = at.LinkedList()
 
     def test_empty(self):
-        """ Test empty check """
+        """Test empty check"""
         self.assertTrue(self.list.is_empty())
         self.list.append(1)
         self.assertFalse(self.list.is_empty())
@@ -297,7 +297,7 @@ class TestLinkedList(ut.TestCase):
         self.assertTrue(self.list.is_empty())
 
     def test_append_and_pop(self):
-        """ Test inserting and reading data"""
+        """Test inserting and reading data"""
         #        check error on popping empty list
         with self.assertRaises(IndexError):
             self.list.pop()
@@ -384,10 +384,10 @@ class TestLinkedList(ut.TestCase):
 
 
 class TestObservedObserver(ut.TestCase):
-    """ Test Class for Observed and Observer"""
+    """Test Class for Observed and Observer"""
 
     # noinspection PyPep8Naming
-    def __init__(self, methodName='runTest'):
+    def __init__(self, methodName="runTest"):
         super(TestObservedObserver, self).__init__(methodName)
 
     def setUp(self):
@@ -395,7 +395,7 @@ class TestObservedObserver(ut.TestCase):
         self.observer = at.Observer(self.observed)
 
     def test_observed(self):
-        """ Test basic functions of observed """
+        """Test basic functions of observed"""
         other_observed = at.Observed(2)
 
         self.assertTrue(self.observed < other_observed)
@@ -449,5 +449,8 @@ class TestObservedObserver(ut.TestCase):
         self.observer.update_observed(other_observed)
         self.assertEqual(self.observer.get_value(), 3)
         self.assertEqual(other_observer.get_value(), 3)
-        six.assertCountEqual(self, [self.observer, other_observer, another_observer],
-                             other_observed.observers)
+        six.assertCountEqual(
+            self,
+            [self.observer, other_observer, another_observer],
+            other_observed.observers,
+        )

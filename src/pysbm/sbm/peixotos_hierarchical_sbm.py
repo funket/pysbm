@@ -10,7 +10,9 @@ import math
 
 
 from .peixotos_flat_sbm import ModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm
-from .peixotos_flat_sbm import DeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm
+from .peixotos_flat_sbm import (
+    DeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm,
+)
 from .peixotos_hierarchical_sbm_tools import log_binom
 from .nxpartitiongraphbased import NxHierarchicalPartition
 from .objective_functions import ObjectiveFunction
@@ -142,7 +144,8 @@ from .objective_functions import ObjectiveFunction
 
 
 class ModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
-        ModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm):
+    ModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm
+):
     """Log Version of Likelihood of Hierarchical Microcanonical Degree Corrected SBM"""
 
     def calculate_complete_uniform_hyperprior_undirected(self, hierarchy_partition):
@@ -150,8 +153,12 @@ class ModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         hierarchy_partition.actual_level = 0
         probability = 0
         probability += self._calculate_p_adjacency_undirected(hierarchy_partition)
-        probability += self._calculate_p_degree_sequence_uniform_hyperprior_undirected(hierarchy_partition)
-        probability += self._calculate_p_edge_counts_hierarchy_undirected(hierarchy_partition)
+        probability += self._calculate_p_degree_sequence_uniform_hyperprior_undirected(
+            hierarchy_partition
+        )
+        probability += self._calculate_p_edge_counts_hierarchy_undirected(
+            hierarchy_partition
+        )
         hierarchy_partition.actual_level = saved_level
         return probability
 
@@ -160,8 +167,12 @@ class ModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         hierarchy_partition.actual_level = 0
         probability = 0
         probability += self._calculate_p_adjacency_undirected(hierarchy_partition)
-        probability += self._calculate_p_degree_sequence_uniform_undirected(hierarchy_partition)
-        probability += self._calculate_p_edge_counts_hierarchy_undirected(hierarchy_partition)
+        probability += self._calculate_p_degree_sequence_uniform_undirected(
+            hierarchy_partition
+        )
+        probability += self._calculate_p_edge_counts_hierarchy_undirected(
+            hierarchy_partition
+        )
         hierarchy_partition.actual_level = saved_level
         return probability
 
@@ -169,8 +180,12 @@ class ModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         saved_level = hierarchy_partition.actual_level
         hierarchy_partition.actual_level = 0
         probability = 0
-        probability += self._calculate_non_degree_corrected_undirected(hierarchy_partition)
-        probability += self._calculate_p_edge_counts_hierarchy_undirected(hierarchy_partition)
+        probability += self._calculate_non_degree_corrected_undirected(
+            hierarchy_partition
+        )
+        probability += self._calculate_p_edge_counts_hierarchy_undirected(
+            hierarchy_partition
+        )
         hierarchy_partition.actual_level = saved_level
         return probability
 
@@ -212,7 +227,9 @@ class ModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
                 probability += math.lgamma(1 + n_r)
 
             # group independent terms of last product
-            number_of_blocks_below = hierarchy_partition.get_number_of_blocks_in_level(level - 1)
+            number_of_blocks_below = hierarchy_partition.get_number_of_blocks_in_level(
+                level - 1
+            )
             probability -= math.lgamma(1 + number_of_blocks_below)
 
             probability -= log_binom(number_of_blocks_below - 1, number_of_blocks - 1)
@@ -223,8 +240,11 @@ class ModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         number_of_blocks_below = number_of_blocks
 
         probability -= log_binom(
-            number_of_blocks_below * (number_of_blocks_below + 1) / 2 + hierarchy_partition.edge_total - 1,
-            hierarchy_partition.edge_total)
+            number_of_blocks_below * (number_of_blocks_below + 1) / 2
+            + hierarchy_partition.edge_total
+            - 1,
+            hierarchy_partition.edge_total,
+        )
 
         # next two factors as log always 0
         # and last factor
@@ -240,8 +260,12 @@ class ModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         hierarchy_partition.actual_level = 0
         probability = 0
         probability += self._calculate_p_adjacency_directed(hierarchy_partition)
-        probability += self._calculate_p_degree_sequence_uniform_hyperprior_directed(hierarchy_partition)
-        probability += self._calculate_p_edge_counts_hierarchy_directed(hierarchy_partition)
+        probability += self._calculate_p_degree_sequence_uniform_hyperprior_directed(
+            hierarchy_partition
+        )
+        probability += self._calculate_p_edge_counts_hierarchy_directed(
+            hierarchy_partition
+        )
         hierarchy_partition.actual_level = saved_level
         return probability
 
@@ -250,8 +274,12 @@ class ModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         hierarchy_partition.actual_level = 0
         probability = 0
         probability += self._calculate_p_adjacency_directed(hierarchy_partition)
-        probability += self._calculate_p_degree_sequence_uniform_directed(hierarchy_partition)
-        probability += self._calculate_p_edge_counts_hierarchy_directed(hierarchy_partition)
+        probability += self._calculate_p_degree_sequence_uniform_directed(
+            hierarchy_partition
+        )
+        probability += self._calculate_p_edge_counts_hierarchy_directed(
+            hierarchy_partition
+        )
         hierarchy_partition.actual_level = saved_level
         return probability
 
@@ -259,8 +287,12 @@ class ModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         saved_level = hierarchy_partition.actual_level
         hierarchy_partition.actual_level = 0
         probability = 0
-        probability += self._calculate_non_degree_corrected_directed(hierarchy_partition)
-        probability += self._calculate_p_edge_counts_hierarchy_directed(hierarchy_partition)
+        probability += self._calculate_non_degree_corrected_directed(
+            hierarchy_partition
+        )
+        probability += self._calculate_p_edge_counts_hierarchy_directed(
+            hierarchy_partition
+        )
         hierarchy_partition.actual_level = saved_level
         return probability
 
@@ -296,7 +328,9 @@ class ModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
 
                 probability += math.lgamma(1 + n_r)
 
-            number_of_blocks_below = hierarchy_partition.get_number_of_blocks_in_level(level - 1)
+            number_of_blocks_below = hierarchy_partition.get_number_of_blocks_in_level(
+                level - 1
+            )
             probability -= math.lgamma(1 + number_of_blocks_below)
 
             probability -= log_binom(number_of_blocks_below - 1, number_of_blocks - 1)
@@ -307,8 +341,11 @@ class ModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         number_of_blocks_below = number_of_blocks
 
         probability -= log_binom(
-            number_of_blocks_below * number_of_blocks_below + hierarchy_partition.edge_total - 1,
-            hierarchy_partition.edge_total)
+            number_of_blocks_below * number_of_blocks_below
+            + hierarchy_partition.edge_total
+            - 1,
+            hierarchy_partition.edge_total,
+        )
 
         # next two factors always 0 (as log)
         # and last factor
@@ -319,17 +356,23 @@ class ModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
 
 
 class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
-        DeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm):
+    DeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm
+):
     """Delta Log Version of Likelihood of Hierarchical Microcanonical Degree Corrected SBM"""
 
-    def calculate_delta_complete_uniform_hyperprior_undirected(self, hierarchy_partition, from_block, to_block, *args):
+    def calculate_delta_complete_uniform_hyperprior_undirected(
+        self, hierarchy_partition, from_block, to_block, *args
+    ):
         if from_block == to_block:
             return 0
         # handle input variables
         if len(args) == 3:
             kit, selfloops, degree = args
             nodes_moved = 1
-            nodes_remaining = not (hierarchy_partition.get_number_of_nodes_in_block(from_block) == nodes_moved)
+            nodes_remaining = not (
+                hierarchy_partition.get_number_of_nodes_in_block(from_block)
+                == nodes_moved
+            )
         elif len(args) == 5:
             kit, selfloops, degree, nodes_moved, nodes_remaining = args
         else:
@@ -344,25 +387,51 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         delta = 0
         if hierarchy_partition.actual_level == 0:
             delta += self._calculate_delta_p_adjacency_undirected(
-                hierarchy_partition, from_block, to_block, kit, selfloops, degree, to_block_exists)
-            delta += self._calculate_delta_p_degree_sequence_uniform_hyperprior_undirected(
-                hierarchy_partition, from_block, to_block, degree,
-                nodes_remaining, to_block_exists, nodes_moved
+                hierarchy_partition,
+                from_block,
+                to_block,
+                kit,
+                selfloops,
+                degree,
+                to_block_exists,
+            )
+            delta += (
+                self._calculate_delta_p_degree_sequence_uniform_hyperprior_undirected(
+                    hierarchy_partition,
+                    from_block,
+                    to_block,
+                    degree,
+                    nodes_remaining,
+                    to_block_exists,
+                    nodes_moved,
+                )
             )
         delta += self._calculate_delta_p_edge_counts_hierarchy_undirected(
-            hierarchy_partition, hierarchy_partition.actual_level, from_block, to_block, kit, selfloops,
-            nodes_remaining, to_block_exists, nodes_moved
+            hierarchy_partition,
+            hierarchy_partition.actual_level,
+            from_block,
+            to_block,
+            kit,
+            selfloops,
+            nodes_remaining,
+            to_block_exists,
+            nodes_moved,
         )
         return delta
 
-    def calculate_delta_complete_uniform_undirected(self, hierarchy_partition, from_block, to_block, *args):
+    def calculate_delta_complete_uniform_undirected(
+        self, hierarchy_partition, from_block, to_block, *args
+    ):
         if from_block == to_block:
             return 0
         # handle input variables
         if len(args) == 3:
             kit, selfloops, degree = args
             nodes_moved = 1
-            nodes_remaining = not (hierarchy_partition.get_number_of_nodes_in_block(from_block) == nodes_moved)
+            nodes_remaining = not (
+                hierarchy_partition.get_number_of_nodes_in_block(from_block)
+                == nodes_moved
+            )
         elif len(args) == 5:
             kit, selfloops, degree, nodes_moved, nodes_remaining = args
         else:
@@ -377,26 +446,49 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         delta = 0
         if hierarchy_partition.actual_level == 0:
             delta += self._calculate_delta_p_adjacency_undirected(
-                hierarchy_partition, from_block, to_block, kit, selfloops, degree, to_block_exists)
+                hierarchy_partition,
+                from_block,
+                to_block,
+                kit,
+                selfloops,
+                degree,
+                to_block_exists,
+            )
             delta += self._calculate_delta_p_degree_sequence_uniform_undirected(
-                hierarchy_partition, from_block, to_block, degree,
-                nodes_remaining, to_block_exists, nodes_moved
+                hierarchy_partition,
+                from_block,
+                to_block,
+                degree,
+                nodes_remaining,
+                to_block_exists,
+                nodes_moved,
             )
         delta += self._calculate_delta_p_edge_counts_hierarchy_undirected(
-            hierarchy_partition, hierarchy_partition.actual_level, from_block, to_block, kit, selfloops,
-            nodes_remaining, to_block_exists, nodes_moved
+            hierarchy_partition,
+            hierarchy_partition.actual_level,
+            from_block,
+            to_block,
+            kit,
+            selfloops,
+            nodes_remaining,
+            to_block_exists,
+            nodes_moved,
         )
         return delta
 
-    def calculate_delta_complete_non_degree_corrected_undirected(self, hierarchy_partition, from_block, to_block,
-                                                                 *args):
+    def calculate_delta_complete_non_degree_corrected_undirected(
+        self, hierarchy_partition, from_block, to_block, *args
+    ):
         if from_block == to_block:
             return 0
         # handle input variables
         if len(args) == 3:
             kit, selfloops, degree = args
             nodes_moved = 1
-            nodes_remaining = not (hierarchy_partition.get_number_of_nodes_in_block(from_block) == nodes_moved)
+            nodes_remaining = not (
+                hierarchy_partition.get_number_of_nodes_in_block(from_block)
+                == nodes_moved
+            )
         elif len(args) == 5:
             kit, selfloops, degree, nodes_moved, nodes_remaining = args
         else:
@@ -411,11 +503,26 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         delta = 0
         if hierarchy_partition.actual_level == 0:
             delta += self._calculate_delta_non_degree_corrected_undirected(
-                hierarchy_partition, from_block, to_block, kit, selfloops, degree,
-                nodes_remaining, to_block_exists, nodes_moved)
+                hierarchy_partition,
+                from_block,
+                to_block,
+                kit,
+                selfloops,
+                degree,
+                nodes_remaining,
+                to_block_exists,
+                nodes_moved,
+            )
         delta += self._calculate_delta_p_edge_counts_hierarchy_undirected(
-            hierarchy_partition, hierarchy_partition.actual_level, from_block, to_block, kit, selfloops,
-            nodes_remaining, to_block_exists, nodes_moved
+            hierarchy_partition,
+            hierarchy_partition.actual_level,
+            from_block,
+            to_block,
+            kit,
+            selfloops,
+            nodes_remaining,
+            to_block_exists,
+            nodes_moved,
         )
         return delta
 
@@ -427,8 +534,12 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         level = hierarchy_partition.actual_level
         delta = 0
 
-        new_number_of_nodes_per_block = {block: 0 for block in range(
-            hierarchy_partition.get_number_of_blocks_in_level(level + 1))}
+        new_number_of_nodes_per_block = {
+            block: 0
+            for block in range(
+                hierarchy_partition.get_number_of_blocks_in_level(level + 1)
+            )
+        }
 
         # code from above for one level
         number_of_blocks = hierarchy_partition.B
@@ -446,11 +557,15 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
 
             delta += math.lgamma(1 + n_r)
             if level != hierarchy_partition.max_level:
-                new_number_of_nodes_per_block[hierarchy_partition.partitions[level + 1].partition[r]] += n_r
+                new_number_of_nodes_per_block[
+                    hierarchy_partition.partitions[level + 1].partition[r]
+                ] += n_r
             else:
                 new_number_of_nodes_per_block[0] += n_r
 
-        number_of_blocks_below = hierarchy_partition.get_number_of_blocks_in_level(level - 1)
+        number_of_blocks_below = hierarchy_partition.get_number_of_blocks_in_level(
+            level - 1
+        )
 
         # only multiset coefficient for level above
         if level != hierarchy_partition.max_level:
@@ -478,8 +593,11 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
             delta -= math.lgamma(1 + number_of_blocks_below)
 
             delta -= log_binom(
-                number_of_blocks * (number_of_blocks + 1) / 2 + hierarchy_partition.edge_total - 1,
-                hierarchy_partition.edge_total)
+                number_of_blocks * (number_of_blocks + 1) / 2
+                + hierarchy_partition.edge_total
+                - 1,
+                hierarchy_partition.edge_total,
+            )
 
         # terms for binomial coefficient (B_{l-1}-1 B_l - 1)
         delta -= log_binom(number_of_blocks_below - 1, number_of_blocks - 1)
@@ -487,7 +605,10 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         delta -= math.log(number_of_blocks)  # !! change to actual block number
 
         # # add term for level above
-        delta -= log_binom(number_of_blocks - 1, hierarchy_partition.get_number_of_blocks_in_level(level + 1) - 1)
+        delta -= log_binom(
+            number_of_blocks - 1,
+            hierarchy_partition.get_number_of_blocks_in_level(level + 1) - 1,
+        )
 
         # switch sign of delta
         delta *= -1
@@ -495,7 +616,6 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         # care about new term
         # first term for level above
         if level != hierarchy_partition.max_level:
-
             hierarchy_partition.actual_level += 1
             for r in range(hierarchy_partition.B):
                 n_r = new_number_of_nodes_per_block[r]
@@ -515,20 +635,34 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
             hierarchy_partition.actual_level -= 1
 
             # only binomial coefficient is affected after the multiset binomial coefficients
-            delta -= log_binom(number_of_blocks_below - 1,
-                               hierarchy_partition.get_number_of_blocks_in_level(level + 1) - 1)
+            delta -= log_binom(
+                number_of_blocks_below - 1,
+                hierarchy_partition.get_number_of_blocks_in_level(level + 1) - 1,
+            )
         else:
             delta -= log_binom(
-                new_number_of_nodes_per_block[0] * (new_number_of_nodes_per_block[0] + 1) / 2
-                + hierarchy_partition.edge_total - 1,
-                hierarchy_partition.edge_total)
+                new_number_of_nodes_per_block[0]
+                * (new_number_of_nodes_per_block[0] + 1)
+                / 2
+                + hierarchy_partition.edge_total
+                - 1,
+                hierarchy_partition.edge_total,
+            )
 
         return delta
 
     @staticmethod
-    def _calculate_delta_p_edge_counts_hierarchy_undirected(hierarchy_partition, level, from_block, to_block,
-                                                            kit, selfloops, nodes_remaining, to_block_exists,
-                                                            nodes_moved=1):
+    def _calculate_delta_p_edge_counts_hierarchy_undirected(
+        hierarchy_partition,
+        level,
+        from_block,
+        to_block,
+        kit,
+        selfloops,
+        nodes_remaining,
+        to_block_exists,
+        nodes_moved=1,
+    ):
         """
 
         :param hierarchy_partition:
@@ -545,7 +679,10 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
             # new block
             new_block_count = to_block + 1
             top_block_node_change = 1
-        if hierarchy_partition.get_number_of_nodes_in_block(from_block) == nodes_moved and from_block != to_block:
+        if (
+            hierarchy_partition.get_number_of_nodes_in_block(from_block) == nodes_moved
+            and from_block != to_block
+        ):
             # block will be removed
             new_block_count = hierarchy_partition.B - 1
             top_block_node_change = -1
@@ -555,50 +692,80 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
 
             # term - \log \nCr{B_{l-1}-1, B_l-1)
             # terms for change B_l
-            delta -= log_binom(hierarchy_partition.get_number_of_blocks_in_level(level - 1) - 1,
-                               new_block_count - 1)
+            delta -= log_binom(
+                hierarchy_partition.get_number_of_blocks_in_level(level - 1) - 1,
+                new_block_count - 1,
+            )
 
-            delta += log_binom(hierarchy_partition.get_number_of_blocks_in_level(level - 1) - 1,
-                               hierarchy_partition.B - 1)
+            delta += log_binom(
+                hierarchy_partition.get_number_of_blocks_in_level(level - 1) - 1,
+                hierarchy_partition.B - 1,
+            )
 
             # terms for change B_{l-1}
-            delta -= log_binom(new_block_count - 1,
-                               hierarchy_partition.get_number_of_blocks_in_level(level + 1) - 1)
+            delta -= log_binom(
+                new_block_count - 1,
+                hierarchy_partition.get_number_of_blocks_in_level(level + 1) - 1,
+            )
 
-            delta += log_binom(hierarchy_partition.B - 1,
-                               hierarchy_partition.get_number_of_blocks_in_level(level + 1) - 1)
+            delta += log_binom(
+                hierarchy_partition.B - 1,
+                hierarchy_partition.get_number_of_blocks_in_level(level + 1) - 1,
+            )
 
             # deal with changes of nodes_in_block of top_block belonging to from_block
             if hierarchy_partition.actual_level < hierarchy_partition.max_level:
                 # handle term -\log B_{l-1}!
-                delta -= math.lgamma(1 + new_block_count) - math.lgamma(1 + hierarchy_partition.B)
+                delta -= math.lgamma(1 + new_block_count) - math.lgamma(
+                    1 + hierarchy_partition.B
+                )
 
                 # switch to level above actual level
                 hierarchy_partition.actual_level += 1
                 top_block = hierarchy_partition.get_block_of_node(from_block)
-                old_n_top_block = hierarchy_partition.get_number_of_nodes_in_block(top_block)
+                old_n_top_block = hierarchy_partition.get_number_of_nodes_in_block(
+                    top_block
+                )
                 new_n_top_block = old_n_top_block + top_block_node_change
 
                 # handle all (( n_r e_r )) terms
                 for block in hierarchy_partition.get_neighbors_of_block(top_block):
                     if block != top_block:
-                        n_block = hierarchy_partition.get_number_of_nodes_in_block(block)
+                        n_block = hierarchy_partition.get_number_of_nodes_in_block(
+                            block
+                        )
                         # old value
-                        edge_count = hierarchy_partition.get_edge_count(top_block, block)
+                        edge_count = hierarchy_partition.get_edge_count(
+                            top_block, block
+                        )
                         # neighbor -> edge_count > 0
-                        delta += log_binom(old_n_top_block * n_block + edge_count - 1, edge_count)
+                        delta += log_binom(
+                            old_n_top_block * n_block + edge_count - 1, edge_count
+                        )
                         # new value
-                        delta -= log_binom(new_n_top_block * n_block + edge_count - 1, edge_count)
+                        delta -= log_binom(
+                            new_n_top_block * n_block + edge_count - 1, edge_count
+                        )
 
                 # deal with entry with both top_block
                 # old term
-                edge_count = hierarchy_partition.get_edge_count(top_block, top_block) / 2
-                delta += log_binom(old_n_top_block * (old_n_top_block + 1) / 2 + edge_count - 1, edge_count)
+                edge_count = (
+                    hierarchy_partition.get_edge_count(top_block, top_block) / 2
+                )
+                delta += log_binom(
+                    old_n_top_block * (old_n_top_block + 1) / 2 + edge_count - 1,
+                    edge_count,
+                )
                 # new term
-                delta -= log_binom(new_n_top_block * (new_n_top_block + 1) / 2 + edge_count - 1, edge_count)
+                delta -= log_binom(
+                    new_n_top_block * (new_n_top_block + 1) / 2 + edge_count - 1,
+                    edge_count,
+                )
 
                 # handle n_r! term
-                delta += math.lgamma(1 + new_n_top_block) - math.lgamma(1 + old_n_top_block)
+                delta += math.lgamma(1 + new_n_top_block) - math.lgamma(
+                    1 + old_n_top_block
+                )
 
                 # switch back to actual level
                 hierarchy_partition.actual_level -= 1
@@ -607,12 +774,18 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
                 # no need of extra term -\log B_{l-1}! because effects cancel out
                 # new term
                 delta -= log_binom(
-                    new_block_count * (new_block_count + 1) / 2 + hierarchy_partition.edge_total - 1,
-                    hierarchy_partition.edge_total)
+                    new_block_count * (new_block_count + 1) / 2
+                    + hierarchy_partition.edge_total
+                    - 1,
+                    hierarchy_partition.edge_total,
+                )
                 # old term
                 delta += log_binom(
-                    hierarchy_partition.B * (hierarchy_partition.B + 1) / 2 + hierarchy_partition.edge_total - 1,
-                    hierarchy_partition.edge_total)
+                    hierarchy_partition.B * (hierarchy_partition.B + 1) / 2
+                    + hierarchy_partition.edge_total
+                    - 1,
+                    hierarchy_partition.edge_total,
+                )
 
         # delta of second sum \sum_{r<s}\log e_{rs}!
         n_from_block_old = hierarchy_partition.get_number_of_nodes_in_block(from_block)
@@ -625,7 +798,9 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         # important loop over all neighbors of the block because number of nodes in block effects all
         neighbors = hierarchy_partition.get_neighbors_of_block(from_block)
         if to_block_exists:
-            neighbors = neighbors.union(hierarchy_partition.get_neighbors_of_block(to_block))
+            neighbors = neighbors.union(
+                hierarchy_partition.get_neighbors_of_block(to_block)
+            )
         # for those with no kit value available use 0 instead
         for block in neighbors:
             if block != from_block and block != to_block:
@@ -633,62 +808,85 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
                 # old value from block
                 edge_count = hierarchy_partition.get_edge_count(from_block, block)
                 # neighbor -> edge_count > 0
-                delta += log_binom(n_from_block_old * n_block + edge_count - 1, edge_count)
+                delta += log_binom(
+                    n_from_block_old * n_block + edge_count - 1, edge_count
+                )
 
                 if nodes_remaining:
                     # new value from block
                     if block in kit:
                         edge_count -= kit[block]
-                    delta -= log_binom(n_from_block_new * n_block + edge_count - 1, edge_count)
+                    delta -= log_binom(
+                        n_from_block_new * n_block + edge_count - 1, edge_count
+                    )
 
                 # old value to block
                 if to_block_exists:
                     edge_count = hierarchy_partition.get_edge_count(to_block, block)
-                    delta += log_binom(n_to_block_old * n_block + edge_count - 1, edge_count)
+                    delta += log_binom(
+                        n_to_block_old * n_block + edge_count - 1, edge_count
+                    )
                 else:
                     edge_count = 0
                 # new value to block
                 if block in kit:
                     edge_count += kit[block]
-                delta -= log_binom(n_to_block_new * n_block + edge_count - 1, edge_count)
+                delta -= log_binom(
+                    n_to_block_new * n_block + edge_count - 1, edge_count
+                )
 
         # handle the term with both from and to block
         # old e_{from_block, to_block} term
         if to_block_exists:
             edge_count = hierarchy_partition.get_edge_count(from_block, to_block)
-            delta += log_binom(n_from_block_old * n_to_block_old + edge_count - 1, edge_count)
+            delta += log_binom(
+                n_from_block_old * n_to_block_old + edge_count - 1, edge_count
+            )
         else:
             edge_count = 0
 
         if nodes_remaining:
             # new term
             edge_count += kit[from_block] - kit[to_block]
-            delta -= log_binom(n_from_block_new * n_to_block_new + edge_count - 1, edge_count)
+            delta -= log_binom(
+                n_from_block_new * n_to_block_new + edge_count - 1, edge_count
+            )
 
         # handle sum -\sum_r \log (( n_r^l*(n_r^l + 1)/2  e_{rr}^{l+1}/2 ))
         # old e_{from_block, from_block} term
         edge_count = hierarchy_partition.get_edge_count(from_block, from_block) / 2
-        delta += log_binom(n_from_block_old * (n_from_block_old + 1) / 2 + edge_count - 1, edge_count)
+        delta += log_binom(
+            n_from_block_old * (n_from_block_old + 1) / 2 + edge_count - 1, edge_count
+        )
 
         if nodes_remaining:
             # new term
             edge_count -= kit[from_block] + selfloops
-            delta -= log_binom(n_from_block_new * (n_from_block_new + 1) / 2 + edge_count - 1, edge_count)
+            delta -= log_binom(
+                n_from_block_new * (n_from_block_new + 1) / 2 + edge_count - 1,
+                edge_count,
+            )
 
         # old e_{to_block, to_block} term
         if to_block_exists:
             edge_count = hierarchy_partition.get_edge_count(to_block, to_block) / 2
-            delta += log_binom(n_to_block_old * (n_to_block_old + 1) / 2 + edge_count - 1, edge_count)
+            delta += log_binom(
+                n_to_block_old * (n_to_block_old + 1) / 2 + edge_count - 1, edge_count
+            )
         else:
             edge_count = 0
         # new term
         edge_count += kit[to_block] + selfloops
-        delta -= log_binom(n_to_block_new * (n_to_block_new + 1) / 2 + edge_count - 1, edge_count)
+        delta -= log_binom(
+            n_to_block_new * (n_to_block_new + 1) / 2 + edge_count - 1, edge_count
+        )
 
         # delta for \sum_r \log n^l_r!
-        delta += - math.lgamma(1 + n_from_block_old) \
-            + math.lgamma(1 + n_to_block_new) \
+        delta += (
+            -math.lgamma(1 + n_from_block_old)
+            + math.lgamma(1 + n_to_block_new)
             - math.lgamma(1 + n_to_block_old)
+        )
 
         if nodes_remaining:
             delta += math.lgamma(1 + n_from_block_new)
@@ -698,16 +896,23 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
     # ----------------------------------
     # directed Versions
     # ----------------------------------
-    def calculate_delta_complete_uniform_hyperprior_directed(self, hierarchy_partition, from_block, to_block, *args):
+    def calculate_delta_complete_uniform_hyperprior_directed(
+        self, hierarchy_partition, from_block, to_block, *args
+    ):
         if from_block == to_block:
             return 0
         # handle input variables
         if len(args) == 5:
             kit, kti, selfloops, in_degree, out_degree = args
             nodes_moved = 1
-            nodes_remaining = not (hierarchy_partition.get_number_of_nodes_in_block(from_block) == nodes_moved)
+            nodes_remaining = not (
+                hierarchy_partition.get_number_of_nodes_in_block(from_block)
+                == nodes_moved
+            )
         elif len(args) == 7:
-            kit, kti, selfloops, in_degree, out_degree, nodes_moved, nodes_remaining = args
+            kit, kti, selfloops, in_degree, out_degree, nodes_moved, nodes_remaining = (
+                args
+            )
         else:
             raise ValueError()
 
@@ -720,27 +925,59 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         delta = 0
         if hierarchy_partition.actual_level == 0:
             delta += self._calculate_delta_p_adjacency_directed(
-                hierarchy_partition, from_block, to_block, kit, kti, selfloops, in_degree, out_degree, to_block_exists)
-            delta += self._calculate_delta_p_degree_sequence_uniform_hyperprior_directed(
-                hierarchy_partition, from_block, to_block, in_degree, out_degree,
-                nodes_remaining, to_block_exists, nodes_moved
+                hierarchy_partition,
+                from_block,
+                to_block,
+                kit,
+                kti,
+                selfloops,
+                in_degree,
+                out_degree,
+                to_block_exists,
+            )
+            delta += (
+                self._calculate_delta_p_degree_sequence_uniform_hyperprior_directed(
+                    hierarchy_partition,
+                    from_block,
+                    to_block,
+                    in_degree,
+                    out_degree,
+                    nodes_remaining,
+                    to_block_exists,
+                    nodes_moved,
+                )
             )
         delta += self._calculate_delta_p_edge_counts_hierarchy_directed(
-            hierarchy_partition, hierarchy_partition.actual_level, from_block, to_block, kit, kti, selfloops,
-            nodes_remaining, to_block_exists, nodes_moved
+            hierarchy_partition,
+            hierarchy_partition.actual_level,
+            from_block,
+            to_block,
+            kit,
+            kti,
+            selfloops,
+            nodes_remaining,
+            to_block_exists,
+            nodes_moved,
         )
         return delta
 
-    def calculate_delta_complete_uniform_directed(self, hierarchy_partition, from_block, to_block, *args):
+    def calculate_delta_complete_uniform_directed(
+        self, hierarchy_partition, from_block, to_block, *args
+    ):
         if from_block == to_block:
             return 0
         # handle input variables
         if len(args) == 5:
             kit, kti, selfloops, in_degree, out_degree = args
             nodes_moved = 1
-            nodes_remaining = not (hierarchy_partition.get_number_of_nodes_in_block(from_block) == nodes_moved)
+            nodes_remaining = not (
+                hierarchy_partition.get_number_of_nodes_in_block(from_block)
+                == nodes_moved
+            )
         elif len(args) == 7:
-            kit, kti, selfloops, in_degree, out_degree, nodes_moved, nodes_remaining = args
+            kit, kti, selfloops, in_degree, out_degree, nodes_moved, nodes_remaining = (
+                args
+            )
         else:
             raise ValueError()
 
@@ -753,26 +990,57 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         delta = 0
         if hierarchy_partition.actual_level == 0:
             delta += self._calculate_delta_p_adjacency_directed(
-                hierarchy_partition, from_block, to_block, kit, kti, selfloops, in_degree, out_degree, to_block_exists)
+                hierarchy_partition,
+                from_block,
+                to_block,
+                kit,
+                kti,
+                selfloops,
+                in_degree,
+                out_degree,
+                to_block_exists,
+            )
             delta += self._calculate_delta_p_degree_sequence_uniform_directed(
-                hierarchy_partition, from_block, to_block, in_degree, out_degree,
-                nodes_remaining, to_block_exists, nodes_moved)
+                hierarchy_partition,
+                from_block,
+                to_block,
+                in_degree,
+                out_degree,
+                nodes_remaining,
+                to_block_exists,
+                nodes_moved,
+            )
         delta += self._calculate_delta_p_edge_counts_hierarchy_directed(
-            hierarchy_partition, hierarchy_partition.actual_level, from_block, to_block, kit, kti, selfloops,
-            nodes_remaining, to_block_exists, nodes_moved
+            hierarchy_partition,
+            hierarchy_partition.actual_level,
+            from_block,
+            to_block,
+            kit,
+            kti,
+            selfloops,
+            nodes_remaining,
+            to_block_exists,
+            nodes_moved,
         )
         return delta
 
-    def calculate_delta_complete_non_degree_corrected_directed(self, hierarchy_partition, from_block, to_block, *args):
+    def calculate_delta_complete_non_degree_corrected_directed(
+        self, hierarchy_partition, from_block, to_block, *args
+    ):
         if from_block == to_block:
             return 0
         # handle input variables
         if len(args) == 5:
             kit, kti, selfloops, in_degree, out_degree = args
             nodes_moved = 1
-            nodes_remaining = not (hierarchy_partition.get_number_of_nodes_in_block(from_block) == nodes_moved)
+            nodes_remaining = not (
+                hierarchy_partition.get_number_of_nodes_in_block(from_block)
+                == nodes_moved
+            )
         elif len(args) == 7:
-            kit, kti, selfloops, in_degree, out_degree, nodes_moved, nodes_remaining = args
+            kit, kti, selfloops, in_degree, out_degree, nodes_moved, nodes_remaining = (
+                args
+            )
         else:
             raise ValueError()
 
@@ -785,11 +1053,29 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         delta = 0
         if hierarchy_partition.actual_level == 0:
             delta += self._calculate_delta_non_degree_corrected_directed(
-                hierarchy_partition, from_block, to_block, kit, kti, selfloops, in_degree, out_degree,
-                nodes_remaining, to_block_exists, nodes_moved)
+                hierarchy_partition,
+                from_block,
+                to_block,
+                kit,
+                kti,
+                selfloops,
+                in_degree,
+                out_degree,
+                nodes_remaining,
+                to_block_exists,
+                nodes_moved,
+            )
         delta += self._calculate_delta_p_edge_counts_hierarchy_directed(
-            hierarchy_partition, hierarchy_partition.actual_level, from_block, to_block, kit, kti, selfloops,
-            nodes_remaining, to_block_exists, nodes_moved
+            hierarchy_partition,
+            hierarchy_partition.actual_level,
+            from_block,
+            to_block,
+            kit,
+            kti,
+            selfloops,
+            nodes_remaining,
+            to_block_exists,
+            nodes_moved,
         )
         return delta
 
@@ -801,8 +1087,12 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         level = hierarchy_partition.actual_level
         delta = 0
 
-        new_number_of_nodes_per_block = {block: 0 for block in range(
-            hierarchy_partition.get_number_of_blocks_in_level(level + 1))}
+        new_number_of_nodes_per_block = {
+            block: 0
+            for block in range(
+                hierarchy_partition.get_number_of_blocks_in_level(level + 1)
+            )
+        }
 
         # code from above for one level
         number_of_blocks = hierarchy_partition.B
@@ -816,11 +1106,15 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
 
             delta += math.lgamma(1 + n_r)
             if level != hierarchy_partition.max_level:
-                new_number_of_nodes_per_block[hierarchy_partition.partitions[level + 1].partition[r]] += n_r
+                new_number_of_nodes_per_block[
+                    hierarchy_partition.partitions[level + 1].partition[r]
+                ] += n_r
             else:
                 new_number_of_nodes_per_block[0] += n_r
 
-        number_of_blocks_below = hierarchy_partition.get_number_of_blocks_in_level(level - 1)
+        number_of_blocks_below = hierarchy_partition.get_number_of_blocks_in_level(
+            level - 1
+        )
 
         # only multiset coefficient for level above
         if level != hierarchy_partition.max_level:
@@ -844,8 +1138,11 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
             delta -= math.lgamma(1 + number_of_blocks_below)
 
             delta -= log_binom(
-                number_of_blocks * number_of_blocks + hierarchy_partition.edge_total - 1,
-                hierarchy_partition.edge_total)
+                number_of_blocks * number_of_blocks
+                + hierarchy_partition.edge_total
+                - 1,
+                hierarchy_partition.edge_total,
+            )
 
         # terms for binomial coefficient (B_{l-1}-1 B_l - 1)
         delta -= log_binom(number_of_blocks_below - 1, number_of_blocks - 1)
@@ -853,7 +1150,10 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         delta -= math.log(number_of_blocks)  # !! change to actual block number
 
         # # add term for level above
-        delta -= log_binom(number_of_blocks - 1, hierarchy_partition.get_number_of_blocks_in_level(level + 1) - 1)
+        delta -= log_binom(
+            number_of_blocks - 1,
+            hierarchy_partition.get_number_of_blocks_in_level(level + 1) - 1,
+        )
 
         # switch sign of delta
         delta *= -1
@@ -861,7 +1161,6 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         # care about new term
         # first term for level above
         if level != hierarchy_partition.max_level:
-
             hierarchy_partition.actual_level += 1
             for r in range(hierarchy_partition.B):
                 n_r = new_number_of_nodes_per_block[r]
@@ -876,19 +1175,33 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
             hierarchy_partition.actual_level -= 1
 
             # only binomial coefficient is affected after the multiset binomial coefficients
-            delta -= log_binom(number_of_blocks_below - 1,
-                               hierarchy_partition.get_number_of_blocks_in_level(level + 1) - 1)
+            delta -= log_binom(
+                number_of_blocks_below - 1,
+                hierarchy_partition.get_number_of_blocks_in_level(level + 1) - 1,
+            )
         else:
             delta -= log_binom(
                 new_number_of_nodes_per_block[0] * new_number_of_nodes_per_block[0]
-                + hierarchy_partition.edge_total - 1,
-                hierarchy_partition.edge_total)
+                + hierarchy_partition.edge_total
+                - 1,
+                hierarchy_partition.edge_total,
+            )
 
         return delta
 
     @staticmethod
-    def _calculate_delta_p_edge_counts_hierarchy_directed(hierarchy_partition, level, from_block, to_block, kit, kti,
-                                                          selfloops, nodes_remaining, to_block_exists, nodes_moved=1):
+    def _calculate_delta_p_edge_counts_hierarchy_directed(
+        hierarchy_partition,
+        level,
+        from_block,
+        to_block,
+        kit,
+        kti,
+        selfloops,
+        nodes_remaining,
+        to_block_exists,
+        nodes_moved=1,
+    ):
         """
         Formulas
         \log P({e_l}|{b_l}) = \sum_{l=1}^L \log P(e_l| e_{l+1}, b_l)
@@ -912,7 +1225,10 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
             # new block
             new_block_count = to_block + 1
             top_block_node_change = 1
-        if hierarchy_partition.get_number_of_nodes_in_block(from_block) == nodes_moved and from_block != to_block:
+        if (
+            hierarchy_partition.get_number_of_nodes_in_block(from_block) == nodes_moved
+            and from_block != to_block
+        ):
             # block will be removed
             new_block_count = hierarchy_partition.B - 1
             top_block_node_change = -1
@@ -922,54 +1238,86 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
 
             # term - \log \nCr{B_{l-1}-1, B_l-1)
             # terms for change B_l
-            delta -= log_binom(hierarchy_partition.get_number_of_blocks_in_level(level - 1) - 1,
-                               new_block_count - 1)
+            delta -= log_binom(
+                hierarchy_partition.get_number_of_blocks_in_level(level - 1) - 1,
+                new_block_count - 1,
+            )
 
-            delta += log_binom(hierarchy_partition.get_number_of_blocks_in_level(level - 1) - 1,
-                               hierarchy_partition.B - 1)
+            delta += log_binom(
+                hierarchy_partition.get_number_of_blocks_in_level(level - 1) - 1,
+                hierarchy_partition.B - 1,
+            )
 
             # terms for change B_{l-1}
-            delta -= log_binom(new_block_count - 1,
-                               hierarchy_partition.get_number_of_blocks_in_level(level + 1) - 1)
+            delta -= log_binom(
+                new_block_count - 1,
+                hierarchy_partition.get_number_of_blocks_in_level(level + 1) - 1,
+            )
 
-            delta += log_binom(hierarchy_partition.B - 1,
-                               hierarchy_partition.get_number_of_blocks_in_level(level + 1) - 1)
+            delta += log_binom(
+                hierarchy_partition.B - 1,
+                hierarchy_partition.get_number_of_blocks_in_level(level + 1) - 1,
+            )
 
             # deal with changes of nodes_in_block of top_block belonging to from_block
             if hierarchy_partition.actual_level < hierarchy_partition.max_level:
                 # handle term -\log B_{l-1}!
-                delta -= math.lgamma(1 + new_block_count) - math.lgamma(1 + hierarchy_partition.B)
+                delta -= math.lgamma(1 + new_block_count) - math.lgamma(
+                    1 + hierarchy_partition.B
+                )
 
                 # switch to level above actual level
                 hierarchy_partition.actual_level += 1
                 top_block = hierarchy_partition.get_block_of_node(from_block)
-                old_n_top_block = hierarchy_partition.get_number_of_nodes_in_block(top_block)
+                old_n_top_block = hierarchy_partition.get_number_of_nodes_in_block(
+                    top_block
+                )
                 new_n_top_block = old_n_top_block + top_block_node_change
 
                 # handle all (( n_r e_r )) terms
                 for block in hierarchy_partition.get_neighbors_of_block(top_block):
                     if block != top_block:
-                        n_block = hierarchy_partition.get_number_of_nodes_in_block(block)
+                        n_block = hierarchy_partition.get_number_of_nodes_in_block(
+                            block
+                        )
                         # old value
-                        edge_count = hierarchy_partition.get_edge_count(top_block, block)
-                        delta += log_binom(old_n_top_block * n_block + edge_count - 1, edge_count)
+                        edge_count = hierarchy_partition.get_edge_count(
+                            top_block, block
+                        )
+                        delta += log_binom(
+                            old_n_top_block * n_block + edge_count - 1, edge_count
+                        )
                         # new value
-                        delta -= log_binom(new_n_top_block * n_block + edge_count - 1, edge_count)
+                        delta -= log_binom(
+                            new_n_top_block * n_block + edge_count - 1, edge_count
+                        )
 
                         # old value
-                        edge_count = hierarchy_partition.get_edge_count(block, top_block)
-                        delta += log_binom(old_n_top_block * n_block + edge_count - 1, edge_count)
+                        edge_count = hierarchy_partition.get_edge_count(
+                            block, top_block
+                        )
+                        delta += log_binom(
+                            old_n_top_block * n_block + edge_count - 1, edge_count
+                        )
                         # new value
-                        delta -= log_binom(new_n_top_block * n_block + edge_count - 1, edge_count)
+                        delta -= log_binom(
+                            new_n_top_block * n_block + edge_count - 1, edge_count
+                        )
 
                 # entry for both top block
                 edge_count = hierarchy_partition.get_edge_count(top_block, top_block)
-                delta += log_binom(old_n_top_block * old_n_top_block + edge_count - 1, edge_count)
+                delta += log_binom(
+                    old_n_top_block * old_n_top_block + edge_count - 1, edge_count
+                )
                 # new value
-                delta -= log_binom(new_n_top_block * new_n_top_block + edge_count - 1, edge_count)
+                delta -= log_binom(
+                    new_n_top_block * new_n_top_block + edge_count - 1, edge_count
+                )
 
                 # handle n_r! term
-                delta += math.lgamma(1 + new_n_top_block) - math.lgamma(1 + old_n_top_block)
+                delta += math.lgamma(1 + new_n_top_block) - math.lgamma(
+                    1 + old_n_top_block
+                )
 
                 # switch back to actual level
                 hierarchy_partition.actual_level -= 1
@@ -978,12 +1326,18 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
                 # no need of extra term -\log B_{l-1}! because effects cancel out
                 # new term
                 delta -= log_binom(
-                    new_block_count * new_block_count + hierarchy_partition.edge_total - 1,
-                    hierarchy_partition.edge_total)
+                    new_block_count * new_block_count
+                    + hierarchy_partition.edge_total
+                    - 1,
+                    hierarchy_partition.edge_total,
+                )
                 # old term
                 delta += log_binom(
-                    hierarchy_partition.B * hierarchy_partition.B + hierarchy_partition.edge_total - 1,
-                    hierarchy_partition.edge_total)
+                    hierarchy_partition.B * hierarchy_partition.B
+                    + hierarchy_partition.edge_total
+                    - 1,
+                    hierarchy_partition.edge_total,
+                )
 
         # # delta of second sum \sum_{rs}\log e_{rs}!
         n_from_block_old = hierarchy_partition.get_number_of_nodes_in_block(from_block)
@@ -996,88 +1350,120 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         # important loop over all neighbors of the block because number of nodes in block effects all
         neighbors = hierarchy_partition.get_neighbors_of_block(from_block)
         if to_block_exists:
-            neighbors = neighbors.union(hierarchy_partition.get_neighbors_of_block(to_block))
+            neighbors = neighbors.union(
+                hierarchy_partition.get_neighbors_of_block(to_block)
+            )
         # for those with no kit value available use 0 instead
         for block in neighbors:
             if block != from_block and block != to_block:
                 n_block = hierarchy_partition.get_number_of_nodes_in_block(block)
                 # old value from block -> block
                 edge_count = hierarchy_partition.get_edge_count(from_block, block)
-                delta += log_binom(n_from_block_old * n_block + edge_count - 1, edge_count)
+                delta += log_binom(
+                    n_from_block_old * n_block + edge_count - 1, edge_count
+                )
                 if nodes_remaining:
                     # new value from block -> block
                     if block in kit:
                         edge_count -= kit[block]
-                    delta -= log_binom(n_from_block_new * n_block + edge_count - 1, edge_count)
+                    delta -= log_binom(
+                        n_from_block_new * n_block + edge_count - 1, edge_count
+                    )
 
                 # old value to block -> block
                 if to_block_exists:
                     edge_count = hierarchy_partition.get_edge_count(to_block, block)
-                    delta += log_binom(n_to_block_old * n_block + edge_count - 1, edge_count)
+                    delta += log_binom(
+                        n_to_block_old * n_block + edge_count - 1, edge_count
+                    )
                 else:
                     edge_count = 0
                 # new value to block -> block
                 if block in kit:
                     edge_count += kit[block]
-                delta -= log_binom(n_to_block_new * n_block + edge_count - 1, edge_count)
+                delta -= log_binom(
+                    n_to_block_new * n_block + edge_count - 1, edge_count
+                )
 
                 # other directions
                 # old value from block <- block
                 edge_count = hierarchy_partition.get_edge_count(block, from_block)
-                delta += log_binom(n_from_block_old * n_block + edge_count - 1, edge_count)
+                delta += log_binom(
+                    n_from_block_old * n_block + edge_count - 1, edge_count
+                )
                 if nodes_remaining:
                     # new value from block <- block
                     if block in kti:
                         edge_count -= kti[block]
-                    delta -= log_binom(n_from_block_new * n_block + edge_count - 1, edge_count)
+                    delta -= log_binom(
+                        n_from_block_new * n_block + edge_count - 1, edge_count
+                    )
 
                 # old value to block <- block
                 if to_block_exists:
                     edge_count = hierarchy_partition.get_edge_count(block, to_block)
-                    delta += log_binom(n_to_block_old * n_block + edge_count - 1, edge_count)
+                    delta += log_binom(
+                        n_to_block_old * n_block + edge_count - 1, edge_count
+                    )
                 else:
                     edge_count = 0
                 # new value to block <- block
                 if block in kti:
                     edge_count += kti[block]
-                delta -= log_binom(n_to_block_new * n_block + edge_count - 1, edge_count)
+                delta -= log_binom(
+                    n_to_block_new * n_block + edge_count - 1, edge_count
+                )
 
         # handle the term with both from and to block
         # old e_{from_block, to_block} term
         if to_block_exists:
             edge_count = hierarchy_partition.get_edge_count(from_block, to_block)
-            delta += log_binom(n_from_block_old * n_to_block_old + edge_count - 1, edge_count)
+            delta += log_binom(
+                n_from_block_old * n_to_block_old + edge_count - 1, edge_count
+            )
         else:
             edge_count = 0
         if nodes_remaining:
             # new term
             edge_count += kti[from_block] - kit[to_block]
-            delta -= log_binom(n_from_block_new * n_to_block_new + edge_count - 1, edge_count)
+            delta -= log_binom(
+                n_from_block_new * n_to_block_new + edge_count - 1, edge_count
+            )
 
         # other direction
         if to_block_exists:
             edge_count = hierarchy_partition.get_edge_count(to_block, from_block)
-            delta += log_binom(n_from_block_old * n_to_block_old + edge_count - 1, edge_count)
+            delta += log_binom(
+                n_from_block_old * n_to_block_old + edge_count - 1, edge_count
+            )
         else:
             edge_count = 0
         if nodes_remaining:
             # new term
             edge_count += kit[from_block] - kti[to_block]
-            delta -= log_binom(n_from_block_new * n_to_block_new + edge_count - 1, edge_count)
+            delta -= log_binom(
+                n_from_block_new * n_to_block_new + edge_count - 1, edge_count
+            )
 
         # handle term with both from_block or to_block
         # old e_{from_block, from_block} term
         edge_count = hierarchy_partition.get_edge_count(from_block, from_block)
-        delta += log_binom(n_from_block_old * n_from_block_old + edge_count - 1, edge_count)
+        delta += log_binom(
+            n_from_block_old * n_from_block_old + edge_count - 1, edge_count
+        )
         if nodes_remaining:
             # new term
             edge_count -= kit[from_block] + kti[from_block] + selfloops
-            delta -= log_binom(n_from_block_new * n_from_block_new + edge_count - 1, edge_count)
+            delta -= log_binom(
+                n_from_block_new * n_from_block_new + edge_count - 1, edge_count
+            )
 
         # old e_{to_block, to_block} term
         if to_block_exists:
             edge_count = hierarchy_partition.get_edge_count(to_block, to_block)
-            delta += log_binom(n_to_block_old * n_to_block_old + edge_count - 1, edge_count)
+            delta += log_binom(
+                n_to_block_old * n_to_block_old + edge_count - 1, edge_count
+            )
         else:
             edge_count = 0
         # new term
@@ -1085,10 +1471,12 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         delta -= log_binom(n_to_block_new * n_to_block_new + edge_count - 1, edge_count)
 
         # delta for \sum_r \log n^l_r!
-        delta += - math.lgamma(1 + n_from_block_old) \
-            + math.lgamma(1 + n_to_block_new) \
-            - math.lgamma(1 + n_to_block_old) \
+        delta += (
+            -math.lgamma(1 + n_from_block_old)
+            + math.lgamma(1 + n_to_block_new)
+            - math.lgamma(1 + n_to_block_old)
             + math.lgamma(1 + n_from_block_new)
+        )
 
         return delta
 
@@ -1100,78 +1488,121 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
 # ----------------------------------------------
 
 
-class LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper(ObjectiveFunction):
+class LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper(
+    ObjectiveFunction
+):
     # class constants
-    UNIFORM_HYPERPRIOR = 'uniform hyperprior'
-    UNIFORM = 'uniform'
-    NON_DEGREE_CORRECTED = 'non degree corrected'
+    UNIFORM_HYPERPRIOR = "uniform hyperprior"
+    UNIFORM = "uniform"
+    NON_DEGREE_CORRECTED = "non degree corrected"
 
     def __init__(self, is_directed, function_type=None):
-        self._delta = DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm()
-        self._complete = ModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm()
+        self._delta = (
+            DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm()
+        )
+        self._complete = (
+            ModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm()
+        )
 
         if function_type is None:
             function_type = self.UNIFORM_HYPERPRIOR
 
         if is_directed:
-            self.calculate_delta_actual_level_removed = self._delta.calculate_delta_actual_level_removed_directed
+            self.calculate_delta_actual_level_removed = (
+                self._delta.calculate_delta_actual_level_removed_directed
+            )
         else:
-            self.calculate_delta_actual_level_removed = self._delta.calculate_delta_actual_level_removed_undirected
+            self.calculate_delta_actual_level_removed = (
+                self._delta.calculate_delta_actual_level_removed_undirected
+            )
 
         if function_type == self.UNIFORM_HYPERPRIOR:
-            calculate_complete_directed = self._complete.calculate_complete_uniform_hyperprior_directed
-            calculate_delta_directed = self._delta.calculate_delta_complete_uniform_hyperprior_directed
-            calculate_complete_undirected = self._complete.calculate_complete_uniform_hyperprior_undirected
-            calculate_delta_undirected = self._delta.calculate_delta_complete_uniform_hyperprior_undirected
+            calculate_complete_directed = (
+                self._complete.calculate_complete_uniform_hyperprior_directed
+            )
+            calculate_delta_directed = (
+                self._delta.calculate_delta_complete_uniform_hyperprior_directed
+            )
+            calculate_complete_undirected = (
+                self._complete.calculate_complete_uniform_hyperprior_undirected
+            )
+            calculate_delta_undirected = (
+                self._delta.calculate_delta_complete_uniform_hyperprior_undirected
+            )
         elif function_type == self.UNIFORM:
-            calculate_complete_directed = self._complete.calculate_complete_uniform_directed
-            calculate_delta_directed = self._delta.calculate_delta_complete_uniform_directed
-            calculate_complete_undirected = self._complete.calculate_complete_uniform_undirected
-            calculate_delta_undirected = self._delta.calculate_delta_complete_uniform_undirected
+            calculate_complete_directed = (
+                self._complete.calculate_complete_uniform_directed
+            )
+            calculate_delta_directed = (
+                self._delta.calculate_delta_complete_uniform_directed
+            )
+            calculate_complete_undirected = (
+                self._complete.calculate_complete_uniform_undirected
+            )
+            calculate_delta_undirected = (
+                self._delta.calculate_delta_complete_uniform_undirected
+            )
         else:
-            calculate_complete_directed = self._complete.calculate_complete_non_degree_corrected_directed
-            calculate_delta_directed = self._delta.calculate_delta_complete_non_degree_corrected_directed
-            calculate_complete_undirected = self._complete.calculate_complete_non_degree_corrected_undirected
-            calculate_delta_undirected = self._delta.calculate_delta_complete_non_degree_corrected_undirected
+            calculate_complete_directed = (
+                self._complete.calculate_complete_non_degree_corrected_directed
+            )
+            calculate_delta_directed = (
+                self._delta.calculate_delta_complete_non_degree_corrected_directed
+            )
+            calculate_complete_undirected = (
+                self._complete.calculate_complete_non_degree_corrected_undirected
+            )
+            calculate_delta_undirected = (
+                self._delta.calculate_delta_complete_non_degree_corrected_undirected
+            )
 
-        super(LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper, self).__init__(
+        super(
+            LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper, self
+        ).__init__(
             is_directed,
             calculate_complete_undirected,
             calculate_complete_directed,
             calculate_delta_undirected,
-            calculate_delta_directed
+            calculate_delta_directed,
         )
 
 
 # @formatter:off
 class LogLikelihoodOfHierarchicalMicrocanonicalNonDegreeCorrected(
-        LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper):
+    LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper
+):
     title = "LogLikelihoodOfHierarchicalMicrocanonicalNonDegreeCorrected"
     # noinspection SpellCheckingInspection
     short_title = "HSPC"
 
     def __init__(self, is_directed):
-        super(LogLikelihoodOfHierarchicalMicrocanonicalNonDegreeCorrected, self).__init__(
-            is_directed, function_type=self.NON_DEGREE_CORRECTED)
+        super(
+            LogLikelihoodOfHierarchicalMicrocanonicalNonDegreeCorrected, self
+        ).__init__(is_directed, function_type=self.NON_DEGREE_CORRECTED)
 
 
 class LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedUniform(
-        LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper):
+    LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper
+):
     title = "LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedUniform"
     # noinspection SpellCheckingInspection
     short_title = "HDCPU"
 
     def __init__(self, is_directed):
-        super(LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedUniform, self).__init__(
-            is_directed, function_type=self.UNIFORM)
+        super(
+            LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedUniform, self
+        ).__init__(is_directed, function_type=self.UNIFORM)
 
 
 class LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedUniformHyperprior(
-        LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper):
+    LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper
+):
     title = "LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedUniformHyperprior"
     # noinspection SpellCheckingInspection
     short_title = "HDCPUH"
 
     def __init__(self, is_directed):
-        super(LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedUniformHyperprior, self).__init__(
-            is_directed, function_type=self.UNIFORM)
+        super(
+            LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedUniformHyperprior,
+            self,
+        ).__init__(is_directed, function_type=self.UNIFORM)

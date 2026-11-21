@@ -23,7 +23,9 @@ class ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
     def calculate_complete_uniform_hyperprior_undirected(self, partition):
         probability = 1
         probability *= self._calculate_p_adjacency_undirected(partition)
-        probability *= self._calculate_p_degree_sequence_uniform_hyperprior_undirected(partition)
+        probability *= self._calculate_p_degree_sequence_uniform_hyperprior_undirected(
+            partition
+        )
         probability *= self._calculate_p_edge_counts_undirected(partition)
         return probability
 
@@ -60,7 +62,9 @@ class ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
         if self._saved_xi is None or self._graph_belonging_to_xi != partition.graph:
             # if xi is still initial compute xi and therefore get information from partition
 
-            adjacency_matrix = partition.get_graph_matrix_representation(with_weights=False)
+            adjacency_matrix = partition.get_graph_matrix_representation(
+                with_weights=False
+            )
             degree_sequence = partition.get_degree_iter()
             self._saved_xi = 1
             for degree in degree_sequence:
@@ -68,7 +72,9 @@ class ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
 
             denominator = 1
             for i in range(len(adjacency_matrix)):
-                denominator *= math.pow(2, adjacency_matrix[i, i]) * math.factorial(int(adjacency_matrix[i, i]))
+                denominator *= math.pow(2, adjacency_matrix[i, i]) * math.factorial(
+                    int(adjacency_matrix[i, i])
+                )
                 for j in range(i + 1, len(adjacency_matrix)):
                     denominator *= math.factorial(int(adjacency_matrix[i, j]))
 
@@ -80,8 +86,9 @@ class ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
         denominator = 1
         for r in range(partition.B):
             omega *= math.factorial(int(partition.get_degree_of_block(r)))
-            denominator *= math.pow(2, partition.get_edge_count(r, r) / 2) \
-                * math.factorial(int(partition.get_edge_count(r, r) / 2))
+            denominator *= math.pow(
+                2, partition.get_edge_count(r, r) / 2
+            ) * math.factorial(int(partition.get_edge_count(r, r) / 2))
 
             for s in range(r + 1, partition.B):
                 denominator *= math.factorial(int(partition.get_edge_count(r, s)))
@@ -106,21 +113,29 @@ class ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
 
         denominator = 1
         for r in range(partition.B):
-            probability *= math.pow(2, partition.get_edge_count(r, r) / 2) \
-                           * math.factorial(int(partition.get_edge_count(r, r) / 2))
+            probability *= math.pow(
+                2, partition.get_edge_count(r, r) / 2
+            ) * math.factorial(int(partition.get_edge_count(r, r) / 2))
 
-            denominator *= math.pow(partition.get_number_of_nodes_in_block(r), partition.get_degree_of_block(r))
+            denominator *= math.pow(
+                partition.get_number_of_nodes_in_block(r),
+                partition.get_degree_of_block(r),
+            )
             for s in range(r + 1, partition.B):
                 probability *= math.factorial(int(partition.get_edge_count(r, s)))
 
         probability /= denominator
 
         if full:
-            adjacency_matrix = partition.get_graph_matrix_representation(with_weights=False)
+            adjacency_matrix = partition.get_graph_matrix_representation(
+                with_weights=False
+            )
 
             denominator = 1
             for i in range(len(adjacency_matrix)):
-                denominator *= math.pow(2, adjacency_matrix[i, i]) * math.factorial(int(adjacency_matrix[i, i]))
+                denominator *= math.pow(2, adjacency_matrix[i, i]) * math.factorial(
+                    int(adjacency_matrix[i, i])
+                )
                 for j in range(i + 1, len(adjacency_matrix)):
                     denominator *= math.factorial(int(adjacency_matrix[i, j]))
 
@@ -160,9 +175,10 @@ class ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
         degree_counts = partition.get_degree_distribution_of_blocks(probability=False)
         probability = 1
         for r in range(partition.B):
-            probability /= get_number_of_restricted_partitions(int(partition.get_degree_of_block(r)),
-                                                               int(partition.get_number_of_nodes_in_block(r))) \
-                           * math.factorial(partition.get_number_of_nodes_in_block(r))
+            probability /= get_number_of_restricted_partitions(
+                int(partition.get_degree_of_block(r)),
+                int(partition.get_number_of_nodes_in_block(r)),
+            ) * math.factorial(partition.get_number_of_nodes_in_block(r))
             for degree_count in degree_counts[r].values():
                 probability *= math.factorial(int(degree_count))
         return probability
@@ -181,7 +197,10 @@ class ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
 
         number_of_blocks = partition.B
         edge_total = partition.get_number_of_edges()
-        binomial_values = (number_of_blocks * (number_of_blocks + 1) / 2 + edge_total - 1, edge_total)
+        binomial_values = (
+            number_of_blocks * (number_of_blocks + 1) / 2 + edge_total - 1,
+            edge_total,
+        )
         if binomial_values not in BINOMIALS:
             BINOMIALS[binomial_values] = binom(*binomial_values)
         probability /= BINOMIALS[binomial_values]
@@ -212,7 +231,9 @@ class ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
     def calculate_complete_uniform_hyperprior_directed(self, partition):
         probability = 1
         probability *= self._calculate_p_adjacency_directed(partition)
-        probability *= self._calculate_p_degree_sequence_uniform_hyperprior_directed(partition)
+        probability *= self._calculate_p_degree_sequence_uniform_hyperprior_directed(
+            partition
+        )
         probability *= self._calculate_p_edge_counts_directed(partition)
         return probability
 
@@ -248,7 +269,9 @@ class ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
         # check if xi was already computed
         if self._saved_xi is None or self._graph_belonging_to_xi != partition.graph:
             # if xi is still initial compute xi and therefore get information from partition
-            adjacency_matrix = partition.get_graph_matrix_representation(with_weights=False)
+            adjacency_matrix = partition.get_graph_matrix_representation(
+                with_weights=False
+            )
             in_degree_sequence = partition.get_in_degree_iter()
             out_degree_sequence = partition.get_out_degree_iter()
             self._saved_xi = 1
@@ -296,8 +319,14 @@ class ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
 
         denominator = 1
         for r in range(partition.B):
-            denominator *= math.pow(partition.get_number_of_nodes_in_block(r), partition.get_in_degree_of_block(r))
-            denominator *= math.pow(partition.get_number_of_nodes_in_block(r), partition.get_out_degree_of_block(r))
+            denominator *= math.pow(
+                partition.get_number_of_nodes_in_block(r),
+                partition.get_in_degree_of_block(r),
+            )
+            denominator *= math.pow(
+                partition.get_number_of_nodes_in_block(r),
+                partition.get_out_degree_of_block(r),
+            )
 
             for s in range(partition.B):
                 probability *= math.factorial(int(partition.get_edge_count(r, s)))
@@ -305,7 +334,9 @@ class ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
         probability /= denominator
 
         if full:
-            adjacency_matrix = partition.get_graph_matrix_representation(with_weights=False)
+            adjacency_matrix = partition.get_graph_matrix_representation(
+                with_weights=False
+            )
 
             denominator = 1
             for i in range(len(adjacency_matrix)):
@@ -356,11 +387,17 @@ class ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
         degree_counts = partition.get_joint_in_out_degree_distribution_of_blocks()
         probability = 1
         for r in range(partition.B):
-            probability /= get_number_of_restricted_partitions(int(partition.get_in_degree_of_block(r)),
-                                                               int(partition.get_number_of_nodes_in_block(r))) \
-                           * get_number_of_restricted_partitions(int(partition.get_out_degree_of_block(r)),
-                                                                 int(partition.get_number_of_nodes_in_block(r))) \
-                           * math.factorial(partition.get_number_of_nodes_in_block(r))
+            probability /= (
+                get_number_of_restricted_partitions(
+                    int(partition.get_in_degree_of_block(r)),
+                    int(partition.get_number_of_nodes_in_block(r)),
+                )
+                * get_number_of_restricted_partitions(
+                    int(partition.get_out_degree_of_block(r)),
+                    int(partition.get_number_of_nodes_in_block(r)),
+                )
+                * math.factorial(partition.get_number_of_nodes_in_block(r))
+            )
             for degree_count in degree_counts[r].values():
                 probability *= math.factorial(int(degree_count))
         return probability
@@ -379,7 +416,10 @@ class ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
 
         number_of_blocks = partition.B
         edge_total = partition.get_number_of_edges()
-        binomial_values = (number_of_blocks * number_of_blocks + edge_total - 1, edge_total)
+        binomial_values = (
+            number_of_blocks * number_of_blocks + edge_total - 1,
+            edge_total,
+        )
         if binomial_values not in BINOMIALS:
             BINOMIALS[binomial_values] = binom(*binomial_values)
         probability /= BINOMIALS[binomial_values]

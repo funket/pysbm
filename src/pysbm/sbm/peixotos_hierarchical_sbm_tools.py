@@ -11,25 +11,25 @@ import numpy as np
 NUMBER_OF_RESTRICTED_PARTITIONS_PRECOMPUTED_LIMIT = 1000
 
 spence_constants_a = [
-    4.65128586073990045278E-5,
-    7.31589045238094711071E-3,
-    1.33847639578309018650E-1,
-    8.79691311754530315341E-1,
-    2.71149851196553469920E0,
-    4.25697156008121755724E0,
-    3.29771340985225106936E0,
-    1.00000000000000000126E0,
+    4.65128586073990045278e-5,
+    7.31589045238094711071e-3,
+    1.33847639578309018650e-1,
+    8.79691311754530315341e-1,
+    2.71149851196553469920e0,
+    4.25697156008121755724e0,
+    3.29771340985225106936e0,
+    1.00000000000000000126e0,
 ]
 
 spence_constants_b = [
-    6.90990488912553276999E-4,
-    2.54043763932544379113E-2,
-    2.82974860602568089943E-1,
-    1.41172597751831069617E0,
-    3.63800533345137075418E0,
-    5.03278880143316990390E0,
-    3.54771340985225096217E0,
-    9.99999999999999998740E-1,
+    6.90990488912553276999e-4,
+    2.54043763932544379113e-2,
+    2.82974860602568089943e-1,
+    1.41172597751831069617e0,
+    3.63800533345137075418e0,
+    5.03278880143316990390e0,
+    3.54771340985225096217e0,
+    9.99999999999999998740e-1,
 ]
 
 
@@ -94,33 +94,47 @@ def init_number_of_restricted_partitions(limit, save_space=True, return_log=Fals
         for m in range(1, limit):
             for n in range(2, m + 1):
                 if m - n <= n:
-                    number_of_restricted_partitions[m][n] = number_of_restricted_partitions[m][n - 1] \
-                                                            + number_of_restricted_partitions[m - n][m - n]
+                    number_of_restricted_partitions[m][n] = (
+                        number_of_restricted_partitions[m][n - 1]
+                        + number_of_restricted_partitions[m - n][m - n]
+                    )
                 elif m - n >= 0:
-                    number_of_restricted_partitions[m][n] = number_of_restricted_partitions[m][n - 1] \
-                                                            + number_of_restricted_partitions[m - n][n]
+                    number_of_restricted_partitions[m][n] = (
+                        number_of_restricted_partitions[m][n - 1]
+                        + number_of_restricted_partitions[m - n][n]
+                    )
                 else:
-                    number_of_restricted_partitions[m][n] = number_of_restricted_partitions[m][n - 1]
+                    number_of_restricted_partitions[m][n] = (
+                        number_of_restricted_partitions[m][n - 1]
+                    )
             # rest the same
             if save_space:
-                del number_of_restricted_partitions[m][(m + 1):]
+                del number_of_restricted_partitions[m][(m + 1) :]
             else:
-                number_of_restricted_partitions[m][(m + 1):] = [number_of_restricted_partitions[m][m]] * (
-                        limit - (m + 1))
+                number_of_restricted_partitions[m][(m + 1) :] = [
+                    number_of_restricted_partitions[m][m]
+                ] * (limit - (m + 1))
     else:
         for m in range(1, limit):
             for n in range(2, m + 1):
                 if m - n >= 0:
-                    number_of_restricted_partitions[m][n] = number_of_restricted_partitions[m][n - 1] \
-                                                            + number_of_restricted_partitions[m - n][n]
+                    number_of_restricted_partitions[m][n] = (
+                        number_of_restricted_partitions[m][n - 1]
+                        + number_of_restricted_partitions[m - n][n]
+                    )
                 else:
-                    number_of_restricted_partitions[m][n] = number_of_restricted_partitions[m][n - 1]
+                    number_of_restricted_partitions[m][n] = (
+                        number_of_restricted_partitions[m][n - 1]
+                    )
             # rest the same
-            number_of_restricted_partitions[m][(m + 1):] = [number_of_restricted_partitions[m][m]] * (limit - (m + 1))
+            number_of_restricted_partitions[m][(m + 1) :] = [
+                number_of_restricted_partitions[m][m]
+            ] * (limit - (m + 1))
     if return_log:
         number_of_restricted_partitions = [
-            [math.log(value) if value != 0 else float('-inf') for value in value_m] for value_m in
-            number_of_restricted_partitions]
+            [math.log(value) if value != 0 else float("-inf") for value in value_m]
+            for value_m in number_of_restricted_partitions
+        ]
 
     return number_of_restricted_partitions
 
@@ -130,7 +144,7 @@ def get_log_number_of_restricted_partitions(m, n):
     if n <= 0 or m <= 0:
         if m == 0:
             return 0
-        return float('-inf')
+        return float("-inf")
     elif m < NUMBER_OF_RESTRICTED_PARTITIONS_PRECOMPUTED_LIMIT:
         if m < n:
             return LOG_NUMBER_OF_RESTRICTED_PARTITIONS_MATRIX[m][m]
@@ -149,23 +163,31 @@ def get_log_number_of_restricted_partitions(m, n):
                 # formula from Peixoto's implementation
                 # https://git.skewed.de/count0/graph-tool/blob/master/src/graph/inference/support/int_part.cc
                 v_new = u * math.sqrt(spence(math.exp(-v)))
-                if math.fabs(v - v_new) < .0001:
+                if math.fabs(v - v_new) < 0.0001:
                     v = v_new
                     break
                 v = v_new
             else:
-                raise Exception("Fix Point iteration as search for v not converged in 100 steps:", v)
+                raise Exception(
+                    "Fix Point iteration as search for v not converged in 100 steps:", v
+                )
 
-            log_f_u = math.log(v) - 1.5 * math.log(2) - math.log(math.pi) - math.log(u) - .5 * math.log(
-                1 - (1 + u * u / 2) * math.exp(-v))
+            log_f_u = (
+                math.log(v)
+                - 1.5 * math.log(2)
+                - math.log(math.pi)
+                - math.log(u)
+                - 0.5 * math.log(1 - (1 + u * u / 2) * math.exp(-v))
+            )
             # log_g_u = math.log(2 * v / u - u * math.log(1 - math.exp(-v)))
             # f_u = v / (2 ** 1.5 * math.pi * u * math.sqrt(1 - (1 + u * u / 2) * math.exp(-v)))
             g_u = 2 * v / u - u * math.log(1 - math.exp(-v))
             return log_f_u - math.log(m) + math.sqrt(m) * g_u
 
 
-LOG_NUMBER_OF_RESTRICTED_PARTITIONS_MATRIX = \
-    init_number_of_restricted_partitions(NUMBER_OF_RESTRICTED_PARTITIONS_PRECOMPUTED_LIMIT, return_log=True)
+LOG_NUMBER_OF_RESTRICTED_PARTITIONS_MATRIX = init_number_of_restricted_partitions(
+    NUMBER_OF_RESTRICTED_PARTITIONS_PRECOMPUTED_LIMIT, return_log=True
+)
 
 
 def log_binom(n, k):

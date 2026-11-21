@@ -12,11 +12,13 @@ from pysbm import sbm
 import networkx as nx
 
 
-def minimum_description_length_peixoto_first(partition_representation,
-                                             number_of_nodes,
-                                             number_of_edges,
-                                             is_directed,
-                                             is_degree_corrected):
+def minimum_description_length_peixoto_first(
+    partition_representation,
+    number_of_nodes,
+    number_of_edges,
+    is_directed,
+    is_degree_corrected,
+):
     """
     from Peixoto 2013 Parsimonious Module Inference in Large Networks
     :param partition_representation: representation of a partition
@@ -39,11 +41,13 @@ def minimum_description_length_peixoto_first(partition_representation,
     number_of_blocks = max(partition_representation.values()) + 1
 
     if is_directed:
-        value = number_of_edges * h(number_of_blocks * number_of_blocks / number_of_edges) \
-                + number_of_nodes * math.log(number_of_blocks)
+        value = number_of_edges * h(
+            number_of_blocks * number_of_blocks / number_of_edges
+        ) + number_of_nodes * math.log(number_of_blocks)
     else:
-        value = number_of_edges * h(number_of_blocks * (number_of_blocks + 1) / (2 * number_of_edges)) \
-                + number_of_nodes * math.log(number_of_blocks)
+        value = number_of_edges * h(
+            number_of_blocks * (number_of_blocks + 1) / (2 * number_of_edges)
+        ) + number_of_nodes * math.log(number_of_blocks)
 
     if is_degree_corrected:
         # both needs iterator over degrees, but don't depend on the partition!
@@ -56,10 +60,9 @@ def minimum_description_length_peixoto_first(partition_representation,
     return value
 
 
-def minimum_description_length_traditional(partition_representation,
-                                           number_of_edges,
-                                           is_directed,
-                                           is_degree_corrected):
+def minimum_description_length_traditional(
+    partition_representation, number_of_edges, is_directed, is_degree_corrected
+):
     """
     own formula according to general description of MDL
     :param partition_representation: representation of a partition
@@ -77,7 +80,9 @@ def minimum_description_length_traditional(partition_representation,
     if is_directed:
         value += number_of_blocks * number_of_blocks * math.log(number_of_edges)
     else:
-        value += number_of_blocks * (number_of_blocks + 1) / 2 * math.log(number_of_edges)
+        value += (
+            number_of_blocks * (number_of_blocks + 1) / 2 * math.log(number_of_edges)
+        )
     if is_degree_corrected:
         # both needs iterator over degrees, but don't depend on the partition!
         if is_directed:
@@ -90,8 +95,7 @@ def minimum_description_length_traditional(partition_representation,
     return value
 
 
-def minimum_description_length_peixoto(partition,
-                                       is_degree_corrected):
+def minimum_description_length_peixoto(partition, is_degree_corrected):
     """
     From Peixoto 2014 ﻿Hierarchical block structures and high-resolution model selection in large networks eq. 9 and 10
     :param partition: complete partition with all information about graph and node partition
@@ -100,19 +104,29 @@ def minimum_description_length_peixoto(partition,
     :return: correction of objective function value
     """
     number_of_blocks = partition.B
-    value = log_binom(number_of_blocks + partition.get_number_of_nodes() - 1, partition.get_number_of_nodes())
+    value = log_binom(
+        number_of_blocks + partition.get_number_of_nodes() - 1,
+        partition.get_number_of_nodes(),
+    )
     # left out partition independent term log |V|!
     for block in range(number_of_blocks):
         value -= math.lgamma(partition.get_number_of_nodes_in_block(block) + 1)
 
     if partition.is_graph_directed():
-        value += log_binom(number_of_blocks * number_of_blocks + partition.get_number_of_edges() - 1,
-                           partition.get_number_of_edges())
+        value += log_binom(
+            number_of_blocks * number_of_blocks + partition.get_number_of_edges() - 1,
+            partition.get_number_of_edges(),
+        )
     else:
-        value += log_binom(number_of_blocks * (number_of_blocks + 1) / 2 + partition.get_number_of_edges() - 1,
-                           partition.get_number_of_edges())
+        value += log_binom(
+            number_of_blocks * (number_of_blocks + 1) / 2
+            + partition.get_number_of_edges()
+            - 1,
+            partition.get_number_of_edges(),
+        )
 
     if is_degree_corrected:
+
         def calculate_weighted_entropys(block_distributions):
             """
             Calculate the sum of the entropy's of the given distribution for each block
@@ -120,12 +134,15 @@ def minimum_description_length_peixoto(partition,
             """
             total = 0
             for block_counter, distribution in enumerate(block_distributions):
-                total += partition.get_number_of_nodes_in_block(block_counter) * calculate_entropy(
-                    distribution)
+                total += partition.get_number_of_nodes_in_block(
+                    block_counter
+                ) * calculate_entropy(distribution)
             return total
 
         if partition.is_graph_directed():
-            in_degree_distributions, out_degree_distributions = partition.get_degree_distribution_of_blocks()
+            in_degree_distributions, out_degree_distributions = (
+                partition.get_degree_distribution_of_blocks()
+            )
             value -= calculate_weighted_entropys(in_degree_distributions)
             value -= calculate_weighted_entropys(out_degree_distributions)
         else:
@@ -134,9 +151,9 @@ def minimum_description_length_peixoto(partition,
     return value
 
 
-def akaike_information_criterion(partition_representation,
-                                 is_directed,
-                                 is_degree_corrected):
+def akaike_information_criterion(
+    partition_representation, is_directed, is_degree_corrected
+):
     """
     own formula according to general description of AIC
     :param partition_representation: representation of a partition
@@ -158,11 +175,13 @@ def akaike_information_criterion(partition_representation,
     return value
 
 
-def bayesian_information_criterion(partition_representation,
-                                   number_of_nodes,
-                                   is_directed,
-                                   is_degree_corrected,
-                                   sparse=True):
+def bayesian_information_criterion(
+    partition_representation,
+    number_of_nodes,
+    is_directed,
+    is_degree_corrected,
+    sparse=True,
+):
     """
     from Yan 2016 ﻿Bayesian model selection of stochastic block models
     :param partition_representation: representation of a partition
@@ -193,13 +212,12 @@ def bayesian_information_criterion(partition_representation,
         else:
             # correct but partition independent +=2*math.log(number_of_nodes)
             value += 0
-    return .5 * value
+    return 0.5 * value
 
 
-def integrated_complete_likelihood(partition_representation,
-                                   number_of_nodes,
-                                   is_directed,
-                                   is_degree_corrected):
+def integrated_complete_likelihood(
+    partition_representation, number_of_nodes, is_directed, is_degree_corrected
+):
     """
     model selection according to ICL
     :param partition_representation: representation of a partition
@@ -218,10 +236,19 @@ def integrated_complete_likelihood(partition_representation,
     value = (number_of_blocks - 1) / 2 * math.log(number_of_nodes)
 
     if is_directed:
-        value += number_of_blocks * number_of_blocks / 2 * math.log(number_of_nodes * number_of_nodes)
+        value += (
+            number_of_blocks
+            * number_of_blocks
+            / 2
+            * math.log(number_of_nodes * number_of_nodes)
+        )
     else:
-        value += number_of_blocks * (number_of_blocks + 1) / 4 * math.log(
-            number_of_nodes * (number_of_nodes - 1) / 2)
+        value += (
+            number_of_blocks
+            * (number_of_blocks + 1)
+            / 4
+            * math.log(number_of_nodes * (number_of_nodes - 1) / 2)
+        )
 
     return value
 
@@ -229,20 +256,34 @@ def integrated_complete_likelihood(partition_representation,
 class ModelSelectionByFunction(object):
     """Infer number of blocks via model selection (partition independent values are ignored!)"""
 
-    def __init__(self, objective_function, number_of_edges, number_of_nodes, double_objective_function=False):
+    def __init__(
+        self,
+        objective_function,
+        number_of_edges,
+        number_of_nodes,
+        double_objective_function=False,
+    ):
         self._objective_function = objective_function
         self._number_of_edges = number_of_edges
         self._number_of_nodes = number_of_nodes
         self._double_objective_function = double_objective_function
 
     def minimum_description_length_peixoto_first(self, partition, is_degree_corrected):
-        return minimum_description_length_peixoto_first(partition.get_representation(), self._number_of_nodes,
-                                                        self._number_of_edges, partition.is_graph_directed(),
-                                                        is_degree_corrected)
+        return minimum_description_length_peixoto_first(
+            partition.get_representation(),
+            self._number_of_nodes,
+            self._number_of_edges,
+            partition.is_graph_directed(),
+            is_degree_corrected,
+        )
 
     def minimum_description_length_traditional(self, partition, is_degree_corrected):
-        return minimum_description_length_traditional(partition.get_representation(), self._number_of_edges,
-                                                      partition.is_graph_directed(), is_degree_corrected)
+        return minimum_description_length_traditional(
+            partition.get_representation(),
+            self._number_of_edges,
+            partition.is_graph_directed(),
+            is_degree_corrected,
+        )
 
     @staticmethod
     def minimum_description_length_peixoto(partition, is_degree_corrected):
@@ -250,16 +291,30 @@ class ModelSelectionByFunction(object):
 
     @staticmethod
     def akaike_information_criterion(partition, is_degree_corrected):
-        return akaike_information_criterion(partition.get_representation(), partition.is_graph_directed(),
-                                            is_degree_corrected)
+        return akaike_information_criterion(
+            partition.get_representation(),
+            partition.is_graph_directed(),
+            is_degree_corrected,
+        )
 
-    def bayesian_information_criterion(self, partition, is_degree_corrected, sparse=True):
-        return bayesian_information_criterion(partition.get_representation(), self._number_of_nodes,
-                                              partition.is_graph_directed(), is_degree_corrected, sparse)
+    def bayesian_information_criterion(
+        self, partition, is_degree_corrected, sparse=True
+    ):
+        return bayesian_information_criterion(
+            partition.get_representation(),
+            self._number_of_nodes,
+            partition.is_graph_directed(),
+            is_degree_corrected,
+            sparse,
+        )
 
     def integrated_complete_likelihood(self, partition, is_degree_corrected):
-        return integrated_complete_likelihood(partition.get_representation(), self._number_of_nodes,
-                                              partition.is_graph_directed(), is_degree_corrected)
+        return integrated_complete_likelihood(
+            partition.get_representation(),
+            self._number_of_nodes,
+            partition.is_graph_directed(),
+            is_degree_corrected,
+        )
 
 
 def calculate_entropy(distribution):
@@ -294,8 +349,11 @@ class ExponentialSearch:
                 return 1
 
         # move further until the decrease stops
-        while moving_upper_bound <= upper_bound and self.values[moving_upper_bound - 1 + lower_boundary] < self.values[
-            moving_lower_bound - 1 + lower_boundary]:
+        while (
+            moving_upper_bound <= upper_bound
+            and self.values[moving_upper_bound - 1 + lower_boundary]
+            < self.values[moving_lower_bound - 1 + lower_boundary]
+        ):
             moving_lower_bound = middle_point
             middle_point = moving_upper_bound
             moving_upper_bound *= 2
@@ -304,10 +362,15 @@ class ExponentialSearch:
             moving_upper_bound = upper_bound
 
         # at this moment we knew that the minimum lies between moving_lower_bound and moving_upper_bound
-        if moving_upper_bound - moving_lower_bound > self._changing_point_to_linear_search:
+        if (
+            moving_upper_bound - moving_lower_bound
+            > self._changing_point_to_linear_search
+        ):
             return self.search_minimum(moving_lower_bound, moving_upper_bound)
         else:
-            return self.search_minimum_linear(moving_lower_bound - 1, moving_upper_bound - 1)
+            return self.search_minimum_linear(
+                moving_lower_bound - 1, moving_upper_bound - 1
+            )
 
     def search_minimum_linear(self, lower_boundary=0, upper_boundary=None):
         """
@@ -337,26 +400,37 @@ class ExponentialSearch:
 
 
 class AbstractModelSelection:
-
     def __init__(self, model_selection_function):
         self._model_selection_function = model_selection_function
 
-    def create_parameters_for_model_selection_function(self, graph, partition_representation):
+    def create_parameters_for_model_selection_function(
+        self, graph, partition_representation
+    ):
         raise NotImplementedError()
 
-    def select_number_of_groups(self, graph, objective_function_values, partition_representations,
-                                return_complete_information=False):
+    def select_number_of_groups(
+        self,
+        graph,
+        objective_function_values,
+        partition_representations,
+        return_complete_information=False,
+    ):
         new_values = {}
         for number_of_blocks in objective_function_values:
-            new_values[number_of_blocks] = objective_function_values[number_of_blocks] - \
-                                           self._model_selection_function(
-                                               **self.create_parameters_for_model_selection_function(
-                                                   graph, partition_representations[number_of_blocks]
-                                               )
-                                           )
+            new_values[number_of_blocks] = objective_function_values[
+                number_of_blocks
+            ] - self._model_selection_function(
+                **self.create_parameters_for_model_selection_function(
+                    graph, partition_representations[number_of_blocks]
+                )
+            )
         selected_number_of_groups = max(new_values, key=lambda x: new_values[x])
         if return_complete_information:
-            return selected_number_of_groups, new_values[selected_number_of_groups], new_values
+            return (
+                selected_number_of_groups,
+                new_values[selected_number_of_groups],
+                new_values,
+            )
         return selected_number_of_groups, new_values[selected_number_of_groups]
 
 
@@ -370,36 +444,44 @@ class ModelSelectionByObjectiveFunctionValueOnly(AbstractModelSelection):
             """Replacement for additional model selection function"""
             return 0
 
-        super(ModelSelectionByObjectiveFunctionValueOnly, self).__init__(dummy_model_selection_function)
+        super(ModelSelectionByObjectiveFunctionValueOnly, self).__init__(
+            dummy_model_selection_function
+        )
 
-    def create_parameters_for_model_selection_function(self, graph, partition_representation):
+    def create_parameters_for_model_selection_function(
+        self, graph, partition_representation
+    ):
         return {}
 
 
 class ModelSelectionWithExtraFunction(AbstractModelSelection):
-
-    def __init__(self,
-                 model_selection_function,
-                 is_degree_corrected,
-                 title,
-                 function_needs_partition=False,
-                 function_needs_partition_representation=True,
-                 function_needs_number_of_nodes=False,
-                 function_needs_number_of_edges=False,
-                 function_needs_is_directed=True,
-                 additional_fixed_key_arguments=None
-                 ):
+    def __init__(
+        self,
+        model_selection_function,
+        is_degree_corrected,
+        title,
+        function_needs_partition=False,
+        function_needs_partition_representation=True,
+        function_needs_number_of_nodes=False,
+        function_needs_number_of_edges=False,
+        function_needs_is_directed=True,
+        additional_fixed_key_arguments=None,
+    ):
         super(ModelSelectionWithExtraFunction, self).__init__(model_selection_function)
         self.title = title
         self.is_degree_corrected = is_degree_corrected
         self.function_needs_partition = function_needs_partition
-        self.function_needs_partition_representation = function_needs_partition_representation
+        self.function_needs_partition_representation = (
+            function_needs_partition_representation
+        )
         self.function_needs_number_of_nodes = function_needs_number_of_nodes
         self.function_needs_number_of_edges = function_needs_number_of_edges
         self.function_needs_is_directed = function_needs_is_directed
         self.additional_fixed_key_arguments = additional_fixed_key_arguments
 
-    def create_parameters_for_model_selection_function(self, graph, partition_representation):
+    def create_parameters_for_model_selection_function(
+        self, graph, partition_representation
+    ):
         """
         Creates from the given information the parameters for the model selection function
         :param graph: graph which nodes are clustered
@@ -412,7 +494,9 @@ class ModelSelectionWithExtraFunction(AbstractModelSelection):
         parameters = {"is_degree_corrected": self.is_degree_corrected}
 
         if self.function_needs_partition:
-            parameters["partition"] = sbm.NxPartition(graph, representation=partition_representation)
+            parameters["partition"] = sbm.NxPartition(
+                graph, representation=partition_representation
+            )
 
         if self.function_needs_partition_representation:
             parameters["partition_representation"] = partition_representation
@@ -466,40 +550,65 @@ def get_possible_model_selection(objective_function_class):
         else:
             is_degree_corrected = False
 
-            model_selections.append(ModelSelectionWithExtraFunction(integrated_complete_likelihood,
-                                                                    is_degree_corrected,
-                                                                    "ICL",
-                                                                    function_needs_number_of_nodes=True,
-                                                                    ))
+            model_selections.append(
+                ModelSelectionWithExtraFunction(
+                    integrated_complete_likelihood,
+                    is_degree_corrected,
+                    "ICL",
+                    function_needs_number_of_nodes=True,
+                )
+            )
 
-        model_selections.append(ModelSelectionWithExtraFunction(akaike_information_criterion,
-                                                                is_degree_corrected,
-                                                                "AIC"))
-        model_selections.append(ModelSelectionWithExtraFunction(minimum_description_length_peixoto,
-                                                                is_degree_corrected,
-                                                                "MDL",
-                                                                function_needs_partition=True,
-                                                                function_needs_partition_representation=False,
-                                                                function_needs_is_directed=False))
-        model_selections.append(ModelSelectionWithExtraFunction(bayesian_information_criterion,
-                                                                is_degree_corrected,
-                                                                "BIC sparse",
-                                                                function_needs_number_of_nodes=True))
-        model_selections.append(ModelSelectionWithExtraFunction(bayesian_information_criterion,
-                                                                is_degree_corrected,
-                                                                "BIC",
-                                                                function_needs_number_of_nodes=True,
-                                                                additional_fixed_key_arguments={'sparse': False}))
+        model_selections.append(
+            ModelSelectionWithExtraFunction(
+                akaike_information_criterion, is_degree_corrected, "AIC"
+            )
+        )
+        model_selections.append(
+            ModelSelectionWithExtraFunction(
+                minimum_description_length_peixoto,
+                is_degree_corrected,
+                "MDL",
+                function_needs_partition=True,
+                function_needs_partition_representation=False,
+                function_needs_is_directed=False,
+            )
+        )
+        model_selections.append(
+            ModelSelectionWithExtraFunction(
+                bayesian_information_criterion,
+                is_degree_corrected,
+                "BIC sparse",
+                function_needs_number_of_nodes=True,
+            )
+        )
+        model_selections.append(
+            ModelSelectionWithExtraFunction(
+                bayesian_information_criterion,
+                is_degree_corrected,
+                "BIC",
+                function_needs_number_of_nodes=True,
+                additional_fixed_key_arguments={"sparse": False},
+            )
+        )
 
-        model_selections.append(ModelSelectionWithExtraFunction(minimum_description_length_traditional,
-                                                                is_degree_corrected,
-                                                                "MDLt",
-                                                                function_needs_number_of_edges=True))
+        model_selections.append(
+            ModelSelectionWithExtraFunction(
+                minimum_description_length_traditional,
+                is_degree_corrected,
+                "MDLt",
+                function_needs_number_of_edges=True,
+            )
+        )
 
-        model_selections.append(ModelSelectionWithExtraFunction(minimum_description_length_peixoto_first,
-                                                                is_degree_corrected,
-                                                                "MDL Peixoto first",
-                                                                function_needs_number_of_edges=True,
-                                                                function_needs_number_of_nodes=True))
+        model_selections.append(
+            ModelSelectionWithExtraFunction(
+                minimum_description_length_peixoto_first,
+                is_degree_corrected,
+                "MDL Peixoto first",
+                function_needs_number_of_edges=True,
+                function_needs_number_of_nodes=True,
+            )
+        )
 
     return model_selections
