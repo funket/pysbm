@@ -1,0 +1,58 @@
+# SPDX-FileCopyrightText: Copyright (C) 2026 Thorben Funke
+# SPDX-License-Identifier: CC-BY-SA-4.0
+
+[project]
+name = "pysbm"
+version = "0.0.1"
+description = "A Python package for stochastic block model inference"
+authors = [{ name = "Thorben Funke" }]
+readme = "README.md"
+license = "CC-BY-SA-4.0"
+license-files = ["LICENSE.txt"]
+requires-python = ">=3.10"
+keywords = ["sbm", "stochastic block model", "community detection", "network", "graph", "inference"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Scientific/Engineering :: Mathematics",
+]
+dependencies = [
+    "networkx>=3.4",
+    "numpy>=2.2",
+    "scikit-learn>=1.7",
+    "scipy>=1.15",
+]
+
+[project.urls]
+homepage = "https://github.com/fabriciofx/pysbm"
+bug-tracker = "https://github.com/fabriciofx/pysbm/issues"
+
+[dependency-groups]
+dev = [
+    "build",
+    "pytest",
+    "six",
+    "twine",
+]
+
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff.lint.per-file-ignores]
+"src/pysbm/parallel_execution.py" = ["BLE001"]

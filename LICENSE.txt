@@ -1,3 +1,5 @@
+Copyright (C) 2026 Thorben Funke
+
 Attribution-ShareAlike 4.0 International
 
 =======================================================================
