@@ -15,7 +15,7 @@ from pysbm import additional_types
 from .exceptions import NoFreeNodeException
 
 
-class Partition(object):
+class Partition:
     """Partition of a graph"""
 
     def __init__(
@@ -258,7 +258,7 @@ class NxPartition(Partition):
 
     def __init__(
         self,
-        graph=nx.DiGraph(),
+        graph,
         number_of_blocks=None,
         calculate_degree_of_blocks=True,
         save_neighbor_of_blocks=True,
@@ -285,7 +285,7 @@ class NxPartition(Partition):
                 self.neighboring_edges = [additional_types.WeightedListDict()]
             else:
                 self.neighboring_edges = [additional_types.ListDict()]
-        super(NxPartition, self).__init__(
+        super().__init__(
             graph,
             number_of_blocks,
             calculate_degree_of_blocks,
@@ -325,14 +325,16 @@ class NxPartition(Partition):
         to_block = self.partition[to_node]
 
         # if needed refresh block neighbor
-        if self._save_neighbor_of_blocks:
-            if self.block_edges[from_block][to_block] == 0:
-                self.list_of_block_neighbors[from_block].add(to_block)
-                #  neighboring block in direct case in both directions
-                if self.is_graph_directed():
-                    self.list_of_block_neighbors[to_block].add(from_block)
+        if (
+            self._save_neighbor_of_blocks
+            and self.block_edges[from_block][to_block] == 0
+        ):
+            self.list_of_block_neighbors[from_block].add(to_block)
+            #  neighboring block in direct case in both directions
+            if self.is_graph_directed():
+                self.list_of_block_neighbors[to_block].add(from_block)
 
-                    # if needed refresh outgoing edges
+        # if needed refresh outgoing edges
         if self._save_neighbor_edges:
             # save all edges even those with aim to the same block
             if self._is_weighted:
@@ -365,16 +367,16 @@ class NxPartition(Partition):
         self.block_edges[from_node_block][to_node_block] -= weight
 
         # if needed refresh block neighbor
-        if self._save_neighbor_of_blocks:
-            # double check for directed graphs
-            if (
-                self.block_edges[from_node_block][to_node_block] == 0
-                and self.block_edges[to_node_block][from_node_block] == 0
-            ):
-                self.list_of_block_neighbors[from_node_block].discard(to_node_block)
-                self.list_of_block_neighbors[to_node_block].discard(from_node_block)
+        # double check for directed graphs
+        if (
+            self._save_neighbor_of_blocks
+            and self.block_edges[from_node_block][to_node_block] == 0
+            and self.block_edges[to_node_block][from_node_block] == 0
+        ):
+            self.list_of_block_neighbors[from_node_block].discard(to_node_block)
+            self.list_of_block_neighbors[to_node_block].discard(from_node_block)
 
-                # if needed refresh outgoing edges
+        # if needed refresh outgoing edges
         if self._save_neighbor_edges:
             if self._is_weighted:
                 # noinspection PyArgumentList
@@ -878,7 +880,7 @@ class NxPartitionWithMoveCounter(NxPartition):
         representation=None,
     ):
         self.node_moves = 0
-        super(NxPartitionWithMoveCounter, self).__init__(
+        super().__init__(
             graph,
             number_of_blocks,
             calculate_degree_of_blocks,
@@ -893,7 +895,7 @@ class NxPartitionWithMoveCounter(NxPartition):
         # only count real moves
         if self.partition[node] != to_block:
             self.node_moves += 1
-            super(NxPartitionWithMoveCounter, self).move_node(node, to_block)
+            super().move_node(node, to_block)
 
     def get_sum_of_covariates(self, from_block, to_block):
         raise NotImplementedError()

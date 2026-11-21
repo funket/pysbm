@@ -1,10 +1,7 @@
 # SPDX-FileCopyrightText: Copyright (C) 2026 Thorben Funke
 # SPDX-License-Identifier: CC-BY-SA-4.0
 
-from .inference import Inference
-from .inference import KarrerInferenceNoNegativeMove
-from .inference import PeixotoInference
-from .peixotos_hierarchical_sbm import NxHierarchicalPartition
+from .inference import Inference, KarrerInferenceNoNegativeMove, PeixotoInference
 
 
 class HierarchicalInference(Inference):
@@ -34,9 +31,7 @@ class HierarchicalInference(Inference):
         :param inference_class:
         :type inference_class class SBMInference
         """
-        super(HierarchicalInference, self).__init__(
-            graph, objective_function, hierarchical_partition
-        )
+        super().__init__(graph, objective_function, hierarchical_partition)
         self.inference_class = inference_class
         if (
             inference_class == KarrerInferenceNoNegativeMove
@@ -70,12 +65,11 @@ class HierarchicalInference(Inference):
         try:
             for _ in range(100):
                 self.infer_stepwise()
-            else:
-                raise Exception(
-                    "Could not find minimum in 100 steps"
-                    + str(self.partition.get_representation())
-                    + str(self.partition.graph.edges())
-                )
+            raise RuntimeError(
+                "Could not find minimum in 100 steps"
+                + str(self.partition.get_representation())
+                + str(self.partition.graph.edges())
+            )
         except StopIteration:
             pass
 
@@ -126,20 +120,19 @@ class HierarchicalInference(Inference):
             self._level_status.insert(self.viewed_level + 1, False)
 
         # now try delete if not lowest level!
-        if self.viewed_level > 0:
-            if self.delete_level(self.viewed_level):
-                any_move_successful = True
-                # delete entry of deleted level
-                del self._level_status[self.viewed_level]
-                # now self.viewed_level point to level above
+        if self.viewed_level > 0 and self.delete_level(self.viewed_level):
+            any_move_successful = True
+            # delete entry of deleted level
+            del self._level_status[self.viewed_level]
+            # now self.viewed_level point to level above
 
-                # take this into account when moving the pointer
-                move_levels_up -= 1
-                # test on >0 already done -> mark level below as not done
-                self._level_status[self.viewed_level - 1] = False
-                # check if above level exists and mark as not done
-                if self.viewed_level < self.partition.max_level:
-                    self._level_status[self.viewed_level] = False
+            # take this into account when moving the pointer
+            move_levels_up -= 1
+            # test on >0 already done -> mark level below as not done
+            self._level_status[self.viewed_level - 1] = False
+            # check if above level exists and mark as not done
+            if self.viewed_level < self.partition.max_level:
+                self._level_status[self.viewed_level] = False
 
         if (
             any_move_successful
@@ -335,9 +328,7 @@ class PeixotoHierarchicalInference(HierarchicalInference):
                 "add_additional_mergers": False,
                 "mcmc_steps": 100,
             }
-        else:
-            inference_class_instance_parameters = inference_class_instance_parameters
-        super(PeixotoHierarchicalInference, self).__init__(
+        super().__init__(
             graph,
             objective_function,
             hierarchical_partition,
@@ -366,7 +357,7 @@ class PeixotoHierarchicalInference1k(PeixotoHierarchicalInference):
             "add_additional_mergers": False,
             "mcmc_steps": 1000,
         }
-        super(PeixotoHierarchicalInference1k, self).__init__(
+        super().__init__(
             graph,
             objective_function,
             hierarchical_partition,

@@ -53,3 +53,6 @@ where = ["src"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.ruff.lint.per-file-ignores]
+"src/pysbm/parallel_execution.py" = ["BLE001"]

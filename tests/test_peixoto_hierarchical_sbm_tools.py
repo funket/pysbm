@@ -7,11 +7,10 @@ from unittest import TestCase
 import numpy as np
 
 from pysbm.sbm.peixotos_hierarchical_sbm_tools import (
-    init_number_of_restricted_partitions,
     NUMBER_OF_RESTRICTED_PARTITIONS_PRECOMPUTED_LIMIT,
     get_log_number_of_restricted_partitions,
+    init_number_of_restricted_partitions,
 )
-
 from pysbm.sbm.peixotos_hierarchical_sbm_tools_full import (
     get_number_of_restricted_partitions,
 )
@@ -176,7 +175,7 @@ class TestBasicFunctions(TestCase):
 
         real_spare = init_number_of_restricted_partitions(11, save_space=True)
         for i, values in enumerate(test_results_spare):
-            self.assertEqual(test_results_spare[i], real_spare[i])
+            self.assertEqual(values, real_spare[i])
 
     def test_get_number_of_restricted_partitions_precomputed(self):
         for m, values in enumerate(self.first_numbers_of_restricted_partitions):

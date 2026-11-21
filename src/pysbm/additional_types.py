@@ -11,7 +11,7 @@ import heapq as hp
 import random
 
 
-class SetDict(object):
+class SetDict:
     """
     Type which implements the following operations with a runtime better than O(n):
     - adding of items (once)
@@ -58,7 +58,7 @@ class SetDict(object):
         return str(self.items)
 
 
-class ListDict(object):
+class ListDict:
     """
     Type which implements the following operations with a runtime better than O(n):
     - adding of items (even multiple times the same)
@@ -114,7 +114,7 @@ class ListDict(object):
         return str(self.items)
 
 
-class WeightedListDict(object):
+class WeightedListDict:
     """
     Type which implements the following operations with a runtime better than:
     - adding of items (even multiple times the same -> reduced to weight)
@@ -195,7 +195,7 @@ class WeightedListDict(object):
 
 
 # noinspection PyPep8Naming
-class nHeap(object):
+class nHeap:
     """
     Data Structure for saving the max n Elements (tuples  (value, item_data))
     """
@@ -226,14 +226,13 @@ class nHeap(object):
         return self.data[key]
 
     def __iter__(self):
-        for value in self._data:
-            yield value
+        yield from self._data
 
     def __len__(self):
         return len(self.data)
 
 
-class Node(object):
+class Node:
     """
     Node with data and link to next node
     """
@@ -258,7 +257,7 @@ class Node(object):
         return self._data
 
 
-class LinkedList(object):
+class LinkedList:
     """
     Implementation of a simple linked list
     """
@@ -333,7 +332,7 @@ class LinkedList(object):
         return hash(self.head)
 
 
-class LinkedListIterator(object):
+class LinkedListIterator:
     """Iterator over a LinkedList"""
 
     # pylint: disable=too-few-public-methods
@@ -360,7 +359,7 @@ class LinkedListIterator(object):
 
 
 @functools.total_ordering
-class Observed(object):
+class Observed:
     """Object containing a value and a list of interested observers"""
 
     def __init__(self, value):
@@ -404,7 +403,7 @@ class Observed(object):
 
 
 @functools.total_ordering
-class Observer(object):
+class Observer:
     """Class watching at an observed object"""
 
     def __init__(self, observed):

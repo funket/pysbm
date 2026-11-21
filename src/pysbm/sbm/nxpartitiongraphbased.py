@@ -9,14 +9,15 @@ import networkx as nx
 import numpy as np
 
 from pysbm import additional_types
-from .partition import Partition
+
 from .exceptions import NoFreeNodeException
+from .partition import Partition
 
 
 class NxPartitionGraphBased(Partition):
     def __init__(
         self,
-        graph=nx.DiGraph(),
+        graph,
         number_of_blocks=None,
         calculate_degree_of_blocks=True,
         save_neighbor_of_blocks=True,
@@ -54,7 +55,7 @@ class NxPartitionGraphBased(Partition):
         self.node_neighbors = {}
         self._refresh_node_neighbors()
 
-        super(NxPartitionGraphBased, self).__init__(
+        super().__init__(
             graph,
             number_of_blocks=number_of_blocks,
             calculate_degree_of_blocks=calculate_degree_of_blocks,
@@ -78,26 +79,28 @@ class NxPartitionGraphBased(Partition):
         if old_block == to_block:
             return
 
-        # check if null move (only relabeling
+        # check if null move (only relabeling), i.e. if not a one element is moved
+        # to another one element block
         if (
             len(self._partition_graph_representation.nodes[old_block][self._NODES_A])
             == 1
+            and to_block not in self._partition_graph_representation
         ):
-            # quick check if not a one element is moved to another one element block
-            if to_block not in self._partition_graph_representation:
-                return
+            return
 
         # refresh partition values
         # assign new block
         self.partition[node] = to_block
         if to_block in self._partition_graph_representation:
             # if blocks were not deleted may insert into empty block and have to increase block count
-            if self.with_empty_blocks:
-                # if node set is empty
-                if not self._partition_graph_representation.nodes[to_block][
+            # (if node set is empty)
+            if (
+                self.with_empty_blocks
+                and not self._partition_graph_representation.nodes[to_block][
                     self._NODES_A
-                ]:
-                    self.B += 1
+                ]
+            ):
+                self.B += 1
             self._partition_graph_representation.nodes[to_block][self._NODES_A].add(
                 node
             )
@@ -259,10 +262,10 @@ class NxPartitionGraphBased(Partition):
                         {self.B: old_block},
                         copy=False,
                     )
-                    for node in self._partition_graph_representation.nodes[old_block][
+                    for member in self._partition_graph_representation.nodes[old_block][
                         self._NODES_A
                     ]:
-                        self.partition[node] = old_block
+                        self.partition[member] = old_block
             else:
                 self._partition_graph_representation.nodes[old_block][
                     self._NODES_A
@@ -908,7 +911,7 @@ class NxPartitionGraphBased(Partition):
         saved_number_of_blocks = self.B
         old_with_empty_blocks = self.with_empty_blocks
         self.with_empty_blocks = True
-        super(NxPartitionGraphBased, self).set_from_representation(representation)
+        super().set_from_representation(representation)
         self.with_empty_blocks = old_with_empty_blocks
         # check number of empty blocks
         if (
@@ -936,7 +939,7 @@ class NxPartitionGraphBased(Partition):
             )
 
             self.B = 1
-            super(NxPartitionGraphBased, self).set_from_representation(representation)
+            super().set_from_representation(representation)
             self.with_empty_blocks = old_with_empty_blocks
             # now the correct number of blocks should be present
             if self.B != len(self._partition_graph_representation):
@@ -1022,7 +1025,7 @@ class NxPartitionGraphBasedWithMoveCounter(NxPartitionGraphBased):
 
     def __init__(
         self,
-        graph=nx.DiGraph(),
+        graph,
         number_of_blocks=None,
         calculate_degree_of_blocks=True,
         save_neighbor_of_blocks=True,
@@ -1034,7 +1037,7 @@ class NxPartitionGraphBasedWithMoveCounter(NxPartitionGraphBased):
         with_covariate=False,
     ):
         self.node_moves = 0
-        super(NxPartitionGraphBasedWithMoveCounter, self).__init__(
+        super().__init__(
             graph=graph,
             number_of_blocks=number_of_blocks,
             calculate_degree_of_blocks=calculate_degree_of_blocks,
@@ -1051,13 +1054,13 @@ class NxPartitionGraphBasedWithMoveCounter(NxPartitionGraphBased):
         # only count real moves
         if self.partition[node] != to_block:
             self.node_moves += 1
-            super(NxPartitionGraphBasedWithMoveCounter, self).move_node(node, to_block)
+            super().move_node(node, to_block)
 
 
 class NxPartitionGraphBasedHierarchy(NxPartitionGraphBased):
     def __init__(
         self,
-        graph=nx.DiGraph(),
+        graph,
         number_of_blocks=None,
         calculate_degree_of_blocks=True,
         save_neighbor_of_blocks=True,
@@ -1068,7 +1071,7 @@ class NxPartitionGraphBasedHierarchy(NxPartitionGraphBased):
         representation=None,
         with_covariate=False,
     ):
-        super(NxPartitionGraphBasedHierarchy, self).__init__(
+        super().__init__(
             graph,
             number_of_blocks,
             calculate_degree_of_blocks,
@@ -1106,13 +1109,15 @@ class NxPartitionGraphBasedHierarchy(NxPartitionGraphBased):
         self.partition[node] = to_block
         if to_block in self._partition_graph_representation:
             # if blocks were not deleted may insert into empty block and have to increase block count
-            if self.with_empty_blocks:
-                # if node set is empty
-                if not self._partition_graph_representation.nodes[to_block][
+            # (if node set is empty)
+            if (
+                self.with_empty_blocks
+                and not self._partition_graph_representation.nodes[to_block][
                     self._NODES_A
-                ]:
-                    self.B += 1
-                    change_of_number_of_blocks = True
+                ]
+            ):
+                self.B += 1
+                change_of_number_of_blocks = True
             self._partition_graph_representation.nodes[to_block][self._NODES_A].add(
                 node
             )
@@ -1270,15 +1275,15 @@ class NxPartitionGraphBasedHierarchy(NxPartitionGraphBased):
                     if self._is_directed:
                         for (
                             _,
-                            to_block,
+                            target_block,
                             weight,
                         ) in self._partition_graph_representation.out_edges(
                             self.B, data=self._WA
                         ):
-                            old_relabeled_edges.append((self.B, to_block, weight))
-                            if to_block != self.B:
+                            old_relabeled_edges.append((self.B, target_block, weight))
+                            if target_block != self.B:
                                 new_relabeled_edges.append(
-                                    (old_block, to_block, weight)
+                                    (old_block, target_block, weight)
                                 )
                             else:
                                 new_relabeled_edges.append(
@@ -1303,15 +1308,15 @@ class NxPartitionGraphBasedHierarchy(NxPartitionGraphBased):
                     else:
                         for (
                             from_block,
-                            to_block,
+                            target_block,
                             weight,
                         ) in self._partition_graph_representation.edges(
                             self.B, data=self._WA
                         ):
-                            old_relabeled_edges.append((self.B, to_block, weight))
-                            if to_block != self.B:
+                            old_relabeled_edges.append((self.B, target_block, weight))
+                            if target_block != self.B:
                                 new_relabeled_edges.append(
-                                    (old_block, to_block, weight)
+                                    (old_block, target_block, weight)
                                 )
                             else:
                                 new_relabeled_edges.append(
@@ -1351,10 +1356,10 @@ class NxPartitionGraphBasedHierarchy(NxPartitionGraphBased):
                         {self.B: old_block},
                         copy=False,
                     )
-                    for node in self._partition_graph_representation.nodes[old_block][
+                    for member in self._partition_graph_representation.nodes[old_block][
                         self._NODES_A
                     ]:
-                        self.partition[node] = old_block
+                        self.partition[member] = old_block
 
                     return (
                         False,
@@ -1620,7 +1625,7 @@ class NxPartitionGraphBasedHierarchy(NxPartitionGraphBased):
 class NxHierarchicalPartition(Partition):
     def __init__(
         self,
-        graph=nx.DiGraph(),
+        graph,
         number_of_blocks=None,
         calculate_degree_of_blocks=True,
         save_neighbor_of_blocks=True,
@@ -1694,7 +1699,7 @@ class NxHierarchicalPartition(Partition):
         if with_covariate:
             self.covariate_total = self._graph.size(weight=self._COVARIATE)
 
-        super(NxHierarchicalPartition, self).__init__(
+        super().__init__(
             graph,
             number_of_blocks,
             calculate_degree_of_blocks,
@@ -1718,16 +1723,15 @@ class NxHierarchicalPartition(Partition):
 
     def move_node(self, node, to_block, check_move=True):
         # if move is allowed, no additional information need to be updated
-        if check_move:
-            if not self._is_valid_move(node, to_block):
-                raise ValueError(
-                    "node"
-                    + str(node)
-                    + "of block"
-                    + str(self.partitions[self.actual_level].partition[node])
-                    + "->"
-                    + str(to_block)
-                )
+        if check_move and not self._is_valid_move(node, to_block):
+            raise ValueError(
+                "node"
+                + str(node)
+                + "of block"
+                + str(self.partitions[self.actual_level].partition[node])
+                + "->"
+                + str(to_block)
+            )
         if self.actual_level == self.max_level:
             # on max level no need to care about moves
             self.partitions[self.actual_level].move_node(node, to_block)
@@ -1758,11 +1762,9 @@ class NxHierarchicalPartition(Partition):
             return True
         # else check if from and to block are in the same block
         from_block = self.partitions[self.actual_level].get_block_of_node(node)
-        if self.partitions[self.actual_level + 1].get_block_of_node(
+        return self.partitions[self.actual_level + 1].get_block_of_node(
             from_block
-        ) != self.partitions[self.actual_level + 1].get_block_of_node(to_block):
-            return False
-        return True
+        ) == self.partitions[self.actual_level + 1].get_block_of_node(to_block)
 
     def get_number_of_nodes_in_block(self, block_number):
         return self.partitions[self.actual_level].get_number_of_nodes_in_block(
@@ -1838,8 +1840,7 @@ class NxHierarchicalPartition(Partition):
                     nodes.extend(self.partitions[level].get_elements_of_block(block))
 
                     # determine smallest block number
-                    if block < min_block:
-                        min_block = block
+                    min_block = min(min_block, block)
 
                 # move all nodes into smallest block
                 for node in nodes:

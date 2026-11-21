@@ -1,30 +1,31 @@
 # SPDX-FileCopyrightText: Copyright (C) 2026 Thorben Funke
 # SPDX-License-Identifier: CC-BY-SA-4.0
 
+import csv
+import math
+import os
+import pickle
+import random as rd
 import time
+from collections import namedtuple
+from typing import ClassVar
 
 import networkx as nx
-import csv
+from sklearn.metrics import adjusted_mutual_info_score as adjusted_mutual_information
 
 from pysbm import sbm
-from pysbm.parallel_execution import parallel_execution
-from pysbm.parallel_execution import TEMP_DIRECTORY
-from pysbm.parallel_execution import TEMP_FILE_NAMES
-from pysbm.parallel_execution import SUCCESS_MESSAGE_AND_SAVE_EVERY_X_PERCENT
+from pysbm.parallel_execution import (
+    SUCCESS_MESSAGE_AND_SAVE_EVERY_X_PERCENT,
+    TEMP_DIRECTORY,
+    TEMP_FILE_NAMES,
+    parallel_execution,
+)
 from pysbm.test_ground import (
     NormalizedMutualInformation,
     PlantedPartitionGenerator,
     SBMGenerator,
     SimplePartition,
 )
-import random as rd
-import os
-import pickle
-import math
-import typing
-from collections import namedtuple
-
-from sklearn.metrics import adjusted_mutual_info_score as adjusted_mutual_information
 
 
 # @formatter:off
@@ -327,7 +328,7 @@ class SingleNetworkTest:
 class TestGround:
     EXCLUSION_FILE_NAME = "exclude.csv"
 
-    NEW_HEADER_LINE = [
+    NEW_HEADER_LINE: ClassVar[list[str]] = [
         "network information",
         "inference short title",
         "objective function short title",
@@ -340,7 +341,7 @@ class TestGround:
         "node block assignments based on sorted nodes...",
     ]
 
-    NEW_HEADER_LINE_EVALUATED = [
+    NEW_HEADER_LINE_EVALUATED: ClassVar[list[str]] = [
         "network information",
         "inference short title",
         "objective function short title",
@@ -453,7 +454,7 @@ class TestGround:
             else:
                 starting_representation = None
 
-            results[key] = network_test.apply_inference_algorithm(
+            result = network_test.apply_inference_algorithm(
                 inference_class,
                 objective_function_class,
                 inference_creation_parameters=inference_creation_parameters,
@@ -462,10 +463,11 @@ class TestGround:
                 number_of_blocks=number_of_blocks,
                 starting_representation=starting_representation,
             )
+            results[key] = result
 
             if key not in self.results_of_all_executions:
                 self.results_of_all_executions[key] = []
-            self.results_of_all_executions[key].extend(results[key])
+            self.results_of_all_executions[key].extend(result)
 
         self._number_of_total_executions += 1
         return results
@@ -771,10 +773,10 @@ class TestGround:
                 included_blocks_by_short_key[short_key].add(number_of_blocks)
 
         if already_extended or self.use_flat_saving:
-            for key in included_blocks_by_short_key:
+            for key, included_blocks in included_blocks_by_short_key.items():
                 if (
                     set(self._get_search_range(key[0], search_in_range))
-                    != included_blocks_by_short_key[key]
+                    != included_blocks
                 ):
                     raise ValueError(
                         "File ", file_path, "found, but different search range"
@@ -1048,7 +1050,7 @@ class TestGround:
                 number_of_blocks = int(line[3])
                 if new_format:
                     offset = 1
-                    start_from_true_partition = True if line[4] == "T" else False
+                    start_from_true_partition = line[4] == "T"
                 else:
                     offset = 0
                     start_from_true_partition = False
@@ -1289,13 +1291,12 @@ class TestGround:
             for single_result in self.results_of_all_executions[key]:
                 if issubclass(inference_class, sbm.HierarchicalInference):
                     representation = single_result[0][0]
-                    if with_zoom:
-                        if len(single_result[0]) > 1:
-                            raw_partition = single_result[0]
-                            representation = {
-                                node: raw_partition[1][raw_partition[0][node]]
-                                for node in raw_partition[0]
-                            }
+                    if with_zoom and len(single_result[0]) > 1:
+                        raw_partition = single_result[0]
+                        representation = {
+                            node: raw_partition[1][raw_partition[0][node]]
+                            for node in raw_partition[0]
+                        }
                 else:
                     representation = single_result[0]
 
@@ -1441,8 +1442,8 @@ class ResultHandler:
 
         # sort number of groups per combination
         for short_key in self._number_of_groups_per_combination:
-            self._number_of_groups_per_combination[short_key] = list(
-                sorted(self._number_of_groups_per_combination[short_key])
+            self._number_of_groups_per_combination[short_key] = sorted(
+                self._number_of_groups_per_combination[short_key]
             )
 
     def _transform_values_per_execution(self, test, inference, objective):
@@ -1592,7 +1593,7 @@ class ResultHandler:
             long_key = self.ModelSelectionKey(
                 test, inference, objective, run_counter, model_selection.title
             )
-            selected_number_of_groups, model_selection_value = (
+            selected_number_of_groups, _model_selection_value = (
                 self._results_per_execution[long_key]
             )
 
@@ -1651,7 +1652,7 @@ class SingleNetworkSupplier:
             edge_probability_in_group,
             edge_probability_between_groups,
         )
-        planted_partition_graph, number_of_blocks, returned_ground_truth = (
+        planted_partition_graph, _number_of_blocks, returned_ground_truth = (
             planted_partition_generator.generate(directed=False, seed=42)
         )
         nodes_in_groups = [
@@ -1710,7 +1711,7 @@ class SingleNetworkSupplier:
                 4, 32, p_in[i], p_out[i]
             )
             for j in range(number_of_networks):
-                planted_partition_graph, number_of_blocks, returned_ground_truth = (
+                planted_partition_graph, _number_of_blocks, returned_ground_truth = (
                     planted_partition_generator.generate(directed=False, seed=j)
                 )
                 information = [
@@ -1782,7 +1783,7 @@ class SingleNetworkSupplier:
                 4, 32, p_in[i], p_out[i]
             )
             for j in range(number_of_networks):
-                planted_partition_graph, number_of_blocks, returned_ground_truth = (
+                planted_partition_graph, _number_of_blocks, returned_ground_truth = (
                     planted_partition_generator.generate(directed=False, seed=j)
                 )
                 information = [

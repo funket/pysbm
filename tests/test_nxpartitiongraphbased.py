@@ -8,11 +8,13 @@ import numpy as np
 import six
 
 import tests.test_partition as test_sbmpartition
-from pysbm.sbm.nxpartitiongraphbased import NxHierarchicalPartition
-from pysbm.sbm.nxpartitiongraphbased import NxPartitionGraphBased
-from pysbm.sbm.nxpartitiongraphbased import NxPartitionGraphBasedHierarchy
-from pysbm.sbm.objective_functions import TraditionalUnnormalizedLogLikelyhood
 from pysbm.sbm.exceptions import NoFreeNodeException
+from pysbm.sbm.nxpartitiongraphbased import (
+    NxHierarchicalPartition,
+    NxPartitionGraphBased,
+    NxPartitionGraphBasedHierarchy,
+)
+from pysbm.sbm.objective_functions import TraditionalUnnormalizedLogLikelyhood
 
 
 # function which are later methods of the classes
@@ -40,18 +42,21 @@ def general_test_saved_edges(self, first_partition, second_partition):
     # test if copy contains the same data
     for i in range(2):
         # next line depends on implementation of NxPartitionGraphBased AND ListDict!
-        if set(
-            first_partition.get_partition_as_a_graph()
-            .nodes[i][self.partition._NEIGHBORING_EDGES_A]
-            .items
-        ) ^ set(
-            second_partition.get_partition_as_a_graph()
-            .nodes[i][second_partition._NEIGHBORING_EDGES_A]
-            .items
-        ) == set([]):
+        if (
+            set(
+                first_partition.get_partition_as_a_graph()
+                .nodes[i][self.partition._NEIGHBORING_EDGES_A]
+                .items
+            )
+            ^ set(
+                second_partition.get_partition_as_a_graph()
+                .nodes[i][second_partition._NEIGHBORING_EDGES_A]
+                .items
+            )
+            == set()
+        ):
             return True
-    else:
-        return False
+    return False
 
 
 def undirected_test_move_node_with_return_values(self):
@@ -184,9 +189,9 @@ def undirected_test_split_and_merge(self):
         edges[(0, 0)] / number_of_tries, 2 / (len(correct_entries) + 1), delta=0.1
     )
     del edges[(0, 0)]
-    for edge in edges:
+    for edge, count in edges.items():
         self.assertAlmostEqual(
-            edges[edge] / number_of_tries, 1 / (len(correct_entries) + 1), delta=0.1
+            count / number_of_tries, 1 / (len(correct_entries) + 1), delta=0.1
         )
 
     # -----------------------
@@ -588,9 +593,9 @@ def directed_test_split_and_merge(self):
         edges[(0, 0)] / number_of_tries, 4 / (len(correct_entries) + 3), delta=0.1
     )
     del edges[(0, 0)]
-    for edge in edges:
+    for edge, count in edges.items():
         self.assertAlmostEqual(
-            edges[edge] / number_of_tries, 1 / (len(correct_entries) + 3), delta=0.1
+            count / number_of_tries, 1 / (len(correct_entries) + 3), delta=0.1
         )
 
     # -----------------------
@@ -1113,7 +1118,7 @@ class TestNxPartitionGraphBased(test_sbmpartition.TestNxPartition):
 
     # noinspection PyPep8Naming
     def __init__(self, methodName="runTest"):
-        super(TestNxPartitionGraphBased, self).__init__(methodName)
+        super().__init__(methodName)
         self.is_weighted = False
         self.test_class = NxPartitionGraphBased
 
@@ -1136,7 +1141,7 @@ class TestNxPartitionGraphBased(test_sbmpartition.TestNxPartition):
 class TestNxPartitionGraphBasedDirected(test_sbmpartition.TestNxPartitionDirected):
     # noinspection PyPep8Naming
     def __init__(self, methodName="runTest"):
-        super(TestNxPartitionGraphBasedDirected, self).__init__(methodName)
+        super().__init__(methodName)
         self.is_weighted = False
         self.test_class = NxPartitionGraphBased
 
@@ -1162,7 +1167,7 @@ class TestNxPartitionGraphBasedMultiWeighted(
 ):
     # noinspection PyPep8Naming
     def __init__(self, methodName="runTest"):
-        super(TestNxPartitionGraphBasedMultiWeighted, self).__init__(methodName)
+        super().__init__(methodName)
         self.is_weighted = True
         self.test_class = NxPartitionGraphBased
 
@@ -1184,7 +1189,7 @@ class TestNxPartitionGraphBasedDirectedMultiWeighted(
 ):
     # noinspection PyPep8Naming
     def __init__(self, methodName="runTest"):
-        super(TestNxPartitionGraphBasedDirectedMultiWeighted, self).__init__(methodName)
+        super().__init__(methodName)
         self.is_weighted = True
         self.test_class = NxPartitionGraphBased
 
@@ -1206,7 +1211,7 @@ class TestNxPartitionGraphBasedHierarchy(TestNxPartitionGraphBased):
 
     # noinspection PyPep8Naming
     def __init__(self, methodName="runTest"):
-        super(TestNxPartitionGraphBasedHierarchy, self).__init__(methodName)
+        super().__init__(methodName)
         self.is_weighted = False
         self.test_class = NxPartitionGraphBasedHierarchy
 
@@ -1221,7 +1226,7 @@ class TestNxPartitionGraphBasedHierarchy(TestNxPartitionGraphBased):
 class TestNxPartitionGraphBasedHierarchyDirected(TestNxPartitionGraphBasedDirected):
     # noinspection PyPep8Naming
     def __init__(self, methodName="runTest"):
-        super(TestNxPartitionGraphBasedHierarchyDirected, self).__init__(methodName)
+        super().__init__(methodName)
         self.is_weighted = False
         self.test_class = NxPartitionGraphBasedHierarchy
 
@@ -1238,9 +1243,7 @@ class TestNxPartitionGraphBasedHierarchyMultiWeighted(
 ):
     # noinspection PyPep8Naming
     def __init__(self, methodName="runTest"):
-        super(TestNxPartitionGraphBasedHierarchyMultiWeighted, self).__init__(
-            methodName
-        )
+        super().__init__(methodName)
         self.is_weighted = True
         self.test_class = NxPartitionGraphBasedHierarchy
 
@@ -1257,9 +1260,7 @@ class TestNxPartitionGraphBasedHierarchyDirectedMultiWeighted(
 ):
     # noinspection PyPep8Naming
     def __init__(self, methodName="runTest"):
-        super(TestNxPartitionGraphBasedHierarchyDirectedMultiWeighted, self).__init__(
-            methodName
-        )
+        super().__init__(methodName)
         self.is_weighted = True
         self.test_class = NxPartitionGraphBasedHierarchy
 
@@ -1274,7 +1275,7 @@ class TestNxPartitionGraphBasedHierarchyDirectedMultiWeighted(
 class TestNxHierarchicalPartition(ut.TestCase):
     # noinspection PyPep8Naming
     def __init__(self, methodName="runTest"):
-        super(TestNxHierarchicalPartition, self).__init__(methodName)
+        super().__init__(methodName)
         self.is_weighted = False
 
     def setUp(self):
@@ -2091,7 +2092,7 @@ class TestNxHierarchicalPartition(ut.TestCase):
             with self.assertRaises(ValueError):
                 hierarchical_partition.random_partition(level=2, number_of_blocks=6)
 
-            for max_level in range(0, 3):
+            for max_level in range(3):
                 for level in range(max_level, -1, -1):
                     old_representation = hierarchical_partition.get_representation()
                     number_of_blocks = 20 - level * 5
@@ -2298,7 +2299,6 @@ class TestNxHierarchicalPartition(ut.TestCase):
                     self._comparator_of_two_partitions(self.partition, other_partition)
 
     def test_no_movable_node_in_hierarchy(self):
-        number_of_nodes = len(self.graph)
         first_partition = {node: (node - 1) for node in self.graph}
         first_partition[0] = 0
         second_partition = {
@@ -2326,5 +2326,5 @@ class TestNxHierarchicalPartition(ut.TestCase):
 class TestNxHierarchicalPartitionWeighted(TestNxHierarchicalPartition):
     # noinspection PyPep8Naming
     def __init__(self, methodName="runTest"):
-        super(TestNxHierarchicalPartitionWeighted, self).__init__(methodName)
+        super().__init__(methodName)
         self.is_weighted = True

@@ -7,18 +7,14 @@ Based on
 ﻿Newman, M. E. J. and Reinert, G. 2016
 """
 
-from math import gamma
-from math import lgamma
-from math import log
-
-from .partition import Partition
+from math import gamma, lgamma, log
 
 from .objective_functions import ObjectiveFunction
 
 
 # @formatter:off
 def newman_reinert_non_degree_corrected_undirected(partition):
-    """
+    r"""
     Calculates
     P(B,b|G) = P(B)P(b|B)P(G|b)
     * ignoring the unknown constant P(G)
@@ -73,7 +69,7 @@ def newman_reinert_non_degree_corrected_undirected(partition):
 
 
 def log_newman_reinert_non_degree_corrected_undirected(partition):
-    """
+    r"""
     Calculates
     log P(B,b|G) = log(P(B)P(b|B)P(G|b))
     * ignoring the unknown constant P(G)
@@ -132,7 +128,7 @@ def log_newman_reinert_non_degree_corrected_undirected(partition):
 def delta_log_newman_reinert_non_degree_corrected_undirected(
     partition, from_block, to_block, *args
 ):
-    """
+    r"""
     Calculates
     \Delta P(B,b|G)
     :param partition: partition with all information including the graph and the node partition
@@ -317,7 +313,7 @@ def delta_log_newman_reinert_non_degree_corrected_undirected(
 
 
 def newman_reinert_non_degree_corrected_directed(partition):
-    """
+    r"""
     Own adaption into a directed version:
     Calculates
     P(B,b|G) = P(B)P(b|B)P(G|b)
@@ -362,7 +358,7 @@ def newman_reinert_non_degree_corrected_directed(partition):
 
 
 def log_newman_reinert_non_degree_corrected_directed(partition):
-    """
+    r"""
     Calculates
     log P(B,b|G) = log(P(B)P(b|B)P(G|b))
     * ignoring the unknown constant P(G)
@@ -407,7 +403,7 @@ def log_newman_reinert_non_degree_corrected_directed(partition):
 def delta_log_newman_reinert_non_degree_corrected_directed(
     partition, from_block, to_block, *args
 ):
-    """
+    r"""
     Calculates
     \Delta P(B,b|G)
     :param partition: partition with all information including the graph and the node partition
@@ -658,9 +654,9 @@ def newman_reinert_degree_corrected_undirected(partition):
     * ignoring the unknown constant P(G)
     with
     P(B) = 1/N
-    P(b|B) = (B-1)!/(N+B-1)! \prod_r n_r!
-    P_standard SBM(G|B) = \prod_r e_rr! / (1/2 p n_r^2 + 1)^{e_rr+1} \prod_{r<s} e_rs!/(pn_rn_s+1)^{e_rs+1}
-    P_dc (G|b) = P_standard SBM(G|b) \prod_{r,n_r\ne0} n_r^e_r(n_r-1)!/(n_r+e_r-1)!
+    P(b|B) = (B-1)!/(N+B-1)! \\prod_r n_r!
+    P_standard SBM(G|B) = \\prod_r e_rr! / (1/2 p n_r^2 + 1)^{e_rr+1} \\prod_{r<s} e_rs!/(pn_rn_s+1)^{e_rs+1}
+    P_dc (G|b) = P_standard SBM(G|b) \\prod_{r,n_r\ne0} n_r^e_r(n_r-1)!/(n_r+e_r-1)!
     and
     p = 2|E|/N^2
     :param partition: partition with all information including the graph and the node partition
@@ -727,9 +723,9 @@ def log_newman_reinert_degree_corrected_undirected(partition):
     * ignoring the unknown constant P(G)
     with
     P(B) = 1/N
-    P(b|B) = (B-1)!/(N+B-1)! \prod_r n_r!
-    P_standard SBM(G|B) = \prod_r e_rr! / (1/2 p n_r^2 + 1)^{e_rr+1} \prod_{r<s} e_rs!/(pn_rn_s+1)^{e_rs+1}
-    P_dc (G|b) = P_standard SBM(G|b) \prod_{r,n_r\ne0} n_r^e_r(n_r-1)!/(n_r+e_r-1)!
+    P(b|B) = (B-1)!/(N+B-1)! \\prod_r n_r!
+    P_standard SBM(G|B) = \\prod_r e_rr! / (1/2 p n_r^2 + 1)^{e_rr+1} \\prod_{r<s} e_rs!/(pn_rn_s+1)^{e_rs+1}
+    P_dc (G|b) = P_standard SBM(G|b) \\prod_{r,n_r\ne0} n_r^e_r(n_r-1)!/(n_r+e_r-1)!
     and
     p = 2|E|/N^2
     should be the likelihood of observing an edge... in undirected case should be 2*|E|/(N*(N+1)/2)
@@ -792,7 +788,7 @@ def log_newman_reinert_degree_corrected_undirected(partition):
 def delta_log_newman_reinert_degree_corrected_undirected(
     partition, from_block, to_block, *args
 ):
-    """
+    r"""
     Calculates
     \Delta P(B,b|G)
     :param partition: partition with all information including the graph and the node partition
@@ -1030,9 +1026,9 @@ def newman_reinert_degree_corrected_directed(partition):
     * ignoring the unknown constant P(G)
     with
     P(B) = 1/N
-    P(b|B) = (B-1)!/(N+B-1)! \prod_r n_r!
-    P_standard SBM(G|B) = \prod_{rs} e_rs!/(pn_rn_s+1)^{e_rs+1}
-    P_dc (G|b) = P_standard SBM(G|b) \prod_{r,n_r\ne0} n_r^(e^in_r+e^out_r)(n_r-1)!/(n_r+e^in_r+e^out_r-1)!
+    P(b|B) = (B-1)!/(N+B-1)! \\prod_r n_r!
+    P_standard SBM(G|B) = \\prod_{rs} e_rs!/(pn_rn_s+1)^{e_rs+1}
+    P_dc (G|b) = P_standard SBM(G|b) \\prod_{r,n_r\ne0} n_r^(e^in_r+e^out_r)(n_r-1)!/(n_r+e^in_r+e^out_r-1)!
     and
     p = |E|/N^2
     :param partition: partition with all information including the graph and the node partition
@@ -1093,9 +1089,9 @@ def log_newman_reinert_degree_corrected_directed(partition):
     * ignoring the unknown constant P(G)
     with
     P(B) = 1/N
-    P(b|B) = (B-1)!/(N+B-1)! \prod_r n_r!
-    P_standard SBM(G|B) = \prod_{rs} e_rs!/(pn_rn_s+1)^{e_rs+1}
-    P_dc (G|b) = P_standard SBM(G|b) \prod_{r,n_r\ne0} n_r^(e^in_r+e^out_r)(n_r-1)!/(n_r+e^in_r+e^out_r-1)!
+    P(b|B) = (B-1)!/(N+B-1)! \\prod_r n_r!
+    P_standard SBM(G|B) = \\prod_{rs} e_rs!/(pn_rn_s+1)^{e_rs+1}
+    P_dc (G|b) = P_standard SBM(G|b) \\prod_{r,n_r\ne0} n_r^(e^in_r+e^out_r)(n_r-1)!/(n_r+e^in_r+e^out_r-1)!
     and
     p = |E|/N^2
     :param partition: partition with all information including the graph and the node partition
@@ -1151,7 +1147,7 @@ def log_newman_reinert_degree_corrected_directed(partition):
 def delta_log_newman_reinert_degree_corrected_directed(
     partition, from_block, to_block, *args
 ):
-    """
+    r"""
     Calculates
     \Delta P(B,b|G)
     :param partition: partition with all information including the graph and the node partition
@@ -1484,7 +1480,7 @@ class NewmanReinertNonDegreeCorrected(ObjectiveFunction):
             delta_log_newman_reinert_non_degree_corrected_directed
         )
 
-        super(NewmanReinertNonDegreeCorrected, self).__init__(
+        super().__init__(
             is_directed,
             function_calculate_undirected,
             function_calculate_directed,
@@ -1507,7 +1503,7 @@ class NewmanReinertDegreeCorrected(ObjectiveFunction):
             delta_log_newman_reinert_degree_corrected_directed
         )
 
-        super(NewmanReinertDegreeCorrected, self).__init__(
+        super().__init__(
             is_directed,
             function_calculate_undirected,
             function_calculate_directed,

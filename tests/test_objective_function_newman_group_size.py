@@ -9,9 +9,9 @@ import networkx as nx
 
 from pysbm.sbm import PeixotoInference
 from pysbm.sbm.nxpartitiongraphbased import NxPartitionGraphBased
-from pysbm.sbm.partition import NxPartition
 from pysbm.sbm.objective_function_newman_group_size import *
 from pysbm.sbm.objective_functions import TraditionalUnnormalizedLogLikelyhood
+from pysbm.sbm.partition import NxPartition
 
 
 def general_delta_test_random_move(

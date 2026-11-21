@@ -7,8 +7,6 @@ import unittest as ut
 # noinspection SpellCheckingInspection
 from pysbm import test_ground as sbmt
 
-from sklearn.metrics.cluster import adjusted_mutual_info_score
-
 
 class TestSimplePartition(ut.TestCase):
     """Test SimplePartition"""

@@ -5,8 +5,10 @@ import unittest as ut
 
 import networkx as nx
 
-from pysbm.sbm.hierarchical_inference import HierarchicalInference
-from pysbm.sbm.hierarchical_inference import PeixotoHierarchicalInference
+from pysbm.sbm.hierarchical_inference import (
+    HierarchicalInference,
+    PeixotoHierarchicalInference,
+)
 from pysbm.sbm.nxpartitiongraphbased import NxHierarchicalPartition
 from pysbm.sbm.peixotos_hierarchical_sbm import (
     LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper,
@@ -142,7 +144,7 @@ class DummyInference(HierarchicalInference):
         )
         hierarchical_partition = NxHierarchicalPartition(graph)
         delta_objective_function_for_level_removal = self.dummy_function
-        super(DummyInference, self).__init__(
+        super().__init__(
             graph,
             objective_function,
             hierarchical_partition,

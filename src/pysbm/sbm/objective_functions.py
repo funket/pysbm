@@ -6,12 +6,11 @@ Different Objective Functions evaluating the probability of a certain partition
 """
 
 # real non truncating division (same behaviour as in python 3)
-from __future__ import division
 
 import math
 
 
-class ObjectiveFunction(object):
+class ObjectiveFunction:
     """Measures the fitting of the SBM to the given graph"""
 
     title = "Forgot to replace short_title"
@@ -413,7 +412,7 @@ class TraditionalUnnormalizedLogLikelyhood(ObjectiveFunction):
     short_title = "SKN"
 
     def __init__(self, is_directed):
-        super(TraditionalUnnormalizedLogLikelyhood, self).__init__(
+        super().__init__(
             is_directed,
             calculate_complete_traditional_unnormalized_log_likelyhood,
             calculate_complete_traditional_unnormalized_log_likelyhood,
@@ -584,7 +583,7 @@ class DegreeCorrectedUnnormalizedLogLikelyhood(ObjectiveFunction):
     short_title = "DCKN"
 
     def __init__(self, is_directed):
-        super(DegreeCorrectedUnnormalizedLogLikelyhood, self).__init__(
+        super().__init__(
             is_directed,
             calculate_complete_degree_corrected_unnormalized_log_likelyhood_undirected,
             calculate_complete_degree_corrected_unnormalized_log_likelyhood_directed,
@@ -613,7 +612,7 @@ class TraditionalMicrocanonicalEntropy(ObjectiveFunction):
     short_title = "SPS"
 
     def __init__(self, is_directed, fixed_value=0):
-        super(TraditionalMicrocanonicalEntropy, self).__init__(
+        super().__init__(
             is_directed,
             self.calculate_complete_traditional_microcanonical_entropy_undirected,
             self.calculate_complete_traditional_microcanonical_entropy_directed,
@@ -670,7 +669,7 @@ class TraditionalMicrocanonicalEntropyDense(ObjectiveFunction):
     short_title = "SPD"
 
     def __init__(self, is_directed, fixed_value=0):
-        super(TraditionalMicrocanonicalEntropyDense, self).__init__(
+        super().__init__(
             is_directed,
             self.calculate_complete_traditional_microcanonical_entropy_dense_undirected,
             self.calculate_complete_traditional_microcanonical_entropy_dense_directed,
@@ -681,7 +680,7 @@ class TraditionalMicrocanonicalEntropyDense(ObjectiveFunction):
         def binary_entropy(x):
             try:
                 if 0 < x < 1:
-                    return -x * math.log(x, 2) - (1 - x) * math.log(1 - x, 2)
+                    return -x * math.log2(x) - (1 - x) * math.log2(1 - x)
                 return 0
             except ValueError:
                 print(x)
@@ -1027,7 +1026,7 @@ class DegreeCorrectedMicrocanonicalEntropy(ObjectiveFunction):
         def stub(*args):
             raise NotImplementedError()
 
-        super(DegreeCorrectedMicrocanonicalEntropy, self).__init__(
+        super().__init__(
             is_directed,
             self.calculate_complete_degree_corrected_microcanonical_entropy_undirected,
             self.calculate_complete_degree_corrected_microcanonical_entropy_directed,

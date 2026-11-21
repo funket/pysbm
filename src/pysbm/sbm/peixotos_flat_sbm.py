@@ -8,15 +8,16 @@
 
 import math
 
-
 from .objective_functions import ObjectiveFunction
-from .peixotos_hierarchical_sbm_tools import get_log_number_of_restricted_partitions
-from .peixotos_hierarchical_sbm_tools import log_binom
+from .peixotos_hierarchical_sbm_tools import (
+    get_log_number_of_restricted_partitions,
+    log_binom,
+)
 
 
 class ModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
     def __init__(self):
-        super(ModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm, self).__init__()
+        super().__init__()
 
         self._saved_xi = None
         self._graph_belonging_to_xi = None
@@ -44,7 +45,7 @@ class ModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
         return probability
 
     def _calculate_p_adjacency_undirected(self, partition):
-        """
+        r"""
         Calculate \log P(A|k,e,b) = \log \Xi(A) - \log \Omega(e)
         with
         \log \Omega(e) = \sum_r \log e_r!- \sum_{r<s}\log e_{rs}! -\sum_r \log e_{rr}!!
@@ -98,7 +99,7 @@ class ModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
 
     @staticmethod
     def _calculate_non_degree_corrected_undirected(partition, full=True):
-        """
+        r"""
         Combination of probability of degree sequence and probability of adjacency matrix.
         Formula
         \log P(A|e,b) = \sum_{r<s} \log e_{rs}! + \sum_r \log e_{rr}!! - \sum_r e_r\log n_r
@@ -146,7 +147,7 @@ class ModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
 
     @staticmethod
     def _calculate_p_degree_sequence_uniform_undirected(partition):
-        """
+        r"""
         Calculate probability of degree sequence using a uniform prior
         \log P(k|e,b) = -\sum_r \log ((n_r e_r))
         :param partition: partition of a graph
@@ -187,7 +188,7 @@ class ModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
         """
         Formulas
         P(e) = (( B(B+1)/2 E ))^{-1}
-        P(b) = \frac{\prod_r n_r!}{N!} (N-1 B-1)^{-1} 1/N
+        P(b) = \frac{\\prod_r n_r!}{N!} (N-1 B-1)^{-1} 1/N
         :param partition:
         :type partition Partition
         :return: log P(e) + log P(b)
@@ -241,7 +242,7 @@ class ModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
         return probability
 
     def _calculate_p_adjacency_directed(self, partition, calculate_complete=True):
-        """
+        r"""
         Calculate \log P(A|k,e,b) = \log \Xi(A) - \log \Omega(e)
         with
         \log \Omega(e) = \sum_r \log e_r^+! \log e_r^-! - \sum_{r,s}\log e_{rs}!
@@ -292,7 +293,7 @@ class ModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
 
     @staticmethod
     def _calculate_non_degree_corrected_directed(partition, full=True):
-        """
+        r"""
         Combination of probability of degree sequence and probability of adjacency matrix.
         Formula
         \log P(A|e,b) = \log e_{rs}!-\sum_r e_r^+\log n_r - e_r^-\log n_r
@@ -335,7 +336,7 @@ class ModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
 
     @staticmethod
     def _calculate_p_degree_sequence_uniform_directed(partition):
-        """
+        r"""
         Calculate probability of degree sequence using a uniform prior
         \log P(k|e,b) = -\sum_r \log ((n_r e_r^+)) +\log ((n_r e_r^-))
         :param partition: partition of a graph
@@ -356,7 +357,7 @@ class ModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
 
     @staticmethod
     def _calculate_p_degree_sequence_uniform_hyperprior_directed(partition):
-        """
+        r"""
         Formulas:
         \log P(k|e,b) = \log P(k|\eta) + \log P(\eta|e,b)
         \log P(k|\eta) = \sum_r \sum_{k^+,k^-} r*\log \eta_{k^+,k^-}!-\log n_r!
@@ -386,7 +387,7 @@ class ModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
         """
         Formulas
         P(e) = (( B*B E ))^{-1}
-        P(b) = \frac{\prod_r n_r!}{N!} (N-1 B-1)^{-1} 1/N
+        P(b) = \frac{\\prod_r n_r!}{N!} (N-1 B-1)^{-1} 1/N
         :param partition:
         :type partition Partition
         :return: log P(e) + log P(b)
@@ -425,8 +426,8 @@ class DeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
         if len(args) == 3:
             kit, selfloops, degree = args
             nodes_moved = 1
-            nodes_remaining = not (
-                partition.get_number_of_nodes_in_block(from_block) == nodes_moved
+            nodes_remaining = (
+                partition.get_number_of_nodes_in_block(from_block) != nodes_moved
             )
         elif len(args) == 5:
             kit, selfloops, degree, nodes_moved, nodes_remaining = args
@@ -472,8 +473,8 @@ class DeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
         if len(args) == 3:
             kit, selfloops, degree = args
             nodes_moved = 1
-            nodes_remaining = not (
-                partition.get_number_of_nodes_in_block(from_block) == nodes_moved
+            nodes_remaining = (
+                partition.get_number_of_nodes_in_block(from_block) != nodes_moved
             )
         elif len(args) == 5:
             kit, selfloops, degree, nodes_moved, nodes_remaining = args
@@ -519,8 +520,8 @@ class DeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
         if len(args) == 3:
             kit, selfloops, degree = args
             nodes_moved = 1
-            nodes_remaining = not (
-                partition.get_number_of_nodes_in_block(from_block) == nodes_moved
+            nodes_remaining = (
+                partition.get_number_of_nodes_in_block(from_block) != nodes_moved
             )
         elif len(args) == 5:
             kit, selfloops, degree, nodes_moved, nodes_remaining = args
@@ -559,7 +560,7 @@ class DeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
     def _calculate_delta_p_adjacency_undirected(
         partition, from_block, to_block, kit, selfloops, degree, to_block_exists
     ):
-        """
+        r"""
         Calculate \Delta \log P(A|k,e,b)
         """
 
@@ -644,7 +645,7 @@ class DeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
         to_block_exists,
         nodes_moved=1,
     ):
-        """
+        r"""
         Combination of probability of degree sequence and probability of adjacency matrix.
         Formula
         \Delta \log P(A|e,b)
@@ -742,7 +743,7 @@ class DeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
         to_block_exists,
         nodes_moved=1,
     ):
-        """
+        r"""
         Calculate probability of degree sequence using a uniform prior
         \Delta \log P(k|e,b)
         """
@@ -993,8 +994,8 @@ class DeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
         if len(args) == 5:
             kit, kti, selfloops, in_degree, out_degree = args
             nodes_moved = 1
-            nodes_remaining = not (
-                partition.get_number_of_nodes_in_block(from_block) == nodes_moved
+            nodes_remaining = (
+                partition.get_number_of_nodes_in_block(from_block) != nodes_moved
             )
         elif len(args) == 7:
             kit, kti, selfloops, in_degree, out_degree, nodes_moved, nodes_remaining = (
@@ -1051,8 +1052,8 @@ class DeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
         if len(args) == 5:
             kit, kti, selfloops, in_degree, out_degree = args
             nodes_moved = 1
-            nodes_remaining = not (
-                partition.get_number_of_nodes_in_block(from_block) == nodes_moved
+            nodes_remaining = (
+                partition.get_number_of_nodes_in_block(from_block) != nodes_moved
             )
         elif len(args) == 7:
             kit, kti, selfloops, in_degree, out_degree, nodes_moved, nodes_remaining = (
@@ -1109,8 +1110,8 @@ class DeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
         if len(args) == 5:
             kit, kti, selfloops, in_degree, out_degree = args
             nodes_moved = 1
-            nodes_remaining = not (
-                partition.get_number_of_nodes_in_block(from_block) == nodes_moved
+            nodes_remaining = (
+                partition.get_number_of_nodes_in_block(from_block) != nodes_moved
             )
         elif len(args) == 7:
             kit, kti, selfloops, in_degree, out_degree, nodes_moved, nodes_remaining = (
@@ -1162,7 +1163,7 @@ class DeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
         out_degree,
         to_block_exists,
     ):
-        """
+        r"""
         Calculate \Delta \log P(A|k,e,b)
         :type partition Partition
         :return: delta of probability \log P(A|k,e,b)
@@ -1274,7 +1275,7 @@ class DeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
         to_block_exists,
         nodes_moved=1,
     ):
-        """
+        r"""
         Combination of probability of degree sequence and probability of adjacency matrix.
         Formula
         \log P(A|e,b) = \log e_{rs}!-\sum_r e_r^+\log n_r - e_r^-\log n_r
@@ -1400,7 +1401,7 @@ class DeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
         to_block_exists,
         nodes_moved=1,
     ):
-        """
+        r"""
         Calculate probability of degree sequence using a uniform prior
         \log P(k|e,b) = -\sum_r \log ((n_r e_r^+)) +\log ((n_r e_r^-))
         :param partition: partition of a graph
@@ -1493,7 +1494,7 @@ class DeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
         to_block_exists,
         nodes_moved=1,
     ):
-        """
+        r"""
         Formulas:
         \log P(k|e,b) = \log P(k|\eta) + \log P(\eta|e,b)
         \log P(k|\eta) = \sum_r \sum_{k^+,k^-} *\log \eta_{k^+,k^-}-\log n_r!
@@ -1748,9 +1749,7 @@ class LogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmWrapper(ObjectiveFuncti
                 self._delta.calculate_delta_complete_non_degree_corrected_undirected
             )
 
-        super(
-            LogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmWrapper, self
-        ).__init__(
+        super().__init__(
             is_directed,
             calculate_complete_undirected,
             calculate_complete_directed,
@@ -1766,9 +1765,7 @@ class LogLikelihoodOfFlatMicrocanonicalNonDegreeCorrected(
     short_title = "SPC"
 
     def __init__(self, is_directed):
-        super(LogLikelihoodOfFlatMicrocanonicalNonDegreeCorrected, self).__init__(
-            is_directed, function_type=self.NON_DEGREE_CORRECTED
-        )
+        super().__init__(is_directed, function_type=self.NON_DEGREE_CORRECTED)
 
 
 class LogLikelihoodOfFlatMicrocanonicalDegreeCorrectedUniform(
@@ -1778,9 +1775,7 @@ class LogLikelihoodOfFlatMicrocanonicalDegreeCorrectedUniform(
     short_title = "DCPU"
 
     def __init__(self, is_directed):
-        super(LogLikelihoodOfFlatMicrocanonicalDegreeCorrectedUniform, self).__init__(
-            is_directed, function_type=self.UNIFORM
-        )
+        super().__init__(is_directed, function_type=self.UNIFORM)
 
 
 class LogLikelihoodOfFlatMicrocanonicalDegreeCorrectedUniformHyperprior(
@@ -1790,6 +1785,4 @@ class LogLikelihoodOfFlatMicrocanonicalDegreeCorrectedUniformHyperprior(
     short_title = "DCPUH"
 
     def __init__(self, is_directed):
-        super(
-            LogLikelihoodOfFlatMicrocanonicalDegreeCorrectedUniformHyperprior, self
-        ).__init__(is_directed, function_type=self.UNIFORM)
+        super().__init__(is_directed, function_type=self.UNIFORM)

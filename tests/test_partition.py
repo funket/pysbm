@@ -37,7 +37,7 @@ class TestNxPartition(ut.TestCase):
 
     # noinspection PyPep8Naming
     def __init__(self, methodName="runTest"):
-        super(TestNxPartition, self).__init__(methodName)
+        super().__init__(methodName)
         self.is_weighted = False
         self.test_class = sbm.NxPartition
 
@@ -91,9 +91,9 @@ class TestNxPartition(ut.TestCase):
 
         # roughly not generates all times the same but uniformly sample partitions
         number_of_partitions = len(partition_count)
-        for key in partition_count:
+        for key, count in partition_count.items():
             self.assertAlmostEqual(
-                float(partition_count[key]) / number_of_tries,
+                float(count) / number_of_tries,
                 1.0 / number_of_partitions,
                 delta=0.1,
             )
@@ -208,10 +208,8 @@ class TestNxPartition(ut.TestCase):
 
         # for every node a move is possible
         self.assertEqual(len(hit_moves), 4)
-        for move in hit_moves:
-            self.assertAlmostEqual(
-                float(hit_moves[move]) / number_of_tries, 0.25, delta=0.1
-            )
+        for move, count in hit_moves.items():
+            self.assertAlmostEqual(float(count) / number_of_tries, 0.25, delta=0.1)
 
         # simple test of block_merge
         self.partition.merge_blocks({1: 0}, 1)
@@ -342,14 +340,12 @@ class TestNxPartition(ut.TestCase):
                 six.assertCountEqual(
                     self, hits.keys(), [(2, 1), (2, 3), (4, 1), (4, 3)]
                 )
-            for edge in hits:
-                self.assertAlmostEqual(
-                    float(hits[edge]) / number_of_tries, 0.25, delta=0.1
-                )
+            for edge, count in hits.items():
+                self.assertAlmostEqual(float(count) / number_of_tries, 0.25, delta=0.1)
 
         # delete information
         self.partition.set_save_neighbor_edges(False)
-        with self.assertRaises(Exception):
+        with self.assertRaises((AttributeError, KeyError)):
             self.partition.get_random_neighboring_edge_of_block(0)
 
         # test saving neighbors
@@ -452,7 +448,7 @@ class TestNxPartition(ut.TestCase):
             self.assertTrue(
                 set(self.partition.neighboring_edges[i].items)
                 ^ set(another_partition.neighboring_edges[i].items)
-                == set([])
+                == set()
             )
 
         node, _, to_block = another_partition.get_random_move()
@@ -462,7 +458,7 @@ class TestNxPartition(ut.TestCase):
             self.assertFalse(
                 set(self.partition.neighboring_edges[i].items)
                 ^ set(another_partition.neighboring_edges[i].items)
-                == set([])
+                == set()
             )
 
     def test_selfloops(self):
@@ -729,9 +725,9 @@ class TestNxPartitionDirected(TestNxPartition):
                     hits.keys(),
                     [(2, 3), (5, 6), (8, 9), (2, 1), (5, 4), (8, 7), (5, 0)],
                 )
-            for edge in hits:
+            for edge, count in hits.items():
                 self.assertAlmostEqual(
-                    float(hits[edge]) / number_of_tries, 1.0 / len(hits), delta=0.1
+                    float(count) / number_of_tries, 1.0 / len(hits), delta=0.1
                 )
 
                 # neighbor blocks
@@ -990,13 +986,13 @@ class TestNxPartitionDirected(TestNxPartition):
                         (7, 0),
                     ],
                 )
-            for edge in hits:
+            for edge, count in hits.items():
                 self.assertAlmostEqual(
-                    float(hits[edge]) / number_of_tries, 1.0 / len(hits), delta=0.1
+                    float(count) / number_of_tries, 1.0 / len(hits), delta=0.1
                 )
                 # deletion of information
         self.partition.set_save_neighbor_edges(False)
-        with self.assertRaises(Exception):
+        with self.assertRaises((AttributeError, KeyError)):
             self.partition.get_random_neighboring_edge_of_block(0)
 
         # test saving neighbors
@@ -1231,7 +1227,7 @@ class TestNxPartitionMultiWeighted(TestNxPartition):
 
     # noinspection PyPep8Naming
     def __init__(self, methodName="runTest"):
-        super(TestNxPartitionMultiWeighted, self).__init__(methodName)
+        super().__init__(methodName)
         self.is_weighted = True
 
     def setUp(self):
@@ -1290,7 +1286,7 @@ class TestNxPartitionDirectedMultiWeighted(TestNxPartitionDirected):
 
     # noinspection PyPep8Naming
     def __init__(self, methodName="runTest"):
-        super(TestNxPartitionDirectedMultiWeighted, self).__init__(methodName)
+        super().__init__(methodName)
         self.is_weighted = True
 
     def setUp(self):
@@ -1340,16 +1336,16 @@ class TestNxPartitionDirectedMultiWeighted(TestNxPartitionDirected):
         # check if edge are sampled with the probability given by their weight
         #  (edge 0->7 is the only edge with weight 5 others weight 1)
         self.assertEqual(len(hits), 10)
-        for edge in hits:
+        for edge, count in hits.items():
             if edge != (0, 7):
                 self.assertAlmostEqual(
-                    (hits[edge] * 1.0) / number_of_tries,
+                    (count * 1.0) / number_of_tries,
                     1.0 / (len(hits) + 4),
                     delta=0.1,
                 )
             else:
                 self.assertAlmostEqual(
-                    (hits[edge] * 1.0) / number_of_tries,
+                    (count * 1.0) / number_of_tries,
                     5.0 / (len(hits) + 4),
                     delta=0.1,
                 )

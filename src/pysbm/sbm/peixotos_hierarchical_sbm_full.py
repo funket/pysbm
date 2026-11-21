@@ -14,7 +14,6 @@ from .peixotos_flat_sbm_full import (
     ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm,
 )
 from .peixotos_hierarchical_sbm_tools_full import BINOMIALS
-from .nxpartitiongraphbased import NxHierarchicalPartition
 
 
 # ---------------------------
@@ -69,14 +68,14 @@ class ModelLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
     def _calculate_p_edge_counts_hierarchy_undirected(hierarchy_partition):
         """
         Formulas
-        P({e_l}|{b_l}) = \prod_{l=1}^L P(e_l| e_{l+1}, b_l)
+        P({e_l}|{b_l}) = \\prod_{l=1}^L P(e_l| e_{l+1}, b_l)
 
-        P(e_l| e_{l+1}, b_l) = \prod_{r<s} (( n_r^l*n_s^l  e_{rs}^{l+1} ))^{-1}
-                                    * \prod_r (( n_r^l*(n_r^l + 1)/2  e_{rr}^{l+1}/2 ))^{-1}
+        P(e_l| e_{l+1}, b_l) = \\prod_{r<s} (( n_r^l*n_s^l  e_{rs}^{l+1} ))^{-1}
+                                    * \\prod_r (( n_r^l*(n_r^l + 1)/2  e_{rr}^{l+1}/2 ))^{-1}
 
-        P({b_l}) = \prod_{l=1}^L P(b_l)
+        P({b_l}) = \\prod_{l=1}^L P(b_l)
         with P(b_l) as above
-            P(b_l) = \prod_r n^l_r! / B_{l-1}! * \nCr{B_{l-1}-1, B_l-1)^{-1} * 1/B_{l-1}
+            P(b_l) = \\prod_r n^l_r! / B_{l-1}! * \nCr{B_{l-1}-1, B_l-1)^{-1} * 1/B_{l-1}
         and boundary condition B_0 = N
         :param hierarchy_partition:
         :type hierarchy_partition NxHierarchicalPartition
@@ -187,13 +186,13 @@ class ModelLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
     def _calculate_p_edge_counts_hierarchy_directed(hierarchy_partition):
         """
         Formulas
-        P({e_l}|{b_l}) = \prod_{l=1}^L P(e_l| e_{l+1}, b_l)
+        P({e_l}|{b_l}) = \\prod_{l=1}^L P(e_l| e_{l+1}, b_l)
 
-        P(e_l| e_{l+1}, b_l) = \prod_{r,s} (( n_r^l*n_s^l  e_{rs}^{l+1} ))^{-1}
+        P(e_l| e_{l+1}, b_l) = \\prod_{r,s} (( n_r^l*n_s^l  e_{rs}^{l+1} ))^{-1}
 
-        P({b_l}) = \prod_{l=1}^L P(b_l)
+        P({b_l}) = \\prod_{l=1}^L P(b_l)
         with P(b_l) as above
-            P(b_l) = \prod_r n^l_r! / B_{l-1}! * \nCr{B_{l-1}-1, B_l-1)^{-1} * 1/B_{l-1}
+            P(b_l) = \\prod_r n^l_r! / B_{l-1}! * \nCr{B_{l-1}-1, B_l-1)^{-1} * 1/B_{l-1}
         and boundary condition B_0 = N
         :param hierarchy_partition:
         :type hierarchy_partition NxHierarchicalPartition

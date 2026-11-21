@@ -2,23 +2,29 @@
 # SPDX-License-Identifier: CC-BY-SA-4.0
 
 import unittest as ut
-from pysbm.sbm.model_selection import ModelSelectionByObjectiveFunctionValueOnly
-from pysbm.sbm.model_selection import minimum_description_length_peixoto_first
-from pysbm.sbm.model_selection import minimum_description_length_traditional
-from pysbm.sbm.model_selection import minimum_description_length_peixoto
-from pysbm.sbm.model_selection import akaike_information_criterion
-from pysbm.sbm.model_selection import bayesian_information_criterion
-from pysbm.sbm.model_selection import integrated_complete_likelihood
-from pysbm.sbm.model_selection import ModelSelectionByFunction
-from pysbm.sbm.model_selection import ModelSelectionWithExtraFunction
-from pysbm.sbm.model_selection import get_possible_model_selection
-from pysbm.sbm.model_selection import AbstractModelSelection
-import networkx as nx
-from pysbm.sbm import NxPartition
-from pysbm.sbm import IntegratedCompleteLikelihoodExactUniform
-from pysbm.sbm import TraditionalMicrocanonicalEntropy
-from pysbm.sbm import DegreeCorrectedMicrocanonicalEntropy
 from math import log
+
+import networkx as nx
+
+from pysbm.sbm import (
+    DegreeCorrectedMicrocanonicalEntropy,
+    IntegratedCompleteLikelihoodExactUniform,
+    NxPartition,
+    TraditionalMicrocanonicalEntropy,
+)
+from pysbm.sbm.model_selection import (
+    AbstractModelSelection,
+    ModelSelectionByFunction,
+    ModelSelectionByObjectiveFunctionValueOnly,
+    ModelSelectionWithExtraFunction,
+    akaike_information_criterion,
+    bayesian_information_criterion,
+    get_possible_model_selection,
+    integrated_complete_likelihood,
+    minimum_description_length_peixoto,
+    minimum_description_length_peixoto_first,
+    minimum_description_length_traditional,
+)
 
 
 class TestModelSelectionByObjectiveFunctionValueOnly(ut.TestCase):

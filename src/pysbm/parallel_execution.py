@@ -2,9 +2,9 @@
 # SPDX-License-Identifier: CC-BY-SA-4.0
 
 import concurrent.futures
-import time
 import os
 import pickle
+import time
 
 TEMP_DIRECTORY = "_temp"
 TEMP_FILE_NAMES = "results_"
@@ -22,9 +22,8 @@ def parallel_execution(
     save_memory=False,
 ):
     # create directory for storing temp files
-    if save_temporary_results:
-        if not os.path.exists(TEMP_DIRECTORY):
-            os.makedirs(TEMP_DIRECTORY)
+    if save_temporary_results and not os.path.exists(TEMP_DIRECTORY):
+        os.makedirs(TEMP_DIRECTORY)
 
     file_paths = []
     with concurrent.futures.ProcessPoolExecutor(max_workers=max_workers) as executor:
@@ -57,7 +56,7 @@ def parallel_execution(
                 try:
                     result = future.result()
                 except Exception as exc:
-                    print("%r generated an exception: %s" % (key, exc))
+                    print(f"{key!r} generated an exception: {exc}")
                     keys_with_error.append(key)
                 else:
                     result_by_key[key] = result
@@ -118,7 +117,5 @@ def parallel_execution(
                 + "seconds. Not finished argument keys: "
                 + str(keys_with_error)
             )
-        except Exception as exc:
-            print("Generated an exception: ", exc)
 
     return result_by_key, keys_with_error

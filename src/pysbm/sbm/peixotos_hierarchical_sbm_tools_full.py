@@ -7,11 +7,12 @@
 import math
 
 from scipy.special import binom
+
 from .peixotos_hierarchical_sbm_tools import (
     NUMBER_OF_RESTRICTED_PARTITIONS_PRECOMPUTED_LIMIT,
+    init_number_of_restricted_partitions,
+    spence,
 )
-from .peixotos_hierarchical_sbm_tools import spence
-from .peixotos_hierarchical_sbm_tools import init_number_of_restricted_partitions
 
 BINOMIALS = {}
 
@@ -47,7 +48,7 @@ def get_number_of_restricted_partitions(m, n):
                     break
                 v = v_new
             else:
-                raise Exception(
+                raise RuntimeError(
                     "Fix Point iteration as search for v not converged in 100 steps:", v
                 )
 

@@ -11,15 +11,11 @@ from pysbm import sbm
 from pysbm.sbm.nxpartitiongraphbased import NxHierarchicalPartition
 from pysbm.sbm.peixotos_hierarchical_sbm import (
     DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm,
-)
-from pysbm.sbm.peixotos_hierarchical_sbm import (
+    LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper,
     ModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm,
 )
 from pysbm.sbm.peixotos_hierarchical_sbm_full import (
     ModelLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm,
-)
-from pysbm.sbm.peixotos_hierarchical_sbm import (
-    LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper,
 )
 
 

@@ -1,7 +1,6 @@
 # SPDX-FileCopyrightText: Copyright (C) 2026 Thorben Funke
 # SPDX-License-Identifier: CC-BY-SA-4.0
 
-from __future__ import division
 
 import math
 import random as rd
@@ -12,7 +11,7 @@ import numpy as np
 from pysbm import sbm
 
 
-class NetworkSuppplier(object):
+class NetworkSuppplier:
     """Create different types of graphs"""
 
     STANDARD_SEED = 42
@@ -84,7 +83,7 @@ class NetworkSuppplier(object):
         """
 
 
-class SBMGenerator(object):
+class SBMGenerator:
     """Generation of graphs based on given SBM"""
 
     PROBABILISTIC_EDGES = "P"
@@ -336,7 +335,7 @@ class SBMGeneratorDegreeCorrected(SBMGenerator):
             self._flattened_block_distribution.append(block_distribution)
             nodes_per_block.append(len(block_distribution))
         # call old init method to do the rest
-        super(SBMGeneratorDegreeCorrected, self).__init__(
+        super().__init__(
             number_of_blocks,
             nodes_per_block,
             edge_matrix,
@@ -356,7 +355,7 @@ class SBMGeneratorDegreeCorrected(SBMGenerator):
 
     def _create_block_info(self, graph):
         # add second field for saving the samples
-        node_list = super(SBMGeneratorDegreeCorrected, self)._create_block_info(graph)
+        node_list = super()._create_block_info(graph)
         block_info = []
         for nodes in node_list:
             block_info.append((nodes, []))
@@ -405,7 +404,7 @@ class PlantedPartitionGenerator(SBMGenerator):
         ]
 
         # call old init method to do the rest
-        super(PlantedPartitionGenerator, self).__init__(
+        super().__init__(
             number_of_groups,
             nodes_per_block,
             edge_matrix,
@@ -414,7 +413,7 @@ class PlantedPartitionGenerator(SBMGenerator):
         )
 
 
-class Comparator(object):
+class Comparator:
     """
     Execute the different inference algorithm on a given test cases
     """
@@ -461,7 +460,7 @@ class Comparator(object):
         return evaluated_results, partitions
 
 
-class SimplePartition(object):
+class SimplePartition:
     """
     Simple partition representation without any graph and edge information
     only save both node to block and block to node relationship
@@ -524,10 +523,10 @@ class SimplePartition(object):
         return str(self._node_to_block)
 
     def __repr__(self):
-        return "%s(%r)" % ("SimplePartition", self._node_to_block)
+        return "{}({!r})".format("SimplePartition", self._node_to_block)
 
 
-class EvaluateResult(object):
+class EvaluateResult:
     def evaluate(self, partition):
         """Evaluate a given partition"""
         raise NotImplementedError()

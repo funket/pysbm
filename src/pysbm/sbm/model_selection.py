@@ -2,14 +2,12 @@
 # SPDX-License-Identifier: CC-BY-SA-4.0
 
 # real non truncating division (same behaviour as in python 3)
-from __future__ import division
 
 import math
 
-from .peixotos_hierarchical_sbm_tools import log_binom
-
 from pysbm import sbm
-import networkx as nx
+
+from .peixotos_hierarchical_sbm_tools import log_binom
 
 
 def minimum_description_length_peixoto_first(
@@ -253,7 +251,7 @@ def integrated_complete_likelihood(
     return value
 
 
-class ModelSelectionByFunction(object):
+class ModelSelectionByFunction:
     """Infer number of blocks via model selection (partition independent values are ignored!)"""
 
     def __init__(
@@ -358,8 +356,7 @@ class ExponentialSearch:
             middle_point = moving_upper_bound
             moving_upper_bound *= 2
 
-        if moving_upper_bound > upper_bound:
-            moving_upper_bound = upper_bound
+        moving_upper_bound = min(moving_upper_bound, upper_bound)
 
         # at this moment we knew that the minimum lies between moving_lower_bound and moving_upper_bound
         if (
@@ -444,9 +441,7 @@ class ModelSelectionByObjectiveFunctionValueOnly(AbstractModelSelection):
             """Replacement for additional model selection function"""
             return 0
 
-        super(ModelSelectionByObjectiveFunctionValueOnly, self).__init__(
-            dummy_model_selection_function
-        )
+        super().__init__(dummy_model_selection_function)
 
     def create_parameters_for_model_selection_function(
         self, graph, partition_representation
@@ -467,7 +462,7 @@ class ModelSelectionWithExtraFunction(AbstractModelSelection):
         function_needs_is_directed=True,
         additional_fixed_key_arguments=None,
     ):
-        super(ModelSelectionWithExtraFunction, self).__init__(model_selection_function)
+        super().__init__(model_selection_function)
         self.title = title
         self.is_degree_corrected = is_degree_corrected
         self.function_needs_partition = function_needs_partition

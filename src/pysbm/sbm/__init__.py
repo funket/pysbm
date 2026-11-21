@@ -1,45 +1,76 @@
 # SPDX-FileCopyrightText: Copyright (C) 2026 Thorben Funke
 # SPDX-License-Identifier: CC-BY-SA-4.0
 
+from .exceptions import NoFreeNodeException as NoFreeNodeException
+from .hierarchical_inference import (
+    HierarchicalInference as HierarchicalInference,
+)
+from .hierarchical_inference import (
+    PeixotoHierarchicalInference as PeixotoHierarchicalInference,
+)
 from .inference import *
 from .model_selection import *
-from .objective_functions import ObjectiveFunction
-from .objective_functions import TraditionalUnnormalizedLogLikelyhood
-from .objective_functions import TraditionalMicrocanonicalEntropy
-from .objective_functions import DegreeCorrectedUnnormalizedLogLikelyhood
-from .objective_functions import DegreeCorrectedMicrocanonicalEntropy
-from .peixotos_flat_sbm import (
-    LogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmWrapper,
+from .nxpartitiongraphbased import (
+    NxHierarchicalPartition as NxHierarchicalPartition,
 )
-from .peixotos_flat_sbm import LogLikelihoodOfFlatMicrocanonicalNonDegreeCorrected
-from .peixotos_flat_sbm import LogLikelihoodOfFlatMicrocanonicalDegreeCorrectedUniform
-from .peixotos_flat_sbm import (
-    LogLikelihoodOfFlatMicrocanonicalDegreeCorrectedUniformHyperprior,
+from .nxpartitiongraphbased import (
+    NxPartitionGraphBased as NxPartitionGraphBased,
 )
-from .peixotos_hierarchical_sbm import (
-    LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper,
+from .nxpartitiongraphbased import (
+    NxPartitionGraphBasedWithMoveCounter as NxPartitionGraphBasedWithMoveCounter,
 )
-from .peixotos_hierarchical_sbm import (
-    LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper,
+from .objective_function_iclex import (
+    IntegratedCompleteLikelihoodExact as IntegratedCompleteLikelihoodExact,
 )
-from .peixotos_hierarchical_sbm import (
-    LogLikelihoodOfHierarchicalMicrocanonicalNonDegreeCorrected,
+from .objective_function_iclex import (
+    IntegratedCompleteLikelihoodExactJeffrey as IntegratedCompleteLikelihoodExactJeffrey,
 )
-from .peixotos_hierarchical_sbm import (
-    LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedUniform,
+from .objective_function_iclex import (
+    IntegratedCompleteLikelihoodExactUniform as IntegratedCompleteLikelihoodExactUniform,
 )
-from .peixotos_hierarchical_sbm import (
-    LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedUniformHyperprior,
+from .objective_function_newman_group_size import (
+    NewmanReinertDegreeCorrected as NewmanReinertDegreeCorrected,
 )
-from .objective_function_iclex import IntegratedCompleteLikelihoodExact
-from .objective_function_iclex import IntegratedCompleteLikelihoodExactJeffrey
-from .objective_function_iclex import IntegratedCompleteLikelihoodExactUniform
-from .objective_function_newman_group_size import NewmanReinertNonDegreeCorrected
-from .objective_function_newman_group_size import NewmanReinertDegreeCorrected
+from .objective_function_newman_group_size import (
+    NewmanReinertNonDegreeCorrected as NewmanReinertNonDegreeCorrected,
+)
+from .objective_functions import (
+    DegreeCorrectedMicrocanonicalEntropy as DegreeCorrectedMicrocanonicalEntropy,
+)
+from .objective_functions import (
+    DegreeCorrectedUnnormalizedLogLikelyhood as DegreeCorrectedUnnormalizedLogLikelyhood,
+)
+from .objective_functions import (
+    ObjectiveFunction as ObjectiveFunction,
+)
+from .objective_functions import (
+    TraditionalMicrocanonicalEntropy as TraditionalMicrocanonicalEntropy,
+)
+from .objective_functions import (
+    TraditionalUnnormalizedLogLikelyhood as TraditionalUnnormalizedLogLikelyhood,
+)
 from .partition import *
-from .exceptions import NoFreeNodeException
-from .hierarchical_inference import HierarchicalInference
-from .hierarchical_inference import PeixotoHierarchicalInference
-from .nxpartitiongraphbased import NxPartitionGraphBased
-from .nxpartitiongraphbased import NxPartitionGraphBasedWithMoveCounter
-from .nxpartitiongraphbased import NxHierarchicalPartition
+from .peixotos_flat_sbm import (
+    LogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmWrapper as LogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmWrapper,
+)
+from .peixotos_flat_sbm import (
+    LogLikelihoodOfFlatMicrocanonicalDegreeCorrectedUniform as LogLikelihoodOfFlatMicrocanonicalDegreeCorrectedUniform,
+)
+from .peixotos_flat_sbm import (
+    LogLikelihoodOfFlatMicrocanonicalDegreeCorrectedUniformHyperprior as LogLikelihoodOfFlatMicrocanonicalDegreeCorrectedUniformHyperprior,
+)
+from .peixotos_flat_sbm import (
+    LogLikelihoodOfFlatMicrocanonicalNonDegreeCorrected as LogLikelihoodOfFlatMicrocanonicalNonDegreeCorrected,
+)
+from .peixotos_hierarchical_sbm import (
+    LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper as LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper,
+)
+from .peixotos_hierarchical_sbm import (
+    LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedUniform as LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedUniform,
+)
+from .peixotos_hierarchical_sbm import (
+    LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedUniformHyperprior as LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedUniformHyperprior,
+)
+from .peixotos_hierarchical_sbm import (
+    LogLikelihoodOfHierarchicalMicrocanonicalNonDegreeCorrected as LogLikelihoodOfHierarchicalMicrocanonicalNonDegreeCorrected,
+)

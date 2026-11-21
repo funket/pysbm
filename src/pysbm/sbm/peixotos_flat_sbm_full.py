@@ -11,8 +11,10 @@ import math
 
 from scipy.special import binom
 
-from .peixotos_hierarchical_sbm_tools_full import BINOMIALS
-from .peixotos_hierarchical_sbm_tools_full import get_number_of_restricted_partitions
+from .peixotos_hierarchical_sbm_tools_full import (
+    BINOMIALS,
+    get_number_of_restricted_partitions,
+)
 
 
 class ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
@@ -44,12 +46,12 @@ class ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
 
     def _calculate_p_adjacency_undirected(self, partition):
         """
-        Calculate P(A|k,e,b) = \Xi(A)/\Omega(e)
+        Calculate P(A|k,e,b) = \\Xi(A)/\\Omega(e)
         with
-        \Omega(e) = \frac{\prod_r e_r!}{\prod_{r<s}e_{rs}! \prod_r e_{rr}!!}
-        with e_r = \sum_s e_{rs} and (2m)!! = 2^m m!
+        \\Omega(e) = \frac{\\prod_r e_r!}{\\prod_{r<s}e_{rs}! \\prod_r e_{rr}!!}
+        with e_r = \\sum_s e_{rs} and (2m)!! = 2^m m!
         and
-        \Xi(A) = \frac{\prod_i k_i!}{\prod_{i<j}A_{ij}! \prod_i A_{ii}!!}
+        \\Xi(A) = \frac{\\prod_i k_i!}{\\prod_{i<j}A_{ij}! \\prod_i A_{ii}!!}
 
         Value depends on adjacency matrix, degree sequence, edge counts and partition
 
@@ -101,8 +103,8 @@ class ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
         """
         Combination of probability of degree sequence and probability of adjacency matrix.
         Formula
-        P(A|e,b) = \frac{\prod_{r<s} e_{rs}! \prod_r e_{rr}!!}{\prod_r n_r^{e_r}}
-                    * \frac{1}{\prod_{i<j}A_{ij}! \prod_i A_{ii}!!}
+        P(A|e,b) = \frac{\\prod_{r<s} e_{rs}! \\prod_r e_{rr}!!}{\\prod_r n_r^{e_r}}
+                    * \frac{1}{\\prod_{i<j}A_{ij}! \\prod_i A_{ii}!!}
         :param partition: Partition of a graph with saved degree
         :type partition Partition
         :param full: Include calculation of adjacency or skip for faster calculation
@@ -145,7 +147,7 @@ class ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
 
     @staticmethod
     def _calculate_p_degree_sequence_uniform_undirected(partition):
-        """
+        r"""
         Calculate probability of degree sequence using a uniform prior
         P(k|e,b) = \prod_r ((n_r e_r))^{-1}
         :param partition: partition of a graph
@@ -188,7 +190,7 @@ class ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
         """
         Formulas
         P(e) = (( B(B+1)/2 E ))^{-1}
-        P(b) = \frac{\prod_r n_r!}{N!} (N-1 B-1)^{-1} 1/N
+        P(b) = \frac{\\prod_r n_r!}{N!} (N-1 B-1)^{-1} 1/N
         :param partition:
         :type partition Partition
         :return: P(e) * P(b)
@@ -252,12 +254,12 @@ class ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
 
     def _calculate_p_adjacency_directed(self, partition):
         """
-        Calculate P(A|k,e,b) = \Xi(A)/\Omega(e)
+        Calculate P(A|k,e,b) = \\Xi(A)/\\Omega(e)
         with
-        \Omega(e) = \frac{\prod_r e_r^+! e_r^-!}{\prod_{r,s}e_{rs}!}
-        with e_r = \sum_s e_{rs} and (2m)!! = 2^m m!
+        \\Omega(e) = \frac{\\prod_r e_r^+! e_r^-!}{\\prod_{r,s}e_{rs}!}
+        with e_r = \\sum_s e_{rs} and (2m)!! = 2^m m!
         and
-        \Xi(A) = \frac{\prod_i k_i^+! k_i^-!}{\prod_{i,j}A_{ij}!}
+        \\Xi(A) = \frac{\\prod_i k_i^+! k_i^-!}{\\prod_{i,j}A_{ij}!}
 
         Value depends on adjacency matrix, degree sequence, edge counts and partition
 
@@ -307,8 +309,8 @@ class ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
         """
         Combination of probability of degree sequence and probability of adjacency matrix.
         Formula
-        P(A|e,b) = \frac{e_{rs}!}{\prod_r n_r^{e_r^+} n_r^{e_r^-}}
-                    * \frac{1}{\prod_{ij}A_{ij}!}
+        P(A|e,b) = \frac{e_{rs}!}{\\prod_r n_r^{e_r^+} n_r^{e_r^-}}
+                    * \frac{1}{\\prod_{ij}A_{ij}!}
         :param partition: Partition of a graph with saved degree
         :type partition Partition
         :param full: Include calculation of adjacency or skip for faster calculation
@@ -349,7 +351,7 @@ class ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
 
     @staticmethod
     def _calculate_p_degree_sequence_uniform_directed(partition):
-        """
+        r"""
         Calculate probability of degree sequence using a uniform prior
         P(k|e,b) = \prod_r ((n_r e_r^+))^{-1} ((n_r e_r^-))^{-1}
         :param partition: partition of a graph
@@ -377,12 +379,12 @@ class ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
     def _calculate_p_degree_sequence_uniform_hyperprior_directed(partition):
         """
         Formulas:
-        P(k|e,b) = P(k|\eta) P(\eta|e,b)
-        P(k|\eta) = \prod_r \frac{\prod_{k^+,k^-} \eta_{k^+,k^-}^r!}{n_r!}
+        P(k|e,b) = P(k|\\eta) P(\\eta|e,b)
+        P(k|\\eta) = \\prod_r \frac{\\prod_{k^+,k^-} \\eta_{k^+,k^-}^r!}{n_r!}
         with the joint (in, out)-degree distribution
-        P(\eta|e,b) = \prod_r q(e_r^+,n_r)^{-1} q(e_r^-,n_r)^{-1}
+        P(\\eta|e,b) = \\prod_r q(e_r^+,n_r)^{-1} q(e_r^-,n_r)^{-1}
         Together
-        P(k|e,b) = \prod_r \frac{q(e_r, n_r)^{-1}}{n_r!} \prod_k \eta_k^r!
+        P(k|e,b) = \\prod_r \frac{q(e_r, n_r)^{-1}}{n_r!} \\prod_k \\eta_k^r!
         """
         degree_counts = partition.get_joint_in_out_degree_distribution_of_blocks()
         probability = 1
@@ -407,7 +409,7 @@ class ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm:
         """
         Formulas
         P(e) = (( B*B E ))^{-1}
-        P(b) = \frac{\prod_r n_r!}{N!} (N-1 B-1)^{-1} 1/N
+        P(b) = \frac{\\prod_r n_r!}{N!} (N-1 B-1)^{-1} 1/N
         :param partition:
         :type partition Partition
         :return: P(e) * P(b)

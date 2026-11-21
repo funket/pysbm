@@ -1,15 +1,14 @@
 # SPDX-FileCopyrightText: Copyright (C) 2026 Thorben Funke
 # SPDX-License-Identifier: CC-BY-SA-4.0
 
+import contextlib
+import os
+import sys
 import unittest as ut
 
 import six
 
 from pysbm.test_ground_new import *
-import os
-
-import contextlib
-import sys
 
 
 class DummyOutput:
@@ -359,38 +358,37 @@ class TestTestGround(ut.TestCase):
             # self.assertEqual(resulting_partition.graph, test_case.network,
             #                  msg="Resulting partition is not of correct network")
 
-            if inference_class == DummyInference:
-                if (
-                    len(test_case.network) == len(nx.karate_club_graph())
-                    or len(test_case.network) == 6
-                ):
-                    # check if infer stochastic_block_model was called
-                    self.assertEqual(
-                        test_case.compare_partition_with_ground_truth_nmi(
-                            SimplePartition(resulting_partition)
-                        ),
-                        1,
-                        msg="No call of infer_stochastic_block_model",
-                    )
+            if inference_class == DummyInference and (
+                len(test_case.network) == len(nx.karate_club_graph())
+                or len(test_case.network) == 6
+            ):
+                # check if infer stochastic_block_model was called
+                self.assertEqual(
+                    test_case.compare_partition_with_ground_truth_nmi(
+                        SimplePartition(resulting_partition)
+                    ),
+                    1,
+                    msg="No call of infer_stochastic_block_model",
+                )
 
-        for test_case in test_found:
+        for test_case, count in test_found.items():
             self.assertEqual(
-                test_found[test_case],
+                count,
                 len(self.inference_classes) * len(self.objective_function_classes),
                 msg="Wrong number of results for test case" + str(test_case),
             )
 
-        for inference_class in inference_found:
+        for inference_class, count in inference_found.items():
             self.assertEqual(
-                inference_found[inference_class],
+                count,
                 len(self.tests) * len(self.objective_function_classes),
                 msg="Wrong number of results for inference class"
                 + str(inference_class),
             )
 
-        for objective_function in objective_function_found:
+        for objective_function, count in objective_function_found.items():
             self.assertEqual(
-                objective_function_found[objective_function],
+                count,
                 len(self.tests) * len(self.inference_classes),
                 msg="Wrong number of results for objective function"
                 + str(objective_function),
@@ -572,7 +570,7 @@ class TestTestGround(ut.TestCase):
             inference_execution_parameters={sbm.MetropolisInference: [(10,)]},
         )
         result = test_ground_single.execute_tests()
-        values = list(result.values())[0][0]
+        values = next(iter(result.values()))[0]
         self.assertEqual(values[3], 10)
 
         test_ground_single = TestGround(
@@ -582,7 +580,7 @@ class TestTestGround(ut.TestCase):
             inference_execution_parameters={sbm.MetropolisInference: [(20,)]},
         )
         result = test_ground_single.execute_tests()
-        values = list(result.values())[0][0]
+        values = next(iter(result.values()))[0]
         self.assertEqual(values[3], 20)
 
         test_ground_single = TestGround(
@@ -722,15 +720,15 @@ class TestTestGround(ut.TestCase):
             in_edges[p_out] /= 128 * number_of_networks
             out_edges[p_out] /= 128 * number_of_networks
 
-        for p_out in total_edges:
-            self.assertLess(15, total_edges[p_out])
-            self.assertGreater(17, total_edges[p_out])
+        for p_out, edge_count in total_edges.items():
+            self.assertLess(15, edge_count)
+            self.assertGreater(17, edge_count)
 
             self.assertAlmostEqual(
-                total_edges[p_out] - 16,
+                edge_count - 16,
                 0,
                 delta=0.4,
-                msg="p_out" + str(p_out) + "\nedges " + str(total_edges[p_out]),
+                msg="p_out" + str(p_out) + "\nedges " + str(edge_count),
             )
 
         true_out_edges = [
@@ -799,15 +797,15 @@ class TestTestGround(ut.TestCase):
             in_edges[p_out] /= 128 * number_of_networks
             out_edges[p_out] /= 128 * number_of_networks
 
-        for p_out in total_edges:
-            self.assertLess(15, total_edges[p_out])
-            self.assertGreater(17, total_edges[p_out])
+        for p_out, edge_count in total_edges.items():
+            self.assertLess(15, edge_count)
+            self.assertGreater(17, edge_count)
 
             self.assertAlmostEqual(
-                total_edges[p_out] - 16,
+                edge_count - 16,
                 0,
                 delta=0.4,
-                msg="p_out" + str(p_out) + "\nedges " + str(total_edges[p_out]),
+                msg="p_out" + str(p_out) + "\nedges " + str(edge_count),
             )
 
         true_out_edges = [
@@ -1040,7 +1038,7 @@ class TestTestGround(ut.TestCase):
         self.assertGreater(len(all_results), 1)
 
         # get a part of the result
-        key = list(all_results.keys())[0]
+        key = next(iter(all_results.keys()))
         one_result = {key: all_results[key]}
 
         # test reading and checking of old file
@@ -1151,7 +1149,7 @@ class TestTestGround(ut.TestCase):
             0,
         )
         # create some files...
-        for i in range(0, 20):
+        for i in range(20):
             file_path = (
                 TEMP_DIRECTORY
                 + "/"
@@ -1179,7 +1177,7 @@ class TestTestGround(ut.TestCase):
             0,
         )
         # create some files...
-        for i in range(0, 20):
+        for i in range(20):
             file_path = (
                 TEMP_DIRECTORY
                 + "/"
@@ -1212,7 +1210,7 @@ class TestTestGround(ut.TestCase):
         test_ground_par.save_memory = False
         with suppress_output():
             sync_results = test_ground_sync.execute_tests()
-            par_results, errors = test_ground_par.execute_tests_parallel()
+            par_results, _errors = test_ground_par.execute_tests_parallel()
 
             self.assertEqual(len(sync_results), len(par_results))
             for key in sync_results:
@@ -1231,7 +1229,7 @@ class TestTestGround(ut.TestCase):
                 TEMP_DIRECTORY + "/" + TEMP_FILE_NAMES + "0",
                 unpack_results_first=False,
             )
-            par_results, errors = test_ground_par.execute_tests_parallel()
+            par_results, _errors = test_ground_par.execute_tests_parallel()
             self.assertEqual(par_results, sync_results)
 
             # save results of first as result_5 and see if it works
@@ -1246,7 +1244,7 @@ class TestTestGround(ut.TestCase):
                 TEMP_DIRECTORY + "/" + TEMP_FILE_NAMES + "5",
                 unpack_results_first=False,
             )
-            par_results, errors = test_ground_par.execute_tests_parallel()
+            par_results, _errors = test_ground_par.execute_tests_parallel()
             self.assertEqual(par_results, sync_results)
 
     def test_execute_parallel_memory_saving(self):
@@ -1260,7 +1258,7 @@ class TestTestGround(ut.TestCase):
 
         with suppress_output():
             sync_results = test_ground_sync.execute_tests()
-            par_results, errors = test_ground_par.execute_tests_parallel()
+            par_results, _errors = test_ground_par.execute_tests_parallel()
 
             self.assertEqual(len(sync_results), len(par_results))
             for key in sync_results:
@@ -1279,7 +1277,7 @@ class TestTestGround(ut.TestCase):
                 TEMP_DIRECTORY + "/" + TEMP_FILE_NAMES + "0",
                 unpack_results_first=False,
             )
-            par_results, errors = test_ground_par.execute_tests_parallel()
+            par_results, _errors = test_ground_par.execute_tests_parallel()
             self.assertEqual(par_results, sync_results)
 
             # save results of first as result_5 and see if it works
@@ -1294,7 +1292,7 @@ class TestTestGround(ut.TestCase):
                 TEMP_DIRECTORY + "/" + TEMP_FILE_NAMES + "5",
                 unpack_results_first=False,
             )
-            par_results, errors = test_ground_par.execute_tests_parallel()
+            par_results, _errors = test_ground_par.execute_tests_parallel()
             self.assertEqual(par_results, sync_results)
 
     def test_read_temp_files(self):
@@ -1390,7 +1388,7 @@ class TestTestGround(ut.TestCase):
         # _0 file with different key
         test_ground.use_flat_saving = True
         # create a result with wrong key
-        key = list(results.keys())[0]
+        key = next(iter(results.keys()))
         error_key = (self.tests[0],) + key[1:]
         error_result = {error_key: results[key]}
         test_ground.save_results_flat(
@@ -1456,7 +1454,7 @@ class TestTestGround(ut.TestCase):
 
         results = test_ground.execute_tests()
 
-        key = list(results.keys())[0]
+        key = next(iter(results.keys()))
         one_result = {key: results[key]}
         base_save_file_path = TEMP_DIRECTORY + "/" + TEMP_FILE_NAMES + "0.csv"
         test_ground.save_results_flat(
@@ -1490,7 +1488,7 @@ class TestTestGround(ut.TestCase):
         )
 
         # transform results
-        original_key = list(results.keys())[0]
+        original_key = next(iter(results.keys()))
         network_test = self.tests[1]
         new_key = (
             network_test,
@@ -1562,7 +1560,7 @@ class TestLFRBenchmark(ut.TestCase):
 
 class DummyInference(sbm.Inference):
     def __init__(self, graph, objective_function, partition, new_parameter=False):
-        super(DummyInference, self).__init__(graph, objective_function, partition)
+        super().__init__(graph, objective_function, partition)
         self._instance_parameter = new_parameter
 
     def infer_stochastic_block_model(self, *args):
@@ -1603,7 +1601,7 @@ class DummyInference(sbm.Inference):
 class DummyTimingInference(sbm.Inference):
     def infer_stochastic_block_model(self, *args):
         # do some nonsense and waste around 2-3 seconds
-        test = [list(range(100)) for _ in range(1000)]
+        _ = [list(range(100)) for _ in range(1000)]
 
         for _ in range(20):
             self.partition.move_node(

@@ -7,7 +7,7 @@ import unittest as ut
 
 import networkx as nx
 
-from pysbm import test_ground, sbm
+from pysbm import sbm, test_ground
 
 
 class TestObjectiveFunctions(ut.TestCase):
@@ -445,7 +445,7 @@ class TestObjectiveFunctionsExtended(TestObjectiveFunctions):
     """Test Class for objective functions"""
 
     def setUp(self):
-        super(TestObjectiveFunctionsExtended, self).setUp()
+        super().setUp()
         self.partitions = []
 
         #        alternate with selfloop
@@ -486,12 +486,10 @@ class TestObjectiveFunctionsExtended(TestObjectiveFunctions):
             call_function()
 
     def test_delta(self):
-        self._partitions_caller(super(TestObjectiveFunctionsExtended, self).test_delta)
+        self._partitions_caller(super().test_delta)
 
     def test_block_merge(self):
-        self._partitions_caller(
-            super(TestObjectiveFunctionsExtended, self).test_block_merge
-        )
+        self._partitions_caller(super().test_block_merge)
 
 
 class TestObjectiveFunctionsDirected(TestObjectiveFunctionsExtended):
@@ -500,7 +498,7 @@ class TestObjectiveFunctionsDirected(TestObjectiveFunctionsExtended):
     def setUp(self):
         #        basically we only set up the test with different graphs and
         #         after that the same tests as before apply
-        super(TestObjectiveFunctionsDirected, self).setUp()
+        super().setUp()
         self.partitions = []
         self.graph = nx.DiGraph()
         self.number_of_nodes = 10

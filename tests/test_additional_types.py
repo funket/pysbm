@@ -13,7 +13,7 @@ class TestSetDict(ut.TestCase):
 
     # noinspection PyPep8Naming
     def __init__(self, methodName="runTest"):
-        super(TestSetDict, self).__init__(methodName)
+        super().__init__(methodName)
 
     def setUp(self):
         self.list = at.SetDict()
@@ -71,9 +71,8 @@ class TestSetDict(ut.TestCase):
         for _ in range(number_of_tries):
             hits[self.list.choose_random()] += 1
 
-        for hit in hits:
-            hits[hit] /= number_of_tries
-            self.assertAlmostEqual(hits[hit], 1.0 / len(hits), delta=0.1)
+        for count in hits.values():
+            self.assertAlmostEqual(count / number_of_tries, 1.0 / len(hits), delta=0.1)
 
     def test_add(self):
         """Test adding elements"""
@@ -104,7 +103,7 @@ class TestListDict(TestSetDict):
 
     # noinspection PyPep8Naming
     def __init__(self, methodName="runTest"):
-        super(TestListDict, self).__init__(methodName)
+        super().__init__(methodName)
 
     def setUp(self):
         self.list = at.ListDict()
@@ -138,9 +137,8 @@ class TestListDict(TestSetDict):
         for _ in range(number_of_tries):
             hits[self.list.choose_random()] += 1
 
-        for hit in hits:
-            hits[hit] /= number_of_tries
-            self.assertAlmostEqual(hits[hit], hit / 10.0, delta=0.1)
+        for hit, count in hits.items():
+            self.assertAlmostEqual(count / number_of_tries, hit / 10.0, delta=0.1)
 
     def test_remove_extended(self):
         """Test removing of multiple elements"""
@@ -166,7 +164,7 @@ class TestWeightedListDict(TestListDict):
 
     # noinspection PyPep8Naming
     def __init__(self, methodName="runTest"):
-        super(TestWeightedListDict, self).__init__(methodName)
+        super().__init__(methodName)
 
     def setUp(self):
         self.list = at.WeightedListDict()
@@ -217,7 +215,7 @@ class TestnHeap(ut.TestCase):
 
     # noinspection PyPep8Naming
     def __init__(self, methodName="runTest"):
-        super(TestnHeap, self).__init__(methodName)
+        super().__init__(methodName)
 
     def setUp(self):
         self.heap = at.nHeap(3)
@@ -241,14 +239,14 @@ class TestnHeap(ut.TestCase):
 
     def test_len(self):
         """Test len method"""
-        for i in range(0, 5):
+        for i in range(5):
             self.assertEqual(min(i, 3), len(self.heap))
             self.heap.push_try((i, i))
 
     def test_access(self):
         """Test access on data of heap"""
         data = []
-        for i in range(0, 2):
+        for i in range(2):
             data.append((i, i))
             self.heap.push_try((i, i))
 
@@ -261,7 +259,7 @@ class TestNode(ut.TestCase):
 
     # noinspection PyPep8Naming
     def __init__(self, methodName="runTest"):
-        super(TestNode, self).__init__(methodName)
+        super().__init__(methodName)
 
     def setUp(self):
         self.node = at.Node()
@@ -283,7 +281,7 @@ class TestLinkedList(ut.TestCase):
 
     # noinspection PyPep8Naming
     def __init__(self, methodName="runTest"):
-        super(TestLinkedList, self).__init__(methodName)
+        super().__init__(methodName)
 
     def setUp(self):
         self.list = at.LinkedList()
@@ -388,7 +386,7 @@ class TestObservedObserver(ut.TestCase):
 
     # noinspection PyPep8Naming
     def __init__(self, methodName="runTest"):
-        super(TestObservedObserver, self).__init__(methodName)
+        super().__init__(methodName)
 
     def setUp(self):
         self.observed = at.Observed(1)

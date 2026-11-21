@@ -15,7 +15,7 @@ class TestSBMInference(ut.TestCase):
 
     # noinspection PyPep8Naming
     def __init__(self, methodName="runTest"):
-        super(TestSBMInference, self).__init__(methodName)
+        super().__init__(methodName)
         self.is_directed = False
 
     def setUp(self):
@@ -355,17 +355,13 @@ class TestMetropolisHastingInference(ut.TestCase):
         # print neighbor_block_fraction
 
         for block in range(partition.B):
-            for neighbor_block in neighbor_block_fraction:
+            for neighbor_block, fraction in neighbor_block_fraction.items():
                 if partition.is_graph_directed():
-                    probability[block] = probability.get(
-                        block, 0
-                    ) + neighbor_block_fraction[neighbor_block] / len(
+                    probability[block] = probability.get(block, 0) + fraction / len(
                         partition.get_neighbors_of_node(node)
                     ) * inference._probability_directed(block, neighbor_block)
                 else:
-                    probability[block] = probability.get(
-                        block, 0
-                    ) + neighbor_block_fraction[neighbor_block] / len(
+                    probability[block] = probability.get(block, 0) + fraction / len(
                         partition.get_neighbors_of_node(node)
                     ) * inference._probability_undirected(block, neighbor_block)
                 #   print probability
@@ -480,7 +476,7 @@ class TestSBMInferenceDirected(TestSBMInference):
 
     # noinspection PyPep8Naming
     def __init__(self, methodName="runTest"):
-        super(TestSBMInferenceDirected, self).__init__(methodName)
+        super().__init__(methodName)
         self.is_directed = True
 
     def setUp(self):
@@ -575,12 +571,12 @@ class TestPeixotoInference(ut.TestCase):
                 fraction_of_neighbors[own_block][neighbor_block] += 1
                 # calculate the right probabilities
         probability = {0: [0.0, 0.0], 1: [0.0, 0.0]}
-        for r in fraction_of_neighbors:
-            total_neighbors = sum(fraction_of_neighbors[r])
+        for r, fractions in fraction_of_neighbors.items():
+            total_neighbors = sum(fractions)
             for s in range(2):
                 for t in range(2):
                     probability[r][s] += (
-                        fraction_of_neighbors[r][t]
+                        fractions[t]
                         / total_neighbors
                         * (self.partition.get_edge_count(t, s) + self.inference.epsilon)
                         / (
@@ -676,7 +672,6 @@ class TestPeixotoInference(ut.TestCase):
 
     def test_objective_function(self):
         """Test passing of the new objective function"""
-        #
         objective_function = sbm.DegreeCorrectedMicrocanonicalEntropy(is_directed=False)
         self.inference.objective_function = objective_function
         self.assertEqual(self.inference.objective_function, objective_function)
@@ -858,4 +853,4 @@ class TestSpectralInference(ut.TestCase):
             graph, 2, True, True, False, False, False, representation
         )
         x = sbm.SpectralInference(graph, objective_function, partition)
-        a = x.infer_stochastic_block_model()
+        x.infer_stochastic_block_model()

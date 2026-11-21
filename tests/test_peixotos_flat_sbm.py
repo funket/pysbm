@@ -11,15 +11,11 @@ from pysbm import sbm
 from pysbm.sbm.nxpartitiongraphbased import NxPartitionGraphBased
 from pysbm.sbm.peixotos_flat_sbm import (
     DeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm,
-)
-from pysbm.sbm.peixotos_flat_sbm import (
     LogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmWrapper,
+    ModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm,
 )
 from pysbm.sbm.peixotos_flat_sbm_full import (
     ModelLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm,
-)
-from pysbm.sbm.peixotos_flat_sbm import (
-    ModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm,
 )
 
 

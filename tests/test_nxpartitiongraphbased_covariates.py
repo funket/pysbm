@@ -12,7 +12,7 @@ from pysbm.sbm.nxpartitiongraphbased import NxPartitionGraphBased
 class TestNxPartitionGraphBasedCovariates(ut.TestCase):
     # noinspection PyPep8Naming
     def __init__(self, methodName="runTest"):
-        super(TestNxPartitionGraphBasedCovariates, self).__init__(methodName)
+        super().__init__(methodName)
         self.is_directed = False
         self.test_class = NxPartitionGraphBased
         self.comparision_class = NxPartitionGraphBased  # NxPartition
@@ -133,5 +133,5 @@ class TestNxPartitionGraphBasedCovariates(ut.TestCase):
 class TestNxPartitionGraphBasedCovariatesDirected(TestNxPartitionGraphBasedCovariates):
     # noinspection PyPep8Naming
     def __init__(self, methodName="runTest"):
-        super(TestNxPartitionGraphBasedCovariatesDirected, self).__init__(methodName)
+        super().__init__(methodName)
         self.is_directed = True

@@ -8,15 +8,12 @@
 
 import math
 
-
-from .peixotos_flat_sbm import ModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm
+from .objective_functions import ObjectiveFunction
 from .peixotos_flat_sbm import (
     DeltaModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm,
+    ModelLogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbm,
 )
 from .peixotos_hierarchical_sbm_tools import log_binom
-from .nxpartitiongraphbased import NxHierarchicalPartition
-from .objective_functions import ObjectiveFunction
-
 
 # larger limit e.g. 10^4 need more time to calculate 45s vs. <1s and
 #   permanent save of this data e.g. with pickle would need 1,87Gb
@@ -193,14 +190,14 @@ class ModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
     def _calculate_p_edge_counts_hierarchy_undirected(hierarchy_partition):
         """
         Formulas
-        \log P({e_l}|{b_l}) = \sum_{l=1}^L \log P(e_l| e_{l+1}, b_l)
+        \\log P({e_l}|{b_l}) = \\sum_{l=1}^L \\log P(e_l| e_{l+1}, b_l)
 
-        \log P(e_l| e_{l+1}, b_l) = \sum_{r<s}\log  (( n_r^l*n_s^l  e_{rs}^{l+1} ))^{-1}
-                                    + \sum_r \log (( n_r^l*(n_r^l + 1)/2  e_{rr}^{l+1}/2 ))^{-1}
+        \\log P(e_l| e_{l+1}, b_l) = \\sum_{r<s}\\log  (( n_r^l*n_s^l  e_{rs}^{l+1} ))^{-1}
+                                    + \\sum_r \\log (( n_r^l*(n_r^l + 1)/2  e_{rr}^{l+1}/2 ))^{-1}
 
-        \log P({b_l}) = \sum_{l=1}^L \log P(b_l)
-        with \log P(b_l) as above
-            \log P(b_l) = \sum_r \log n^l_r! - \log B_{l-1}! - \log \nCr{B_{l-1}-1, B_l-1)-\log B_{l-1}
+        \\log P({b_l}) = \\sum_{l=1}^L \\log P(b_l)
+        with \\log P(b_l) as above
+            \\log P(b_l) = \\sum_r \\log n^l_r! - \\log B_{l-1}! - \\log \nCr{B_{l-1}-1, B_l-1)-\\log B_{l-1}
         and boundary condition B_0 = N
         :param hierarchy_partition:
         :type hierarchy_partition NxHierarchicalPartition
@@ -300,13 +297,13 @@ class ModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
     def _calculate_p_edge_counts_hierarchy_directed(hierarchy_partition):
         """
         Formulas
-        \log P({e_l}|{b_l}) = \sum_{l=1}^L \log P(e_l| e_{l+1}, b_l)
+        \\log P({e_l}|{b_l}) = \\sum_{l=1}^L \\log P(e_l| e_{l+1}, b_l)
 
-        \log P(e_l| e_{l+1}, b_l) = -\sum_{r,s} \log (( n_r^l*n_s^l  e_{rs}^{l+1} ))
+        \\log P(e_l| e_{l+1}, b_l) = -\\sum_{r,s} \\log (( n_r^l*n_s^l  e_{rs}^{l+1} ))
 
-        \log P({b_l}) = \sum_{l=1}^L \log P(b_l)
-        with \log P(b_l) as above
-            \log P(b_l) = \sum_r \log n^l_r! - \log B_{l-1}! - \log \nCr{B_{l-1}-1, B_l-1)-\log B_{l-1}
+        \\log P({b_l}) = \\sum_{l=1}^L \\log P(b_l)
+        with \\log P(b_l) as above
+            \\log P(b_l) = \\sum_r \\log n^l_r! - \\log B_{l-1}! - \\log \nCr{B_{l-1}-1, B_l-1)-\\log B_{l-1}
         and boundary condition B_0 = N
         :param hierarchy_partition:
         :type hierarchy_partition NxHierarchicalPartition
@@ -369,9 +366,9 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         if len(args) == 3:
             kit, selfloops, degree = args
             nodes_moved = 1
-            nodes_remaining = not (
+            nodes_remaining = (
                 hierarchy_partition.get_number_of_nodes_in_block(from_block)
-                == nodes_moved
+                != nodes_moved
             )
         elif len(args) == 5:
             kit, selfloops, degree, nodes_moved, nodes_remaining = args
@@ -428,9 +425,9 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         if len(args) == 3:
             kit, selfloops, degree = args
             nodes_moved = 1
-            nodes_remaining = not (
+            nodes_remaining = (
                 hierarchy_partition.get_number_of_nodes_in_block(from_block)
-                == nodes_moved
+                != nodes_moved
             )
         elif len(args) == 5:
             kit, selfloops, degree, nodes_moved, nodes_remaining = args
@@ -485,9 +482,9 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         if len(args) == 3:
             kit, selfloops, degree = args
             nodes_moved = 1
-            nodes_remaining = not (
+            nodes_remaining = (
                 hierarchy_partition.get_number_of_nodes_in_block(from_block)
-                == nodes_moved
+                != nodes_moved
             )
         elif len(args) == 5:
             kit, selfloops, degree, nodes_moved, nodes_remaining = args
@@ -905,9 +902,9 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         if len(args) == 5:
             kit, kti, selfloops, in_degree, out_degree = args
             nodes_moved = 1
-            nodes_remaining = not (
+            nodes_remaining = (
                 hierarchy_partition.get_number_of_nodes_in_block(from_block)
-                == nodes_moved
+                != nodes_moved
             )
         elif len(args) == 7:
             kit, kti, selfloops, in_degree, out_degree, nodes_moved, nodes_remaining = (
@@ -970,9 +967,9 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         if len(args) == 5:
             kit, kti, selfloops, in_degree, out_degree = args
             nodes_moved = 1
-            nodes_remaining = not (
+            nodes_remaining = (
                 hierarchy_partition.get_number_of_nodes_in_block(from_block)
-                == nodes_moved
+                != nodes_moved
             )
         elif len(args) == 7:
             kit, kti, selfloops, in_degree, out_degree, nodes_moved, nodes_remaining = (
@@ -1033,9 +1030,9 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
         if len(args) == 5:
             kit, kti, selfloops, in_degree, out_degree = args
             nodes_moved = 1
-            nodes_remaining = not (
+            nodes_remaining = (
                 hierarchy_partition.get_number_of_nodes_in_block(from_block)
-                == nodes_moved
+                != nodes_moved
             )
         elif len(args) == 7:
             kit, kti, selfloops, in_degree, out_degree, nodes_moved, nodes_remaining = (
@@ -1204,13 +1201,13 @@ class DeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbm(
     ):
         """
         Formulas
-        \log P({e_l}|{b_l}) = \sum_{l=1}^L \log P(e_l| e_{l+1}, b_l)
+        \\log P({e_l}|{b_l}) = \\sum_{l=1}^L \\log P(e_l| e_{l+1}, b_l)
 
-        \log P(e_l| e_{l+1}, b_l) = -\sum_{r,s} \log (( n_r^l*n_s^l  e_{rs}^{l+1} ))
+        \\log P(e_l| e_{l+1}, b_l) = -\\sum_{r,s} \\log (( n_r^l*n_s^l  e_{rs}^{l+1} ))
 
-        \log P({b_l}) = \sum_{l=1}^L \log P(b_l)
-        with \log P(b_l) as above
-            \log P(b_l) = \sum_r \log n^l_r! - \log B_{l-1}! - \log \nCr{B_{l-1}-1, B_l-1)-\log B_{l-1}
+        \\log P({b_l}) = \\sum_{l=1}^L \\log P(b_l)
+        with \\log P(b_l) as above
+            \\log P(b_l) = \\sum_r \\log n^l_r! - \\log B_{l-1}! - \\log \nCr{B_{l-1}-1, B_l-1)-\\log B_{l-1}
         and boundary condition B_0 = N
         :param hierarchy_partition:
         :type hierarchy_partition NxHierarchicalPartition
@@ -1556,9 +1553,7 @@ class LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper(
                 self._delta.calculate_delta_complete_non_degree_corrected_undirected
             )
 
-        super(
-            LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper, self
-        ).__init__(
+        super().__init__(
             is_directed,
             calculate_complete_undirected,
             calculate_complete_directed,
@@ -1576,9 +1571,7 @@ class LogLikelihoodOfHierarchicalMicrocanonicalNonDegreeCorrected(
     short_title = "HSPC"
 
     def __init__(self, is_directed):
-        super(
-            LogLikelihoodOfHierarchicalMicrocanonicalNonDegreeCorrected, self
-        ).__init__(is_directed, function_type=self.NON_DEGREE_CORRECTED)
+        super().__init__(is_directed, function_type=self.NON_DEGREE_CORRECTED)
 
 
 class LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedUniform(
@@ -1589,9 +1582,7 @@ class LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedUniform(
     short_title = "HDCPU"
 
     def __init__(self, is_directed):
-        super(
-            LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedUniform, self
-        ).__init__(is_directed, function_type=self.UNIFORM)
+        super().__init__(is_directed, function_type=self.UNIFORM)
 
 
 class LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedUniformHyperprior(
@@ -1602,7 +1593,4 @@ class LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedUniformHyperprior(
     short_title = "HDCPUH"
 
     def __init__(self, is_directed):
-        super(
-            LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedUniformHyperprior,
-            self,
-        ).__init__(is_directed, function_type=self.UNIFORM)
+        super().__init__(is_directed, function_type=self.UNIFORM)

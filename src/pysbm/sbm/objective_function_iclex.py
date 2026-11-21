@@ -18,15 +18,15 @@ def calculate_icl_ex_jeffrey_hyperprior_directed(partition):
     Calculate the integrated complete likelihood (exact) from Etienne Come and Pierre Latouche
     Returns the result of formula (2.5):
     ICL_ex (Z,K) = log p(X,Z|K)
-        = \sum_{k,l}^B\log \frac{\Gamma(\eta_{kl}^0+\zeta_{kl}^0)\Gamma(\eta_{kl})\Gamma(\zeta_{kl})}
-        {\Gamma(\eta_{kl}+\zeta_{kl})\Gamma(\eta_{kl}^0)\Gamma(\zeta_{kl}^0)}
-    + \log\frac{\Gamma(\sum_{r=1}^{B}n_k^0)\prod_{r=1}^B\Gamma(n_k)}
-    {\Gamma(\sum_{r=1}^Bn_k)\prod_{r=1}^{B}\Gamma(n_k^0)}
+        = \\sum_{k,l}^B\\log \frac{\\Gamma(\\eta_{kl}^0+\\zeta_{kl}^0)\\Gamma(\\eta_{kl})\\Gamma(\\zeta_{kl})}
+        {\\Gamma(\\eta_{kl}+\\zeta_{kl})\\Gamma(\\eta_{kl}^0)\\Gamma(\\zeta_{kl}^0)}
+    + \\log\frac{\\Gamma(\\sum_{r=1}^{B}n_k^0)\\prod_{r=1}^B\\Gamma(n_k)}
+    {\\Gamma(\\sum_{r=1}^Bn_k)\\prod_{r=1}^{B}\\Gamma(n_k^0)}
     where
     n_k = n_k^0 + |b_k|,\\
-    \eta_{kl} = \eta_{kl}^0 +e_{kl},\\
-    \zeta_{kl} = \zeta_{kl}^0 + |b_k||b_l|-e_{kl}
-    and n_k^0,\ \eta_{kl}^0 and \zeta_{kl}^0 are the hyperparameters of the prior distributions,
+    \\eta_{kl} = \\eta_{kl}^0 +e_{kl},\\
+    \\zeta_{kl} = \\zeta_{kl}^0 + |b_k||b_l|-e_{kl}
+    and n_k^0,\\ \\eta_{kl}^0 and \\zeta_{kl}^0 are the hyperparameters of the prior distributions,
     which are set to 1/2 for a Jeffrey distribution.
     :param partition:
     :return:
@@ -78,15 +78,15 @@ def calculate_icl_ex_uniform_hyperprior_directed(partition):
     Calculate the integrated complete likelihood (exact) from Etienne Come and Pierre Latouche
     Returns the result of formula (2.5):
     ICL_ex (Z,K) = log p(X,Z|K)
-        = \sum_{k,l}^B\log \frac{\Gamma(\eta_{kl}^0+\zeta_{kl}^0)\Gamma(\eta_{kl})\Gamma(\zeta_{kl})}
-        {\Gamma(\eta_{kl}+\zeta_{kl})\Gamma(\eta_{kl}^0)\Gamma(\zeta_{kl}^0)}
-    + \log\frac{\Gamma(\sum_{r=1}^{B}n_k^0)\prod_{r=1}^B\Gamma(n_k)}
-    {\Gamma(\sum_{r=1}^Bn_k)\prod_{r=1}^{B}\Gamma(n_k^0)}
+        = \\sum_{k,l}^B\\log \frac{\\Gamma(\\eta_{kl}^0+\\zeta_{kl}^0)\\Gamma(\\eta_{kl})\\Gamma(\\zeta_{kl})}
+        {\\Gamma(\\eta_{kl}+\\zeta_{kl})\\Gamma(\\eta_{kl}^0)\\Gamma(\\zeta_{kl}^0)}
+    + \\log\frac{\\Gamma(\\sum_{r=1}^{B}n_k^0)\\prod_{r=1}^B\\Gamma(n_k)}
+    {\\Gamma(\\sum_{r=1}^Bn_k)\\prod_{r=1}^{B}\\Gamma(n_k^0)}
     where
     n_k = n_k^0 + |b_k|,\\
-    \eta_{kl} = \eta_{kl}^0 +e_{kl},\\
-    \zeta_{kl} = \zeta_{kl}^0 + |b_k||b_l|-e_{kl}
-    and n_k^0,\ \eta_{kl}^0 and \zeta_{kl}^0 are the hyperparameters of the prior distributions,
+    \\eta_{kl} = \\eta_{kl}^0 +e_{kl},\\
+    \\zeta_{kl} = \\zeta_{kl}^0 + |b_k||b_l|-e_{kl}
+    and n_k^0,\\ \\eta_{kl}^0 and \\zeta_{kl}^0 are the hyperparameters of the prior distributions,
     which are set to 1 for a uniform distribution.
     :param partition:
     :return:
@@ -134,15 +134,15 @@ def calculate_icl_ex_jeffrey_hyperprior_undirected(partition):
     Calculate the integrated complete likelihood (exact) from Etienne Come and Pierre Latouche
     Returns the result of formula (2.5):
     ICL_ex (Z,K) = log p(X,Z|K)
-        = \sum_{k,l}^B\log \frac{\Gamma(\eta_{kl}^0+\zeta_{kl}^0)\Gamma(\eta_{kl})\Gamma(\zeta_{kl})}
-        {\Gamma(\eta_{kl}+\zeta_{kl})\Gamma(\eta_{kl}^0)\Gamma(\zeta_{kl}^0)}
-    + \log\frac{\Gamma(\sum_{r=1}^{B}n_k^0)\prod_{r=1}^B\Gamma(n_k)}
-    {\Gamma(\sum_{r=1}^Bn_k)\prod_{r=1}^{B}\Gamma(n_k^0)}
+        = \\sum_{k,l}^B\\log \frac{\\Gamma(\\eta_{kl}^0+\\zeta_{kl}^0)\\Gamma(\\eta_{kl})\\Gamma(\\zeta_{kl})}
+        {\\Gamma(\\eta_{kl}+\\zeta_{kl})\\Gamma(\\eta_{kl}^0)\\Gamma(\\zeta_{kl}^0)}
+    + \\log\frac{\\Gamma(\\sum_{r=1}^{B}n_k^0)\\prod_{r=1}^B\\Gamma(n_k)}
+    {\\Gamma(\\sum_{r=1}^Bn_k)\\prod_{r=1}^{B}\\Gamma(n_k^0)}
     where
     n_k = n_k^0 + |b_k|,\\
-    \eta_{kl} = \eta_{kl}^0 +e_{kl},\\
-    \zeta_{kl} = \zeta_{kl}^0 + |b_k||b_l|-e_{kl}
-    and n_k^0,\ \eta_{kl}^0 and \zeta_{kl}^0 are the hyperparameters of the prior distributions,
+    \\eta_{kl} = \\eta_{kl}^0 +e_{kl},\\
+    \\zeta_{kl} = \\zeta_{kl}^0 + |b_k||b_l|-e_{kl}
+    and n_k^0,\\ \\eta_{kl}^0 and \\zeta_{kl}^0 are the hyperparameters of the prior distributions,
     which are set to 1/2 for a Jeffrey distribution.
     :param partition:
     :return:
@@ -212,15 +212,15 @@ def calculate_icl_ex_uniform_hyperprior_undirected(partition):
     Calculate the integrated complete likelihood (exact) from Etienne Come and Pierre Latouche
     Returns the result of formula (2.5):
     ICL_ex (Z,K) = log p(X,Z|K)
-        = \sum_{k,l}^B\log \frac{\Gamma(\eta_{kl}^0+\zeta_{kl}^0)\Gamma(\eta_{kl})\Gamma(\zeta_{kl})}
-        {\Gamma(\eta_{kl}+\zeta_{kl})\Gamma(\eta_{kl}^0)\Gamma(\zeta_{kl}^0)}
-    + \log\frac{\Gamma(\sum_{r=1}^{B}n_k^0)\prod_{r=1}^B\Gamma(n_k)}
-    {\Gamma(\sum_{r=1}^Bn_k)\prod_{r=1}^{B}\Gamma(n_k^0)}
+        = \\sum_{k,l}^B\\log \frac{\\Gamma(\\eta_{kl}^0+\\zeta_{kl}^0)\\Gamma(\\eta_{kl})\\Gamma(\\zeta_{kl})}
+        {\\Gamma(\\eta_{kl}+\\zeta_{kl})\\Gamma(\\eta_{kl}^0)\\Gamma(\\zeta_{kl}^0)}
+    + \\log\frac{\\Gamma(\\sum_{r=1}^{B}n_k^0)\\prod_{r=1}^B\\Gamma(n_k)}
+    {\\Gamma(\\sum_{r=1}^Bn_k)\\prod_{r=1}^{B}\\Gamma(n_k^0)}
     where
     n_k = n_k^0 + |b_k|,\\
-    \eta_{kl} = \eta_{kl}^0 +e_{kl},\\
-    \zeta_{kl} = \zeta_{kl}^0 + |b_k||b_l|-e_{kl}
-    and n_k^0,\ \eta_{kl}^0 and \zeta_{kl}^0 are the hyperparameters of the prior distributions,
+    \\eta_{kl} = \\eta_{kl}^0 +e_{kl},\\
+    \\zeta_{kl} = \\zeta_{kl}^0 + |b_k||b_l|-e_{kl}
+    and n_k^0,\\ \\eta_{kl}^0 and \\zeta_{kl}^0 are the hyperparameters of the prior distributions,
     which are set to 1 for a uniform distribution.
     :param partition:
     :return:
@@ -284,8 +284,8 @@ def delta_calculate_icl_ex_jeffrey_hyperprior_undirected(
     if len(args) == 3:
         kit, selfloops, _ = args
         nodes_moved = 1
-        nodes_remaining = not (
-            partition.get_number_of_nodes_in_block(from_block) == nodes_moved
+        nodes_remaining = (
+            partition.get_number_of_nodes_in_block(from_block) != nodes_moved
         )
     elif len(args) == 5:
         kit, selfloops, _, nodes_moved, nodes_remaining = args
@@ -512,8 +512,8 @@ def delta_calculate_icl_ex_uniform_hyperprior_undirected(
     if len(args) == 3:
         kit, selfloops, _ = args
         nodes_moved = 1
-        nodes_remaining = not (
-            partition.get_number_of_nodes_in_block(from_block) == nodes_moved
+        nodes_remaining = (
+            partition.get_number_of_nodes_in_block(from_block) != nodes_moved
         )
     elif len(args) == 5:
         kit, selfloops, _, nodes_moved, nodes_remaining = args
@@ -728,8 +728,8 @@ def delta_calculate_icl_ex_jeffrey_hyperprior_directed(
     if len(args) == 5:
         kit, kti, selfloops, _, _ = args
         nodes_moved = 1
-        nodes_remaining = not (
-            partition.get_number_of_nodes_in_block(from_block) == nodes_moved
+        nodes_remaining = (
+            partition.get_number_of_nodes_in_block(from_block) != nodes_moved
         )
     elif len(args) == 7:
         kit, kti, selfloops, _, _, nodes_moved, nodes_remaining = args
@@ -1048,8 +1048,8 @@ def delta_calculate_icl_ex_uniform_hyperprior_directed(
     if len(args) == 5:
         kit, kti, selfloops, _, _ = args
         nodes_moved = 1
-        nodes_remaining = not (
-            partition.get_number_of_nodes_in_block(from_block) == nodes_moved
+        nodes_remaining = (
+            partition.get_number_of_nodes_in_block(from_block) != nodes_moved
         )
     elif len(args) == 7:
         kit, kti, selfloops, _, _, nodes_moved, nodes_remaining = args
@@ -1382,7 +1382,7 @@ class IntegratedCompleteLikelihoodExact(ObjectiveFunction):
                 delta_calculate_icl_ex_uniform_hyperprior_directed
             )
 
-        super(IntegratedCompleteLikelihoodExact, self).__init__(
+        super().__init__(
             is_directed,
             function_calculate_undirected,
             function_calculate_directed,
@@ -1396,9 +1396,7 @@ class IntegratedCompleteLikelihoodExactJeffrey(IntegratedCompleteLikelihoodExact
     short_title = "ICLexJ"
 
     def __init__(self, is_directed):
-        super(IntegratedCompleteLikelihoodExactJeffrey, self).__init__(
-            is_directed, hyperprior=self.JEFFREY_HYPERPRIOR
-        )
+        super().__init__(is_directed, hyperprior=self.JEFFREY_HYPERPRIOR)
 
 
 class IntegratedCompleteLikelihoodExactUniform(IntegratedCompleteLikelihoodExact):
@@ -1406,6 +1404,4 @@ class IntegratedCompleteLikelihoodExactUniform(IntegratedCompleteLikelihoodExact
     short_title = "ICLexU"
 
     def __init__(self, is_directed):
-        super(IntegratedCompleteLikelihoodExactUniform, self).__init__(
-            is_directed, hyperprior=self.UNIFORM_HYPERPRIOR
-        )
+        super().__init__(is_directed, hyperprior=self.UNIFORM_HYPERPRIOR)

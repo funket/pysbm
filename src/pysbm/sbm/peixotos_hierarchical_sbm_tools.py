@@ -168,7 +168,7 @@ def get_log_number_of_restricted_partitions(m, n):
                     break
                 v = v_new
             else:
-                raise Exception(
+                raise RuntimeError(
                     "Fix Point iteration as search for v not converged in 100 steps:", v
                 )
 
@@ -193,7 +193,7 @@ LOG_NUMBER_OF_RESTRICTED_PARTITIONS_MATRIX = init_number_of_restricted_partition
 def log_binom(n, k):
     """Approximation of log(binom(n,k)) for large values"""
     if n < 0 or k < 0:
-        raise Exception("Negative values")
+        raise ValueError("Negative values")
     if k >= n:
         return 0
     return math.lgamma(n + 1) - math.lgamma(k + 1) - math.lgamma(n - k + 1)
