@@ -1481,7 +1481,7 @@ class NxPartitionGraphBasedHierarchy(NxPartitionGraphBased):
 
     def handle_change_information(self, *args):
         """
-        Determine which of the methods: change_saved_edges, merge_node or split_node is to adress and forward the call
+        Determine which of the methods: change_saved_edges, merge_node or split_node is to address and forward the call
         :param args: parameter returned from move node
         """
         if len(args) == 2:

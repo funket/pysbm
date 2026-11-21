@@ -11,7 +11,7 @@ import numpy as np
 from pysbm import sbm
 
 
-class NetworkSuppplier:
+class NetworkSupplier:
     """Create different types of graphs"""
 
     STANDARD_SEED = 42
@@ -239,7 +239,7 @@ class SBMGenerator:
                     to_block
                 ]:
                     raise ValueError(
-                        "Too many edges demanded. \nDemanded numeber: "
+                        "Too many edges demanded. \nDemanded number: "
                         + str(self._edge_matrix[from_block][to_block])
                         + "\npossible edges "
                         + str(
@@ -260,7 +260,7 @@ class SBMGenerator:
                     / 2
                 ):
                     raise ValueError(
-                        "Too many edges demanded. \nDemanded numeber: "
+                        "Too many edges demanded. \nDemanded number: "
                         + str(self._edge_matrix[from_block][to_block])
                         + "\npossible edges "
                         + str(

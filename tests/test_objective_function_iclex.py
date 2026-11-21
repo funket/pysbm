@@ -9,7 +9,7 @@ import networkx as nx
 from pysbm.sbm.inference import PeixotoInference
 from pysbm.sbm.nxpartitiongraphbased import NxPartitionGraphBased
 from pysbm.sbm.objective_function_iclex import *
-from pysbm.sbm.objective_functions import TraditionalUnnormalizedLogLikelyhood
+from pysbm.sbm.objective_functions import TraditionalUnnormalizedLogLikelihood
 
 
 def general_delta_test_random_move(
@@ -267,7 +267,7 @@ class TestICLExactDirected(ut.TestCase):
             )
         )
 
-        self._replace_likelihood = TraditionalUnnormalizedLogLikelyhood(
+        self._replace_likelihood = TraditionalUnnormalizedLogLikelihood(
             is_directed=True
         )
 
@@ -604,7 +604,7 @@ class TestICLExactUndirected(ut.TestCase):
             )
         )
 
-        self._replace_likelihood = TraditionalUnnormalizedLogLikelyhood(
+        self._replace_likelihood = TraditionalUnnormalizedLogLikelihood(
             is_directed=False
         )
 

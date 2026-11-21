@@ -29,7 +29,7 @@ class TestSBMInference(ut.TestCase):
             save_neighbor_of_blocks=True,
         )
 
-        self.objective_function = sbm.TraditionalUnnormalizedLogLikelyhood(
+        self.objective_function = sbm.TraditionalUnnormalizedLogLikelihood(
             is_directed=False
         )
 
@@ -188,7 +188,7 @@ class TestSBMInference(ut.TestCase):
 
 
 # noinspection PyClassHasNoInit,PyAbstractClass
-class ObjectiveFunctionDummy(sbm.TraditionalUnnormalizedLogLikelyhood):
+class ObjectiveFunctionDummy(sbm.TraditionalUnnormalizedLogLikelihood):
     """Dummy for easier test of acceptance probability"""
 
     def calculate_delta(self, partition, from_block, to_block, *args):
@@ -461,7 +461,7 @@ class TestSBMInferenceTextNodes(TestSBMInference):
             save_neighbor_of_blocks=True,
         )
 
-        self.objective_function = sbm.TraditionalUnnormalizedLogLikelyhood(
+        self.objective_function = sbm.TraditionalUnnormalizedLogLikelihood(
             is_directed=False
         )
 
@@ -490,7 +490,7 @@ class TestSBMInferenceDirected(TestSBMInference):
             save_neighbor_of_blocks=True,
         )
 
-        self.objective_function = sbm.TraditionalUnnormalizedLogLikelyhood(
+        self.objective_function = sbm.TraditionalUnnormalizedLogLikelihood(
             is_directed=True
         )
 
@@ -518,7 +518,7 @@ class TestSBMInferenceDirectedTextNodes(TestSBMInferenceDirected):
             save_neighbor_of_blocks=True,
         )
 
-        self.objective_function = sbm.TraditionalUnnormalizedLogLikelyhood(
+        self.objective_function = sbm.TraditionalUnnormalizedLogLikelihood(
             is_directed=True
         )
 
@@ -547,7 +547,7 @@ class TestPeixotoInference(ut.TestCase):
             save_neighbor_of_blocks=True,
         )
 
-        self.objective_function = sbm.TraditionalUnnormalizedLogLikelyhood(
+        self.objective_function = sbm.TraditionalUnnormalizedLogLikelihood(
             is_directed=False
         )
         self.inference = sbm.PeixotoInference(
@@ -813,7 +813,7 @@ class TestKerninghanLinInference(ut.TestCase):
             },
         )
 
-        objective_function = sbm.DegreeCorrectedUnnormalizedLogLikelyhood(
+        objective_function = sbm.DegreeCorrectedUnnormalizedLogLikelihood(
             is_directed=False
         )
 
@@ -825,7 +825,7 @@ class TestKerninghanLinInference(ut.TestCase):
 class TestSpectralInference(ut.TestCase):
     def test_infer_stochastic_block_model(self):
         # dummy objective function
-        objective_function = sbm.DegreeCorrectedUnnormalizedLogLikelyhood(
+        objective_function = sbm.DegreeCorrectedUnnormalizedLogLikelihood(
             is_directed=False
         )
 

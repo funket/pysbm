@@ -66,7 +66,7 @@ class TestSingleNetworkTest(ut.TestCase):
         optimized = False
         for _ in range(5):
             result = self.single_network_test.apply_inference_algorithm(
-                sbm.MetropolisInference, sbm.TraditionalUnnormalizedLogLikelyhood
+                sbm.MetropolisInference, sbm.TraditionalUnnormalizedLogLikelihood
             )
             partition_representation = result[0][0]
             self.assertTrue(isinstance(partition_representation, dict))
@@ -74,7 +74,7 @@ class TestSingleNetworkTest(ut.TestCase):
             self.assertEqual(len(partition_representation), len(self.karate_club))
             self.assertEqual(max(partition_representation.values()) + 1, 2)
 
-            objective_function = sbm.TraditionalUnnormalizedLogLikelyhood(
+            objective_function = sbm.TraditionalUnnormalizedLogLikelihood(
                 is_directed=False
             )
             random_partition = sbm.NxPartition(
@@ -92,7 +92,7 @@ class TestSingleNetworkTest(ut.TestCase):
 
     def test_apply_inference_with_dummy_class(self):
         result = self.single_network_test.apply_inference_algorithm(
-            DummyInference, sbm.TraditionalUnnormalizedLogLikelyhood
+            DummyInference, sbm.TraditionalUnnormalizedLogLikelihood
         )
 
         self.assertEqual(result[0][0], self.true_partition)
@@ -121,7 +121,7 @@ class TestSingleNetworkTest(ut.TestCase):
     def test_execution_with_execution_parameters(self):
         result = self.single_network_test.apply_inference_algorithm(
             DummyInference,
-            sbm.TraditionalUnnormalizedLogLikelyhood,
+            sbm.TraditionalUnnormalizedLogLikelihood,
             inference_execution_parameters=("First Parameter", "Second Parameter"),
         )
 
@@ -134,7 +134,7 @@ class TestSingleNetworkTest(ut.TestCase):
     def test_execution_with_inference_class_parameters(self):
         result = self.two_cluster_test.apply_inference_algorithm(
             DummyInference,
-            sbm.TraditionalUnnormalizedLogLikelyhood,
+            sbm.TraditionalUnnormalizedLogLikelihood,
             inference_creation_parameters=(True,),
         )
 
@@ -147,7 +147,7 @@ class TestSingleNetworkTest(ut.TestCase):
     def test_performance_measures(self):
         start = time.process_time()
         result = self.single_network_test.apply_inference_algorithm(
-            DummyTimingInference, sbm.TraditionalUnnormalizedLogLikelyhood
+            DummyTimingInference, sbm.TraditionalUnnormalizedLogLikelihood
         )
         end = time.process_time()
 
@@ -229,8 +229,8 @@ class TestTestGround(ut.TestCase):
         ]
 
         self.objective_function_classes = [
-            sbm.TraditionalUnnormalizedLogLikelyhood,
-            sbm.DegreeCorrectedUnnormalizedLogLikelyhood,
+            sbm.TraditionalUnnormalizedLogLikelihood,
+            sbm.DegreeCorrectedUnnormalizedLogLikelihood,
         ]
 
     def test_create_test_ground(self):
@@ -310,7 +310,7 @@ class TestTestGround(ut.TestCase):
         )
         # # check if result belongs to the correct graph
         # self.assertEqual(resulting_partition.graph, self.tests[0].network,
-        #                  msg="Resulting partition is not of correct netowrk")
+        #                  msg="Resulting partition is not of correct network")
 
         # ---- more complex test ground
         result = test_ground.execute_tests()
@@ -500,7 +500,7 @@ class TestTestGround(ut.TestCase):
         self.assertEqual(
             evaluated_results[key_tuple],
             true_evaluated_results,
-            msg="Differ from true resuls",
+            msg="Differ from true results",
         )
 
         for i in range(5):
@@ -520,7 +520,7 @@ class TestTestGround(ut.TestCase):
             self.assertEqual(
                 evaluated_results[key_tuple],
                 true_evaluated_results,
-                msg="Differ from true resuls",
+                msg="Differ from true results",
             )
 
         # AMI
@@ -541,7 +541,7 @@ class TestTestGround(ut.TestCase):
         self.assertEqual(
             evaluated_results[key_tuple],
             true_evaluated_results,
-            msg="Differ from true resuls",
+            msg="Differ from true results",
         )
 
         for i in range(5):
@@ -559,7 +559,7 @@ class TestTestGround(ut.TestCase):
             self.assertEqual(
                 evaluated_results[key_tuple],
                 true_evaluated_results,
-                msg="Differ from true resuls",
+                msg="Differ from true results",
             )
 
     def test_passing_of_parameters(self):

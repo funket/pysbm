@@ -515,7 +515,7 @@ class TestNxPartition(ut.TestCase):
     def test_precalc_move(self):
         """Check precalculation of information for delta calculation"""
 
-        objective_function = sbm.TraditionalUnnormalizedLogLikelyhood(
+        objective_function = sbm.TraditionalUnnormalizedLogLikelihood(
             self.partition.is_graph_directed()
         )
 
@@ -1038,7 +1038,7 @@ class TestNxPartitionDirected(TestNxPartition):
     def test_precalc_move(self):
         """Precalculation on directed graph"""
 
-        objective_function = sbm.TraditionalUnnormalizedLogLikelyhood(
+        objective_function = sbm.TraditionalUnnormalizedLogLikelihood(
             self.partition.is_graph_directed()
         )
 

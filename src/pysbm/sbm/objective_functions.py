@@ -95,8 +95,8 @@ def _help_function_h(x):
 
 
 # @formatter:off
-def calculate_complete_traditional_unnormalized_log_likelyhood(partition):
-    likelyhood = 0.0
+def calculate_complete_traditional_unnormalized_log_likelihood(partition):
+    likelihood = 0.0
     for r in range(partition.B):
         for s in range(partition.B):
             value = partition.get_edge_count(r, s)
@@ -105,11 +105,11 @@ def calculate_complete_traditional_unnormalized_log_likelyhood(partition):
                 value /= partition.get_number_of_nodes_in_block(
                     r
                 ) * partition.get_number_of_nodes_in_block(s)
-                likelyhood += partition.get_edge_count(r, s) * math.log(value)
-    return likelyhood
+                likelihood += partition.get_edge_count(r, s) * math.log(value)
+    return likelihood
 
 
-def calculate_delta_traditional_unnormalized_log_likelyhood_undirected(
+def calculate_delta_traditional_unnormalized_log_likelihood_undirected(
     partition, from_block, to_block, *args
 ):
     #     distinguish by given parameters
@@ -240,7 +240,7 @@ def calculate_delta_traditional_unnormalized_log_likelyhood_undirected(
     return delta
 
 
-def calculate_delta_traditional_unnormalized_log_likelyhood_directed(
+def calculate_delta_traditional_unnormalized_log_likelihood_directed(
     partition, from_block, to_block, *args
 ):
     #     distinguish by given parameters
@@ -405,27 +405,27 @@ def calculate_delta_traditional_unnormalized_log_likelyhood_directed(
     return delta
 
 
-class TraditionalUnnormalizedLogLikelyhood(ObjectiveFunction):
-    """Non degree corrected unnormalized Log Likelyhood from Karrer and Newman"""
+class TraditionalUnnormalizedLogLikelihood(ObjectiveFunction):
+    """Non degree corrected unnormalized Log Likelihood from Karrer and Newman"""
 
-    title = "Traditional Unnormalized Log Likelyhood"
+    title = "Traditional Unnormalized Log Likelihood"
     short_title = "SKN"
 
     def __init__(self, is_directed):
         super().__init__(
             is_directed,
-            calculate_complete_traditional_unnormalized_log_likelyhood,
-            calculate_complete_traditional_unnormalized_log_likelyhood,
-            calculate_delta_traditional_unnormalized_log_likelyhood_undirected,
-            calculate_delta_traditional_unnormalized_log_likelyhood_directed,
+            calculate_complete_traditional_unnormalized_log_likelihood,
+            calculate_complete_traditional_unnormalized_log_likelihood,
+            calculate_delta_traditional_unnormalized_log_likelihood_undirected,
+            calculate_delta_traditional_unnormalized_log_likelihood_directed,
         )
         # same formula as in undirected case (but different delta)
 
 
-def calculate_complete_degree_corrected_unnormalized_log_likelyhood_undirected(
+def calculate_complete_degree_corrected_unnormalized_log_likelihood_undirected(
     partition,
 ):
-    likelyhood = 0.0
+    likelihood = 0.0
     # formula with zero checks to ensure right result
     for r in range(partition.B):
         kappa_r = partition.get_degree_of_block(r)
@@ -437,12 +437,12 @@ def calculate_complete_degree_corrected_unnormalized_log_likelyhood_undirected(
                 continue
             value = partition.get_edge_count(r, s) / (kappa_r * kappa_s)
             if value != 0:
-                likelyhood += partition.get_edge_count(r, s) * math.log(value)
-    return likelyhood
+                likelihood += partition.get_edge_count(r, s) * math.log(value)
+    return likelihood
 
 
-def calculate_complete_degree_corrected_unnormalized_log_likelyhood_directed(partition):
-    likelyhood = 0.0
+def calculate_complete_degree_corrected_unnormalized_log_likelihood_directed(partition):
+    likelihood = 0.0
     # formula with zero checks to ensure right result
     for r in range(partition.B):
         kappa_r = partition.get_out_degree_of_block(r)
@@ -454,11 +454,11 @@ def calculate_complete_degree_corrected_unnormalized_log_likelyhood_directed(par
                 continue
             value = partition.get_edge_count(r, s) / (kappa_r * kappa_s)
             if value != 0:
-                likelyhood += partition.get_edge_count(r, s) * math.log(value)
-    return likelyhood
+                likelihood += partition.get_edge_count(r, s) * math.log(value)
+    return likelihood
 
 
-def calculate_delta_degree_corrected_unnormalized_log_likelyhood_undirected(
+def calculate_delta_degree_corrected_unnormalized_log_likelihood_undirected(
     partition, from_block, to_block, *args
 ):
     if len(args) == 3:
@@ -509,7 +509,7 @@ def calculate_delta_degree_corrected_unnormalized_log_likelyhood_undirected(
     return delta
 
 
-def calculate_delta_degree_corrected_unnormalized_log_likelyhood_directed(
+def calculate_delta_degree_corrected_unnormalized_log_likelihood_directed(
     partition, from_block, to_block, *args
 ):
     if len(args) == 5:
@@ -576,19 +576,19 @@ def calculate_delta_degree_corrected_unnormalized_log_likelyhood_directed(
     return delta
 
 
-class DegreeCorrectedUnnormalizedLogLikelyhood(ObjectiveFunction):
-    """Degree corrected unnormalized Log Likelyhood from Karrer and Newman"""
+class DegreeCorrectedUnnormalizedLogLikelihood(ObjectiveFunction):
+    """Degree corrected unnormalized Log Likelihood from Karrer and Newman"""
 
-    title = "Degree Corrected Unnormalized Log Likelyhood"
+    title = "Degree Corrected Unnormalized Log Likelihood"
     short_title = "DCKN"
 
     def __init__(self, is_directed):
         super().__init__(
             is_directed,
-            calculate_complete_degree_corrected_unnormalized_log_likelyhood_undirected,
-            calculate_complete_degree_corrected_unnormalized_log_likelyhood_directed,
-            calculate_delta_degree_corrected_unnormalized_log_likelyhood_undirected,
-            calculate_delta_degree_corrected_unnormalized_log_likelyhood_directed,
+            calculate_complete_degree_corrected_unnormalized_log_likelihood_undirected,
+            calculate_complete_degree_corrected_unnormalized_log_likelihood_directed,
+            calculate_delta_degree_corrected_unnormalized_log_likelihood_undirected,
+            calculate_delta_degree_corrected_unnormalized_log_likelihood_directed,
         )
 
 
@@ -596,7 +596,7 @@ def calculate_delta_traditional_microcanonical_entropy_undirected(
     partition, from_block, to_block, *args
 ):
     # delta function only implemented for sparse graphs
-    return 0.5 * calculate_delta_traditional_unnormalized_log_likelyhood_undirected(
+    return 0.5 * calculate_delta_traditional_unnormalized_log_likelihood_undirected(
         partition, from_block, to_block, *args
     )
 
@@ -617,7 +617,7 @@ class TraditionalMicrocanonicalEntropy(ObjectiveFunction):
             self.calculate_complete_traditional_microcanonical_entropy_undirected,
             self.calculate_complete_traditional_microcanonical_entropy_directed,
             calculate_delta_traditional_microcanonical_entropy_undirected,
-            calculate_delta_traditional_unnormalized_log_likelyhood_directed,
+            calculate_delta_traditional_unnormalized_log_likelihood_directed,
         )
         # fixed value = number of edges
         self.fixed_value = float(fixed_value)
@@ -998,7 +998,7 @@ def calculate_delta_degree_corrected_microcanonical_entropy_undirected(
     #    Different SIGN than original!
     return (
         0.5
-        * calculate_delta_degree_corrected_unnormalized_log_likelyhood_undirected(
+        * calculate_delta_degree_corrected_unnormalized_log_likelihood_undirected(
             partition, from_block, to_block, *args
         )
     )
@@ -1009,7 +1009,7 @@ class DegreeCorrectedMicrocanonicalEntropy(ObjectiveFunction):
     Degree corrected microcanonical entropy from Peixoto.
 
     Because the similarities to the one from Karrer and Newman, it uses the class
-    DegreeCorrectedUnnormalizedLogLikelyhood.
+    DegreeCorrectedUnnormalizedLogLikelihood.
     Formulas e.g. (5) and (6) from SM: Parsimonious Module Inference in Large Networks
     """
 
@@ -1031,7 +1031,7 @@ class DegreeCorrectedMicrocanonicalEntropy(ObjectiveFunction):
             self.calculate_complete_degree_corrected_microcanonical_entropy_undirected,
             self.calculate_complete_degree_corrected_microcanonical_entropy_directed,
             calculate_delta_degree_corrected_microcanonical_entropy_undirected,
-            calculate_delta_degree_corrected_unnormalized_log_likelyhood_directed,
+            calculate_delta_degree_corrected_unnormalized_log_likelihood_directed,
         )
         # If the absolute value is needed fixed_value := -E-\sum N_k ln(k!)
         self.fixed_value = float(fixed_value)
@@ -1043,7 +1043,7 @@ class DegreeCorrectedMicrocanonicalEntropy(ObjectiveFunction):
         return -(
             self.fixed_value
             - 0.5
-            * calculate_complete_degree_corrected_unnormalized_log_likelyhood_undirected(
+            * calculate_complete_degree_corrected_unnormalized_log_likelihood_undirected(
                 partition
             )
         )
@@ -1054,7 +1054,7 @@ class DegreeCorrectedMicrocanonicalEntropy(ObjectiveFunction):
         #    Different SIGN! - original without the minus
         return -(
             self.fixed_value
-            - calculate_complete_degree_corrected_unnormalized_log_likelyhood_directed(
+            - calculate_complete_degree_corrected_unnormalized_log_likelihood_directed(
                 partition
             )
         )

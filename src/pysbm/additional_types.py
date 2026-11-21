@@ -319,7 +319,7 @@ class LinkedList:
     def __repr__(self):
         return str(list(self))
 
-    # implement operations needed for the desired comparision
+    # implement operations needed for the desired comparison
     def __eq__(self, other):
         if isinstance(other, self.__class__):
             return self.head == other.head

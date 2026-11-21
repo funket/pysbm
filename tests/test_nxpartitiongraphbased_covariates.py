@@ -15,7 +15,7 @@ class TestNxPartitionGraphBasedCovariates(ut.TestCase):
         super().__init__(methodName)
         self.is_directed = False
         self.test_class = NxPartitionGraphBased
-        self.comparision_class = NxPartitionGraphBased  # NxPartition
+        self.comparison_class = NxPartitionGraphBased  # NxPartition
         self.objective_function = DegreeCorrectedMicrocanonicalEntropy(self.is_directed)
 
     def setUp(self):
@@ -42,7 +42,7 @@ class TestNxPartitionGraphBasedCovariates(ut.TestCase):
                     )
 
         representation = {node: node % 3 for node in self.weighted_graph}
-        self.weighted_partition = self.comparision_class(
+        self.weighted_partition = self.comparison_class(
             self.weighted_graph, representation=representation, weighted_graph=True
         )
         self.covariate_partition = self.test_class(
@@ -52,14 +52,14 @@ class TestNxPartitionGraphBasedCovariates(ut.TestCase):
             representation=representation,
         )
 
-        self.unweighted_partition = self.comparision_class(
+        self.unweighted_partition = self.comparison_class(
             self.weighted_graph, representation=representation, weighted_graph=False
         )
 
     def compare_weighted_and_covariate_partition(
         self, weighted_partition, covariate_partition
     ):
-        """Simple method for the comparision of the saved weighted edge counts and the summed covariates"""
+        """Simple method for the comparison of the saved weighted edge counts and the summed covariates"""
         # first some basic checks
         self.assertEqual(
             weighted_partition.get_representation(),

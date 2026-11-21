@@ -402,7 +402,7 @@ class TestObservedObserver(ut.TestCase):
         self.assertFalse(self.observed > other_observed)
         self.assertFalse(self.observed >= other_observed)
 
-        #        test handling of NotImplemented->top handling -> address comparision
+        #        test handling of NotImplemented->top handling -> address comparison
         self.assertFalse(self.observed == NotImplemented)
         # self.assertFalse(self.observed <= NotImplemented)
 
@@ -435,7 +435,7 @@ class TestObservedObserver(ut.TestCase):
         other_observer = at.Observer(self.observed)
 
         self.assertTrue(self.observer == other_observer)
-        #        test handling of NotImplemented->top handling -> address comparision
+        #        test handling of NotImplemented->top handling -> address comparison
         self.assertFalse(self.observer == NotImplemented)
         # self.assertFalse(self.observer <= NotImplemented)
 

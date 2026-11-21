@@ -531,14 +531,14 @@ def get_possible_model_selection(objective_function_class):
     ]:
         model_selections.append(ModelSelectionByObjectiveFunctionValueOnly())
     elif objective_function_class in [
-        sbm.TraditionalUnnormalizedLogLikelyhood,
-        sbm.DegreeCorrectedUnnormalizedLogLikelyhood,
+        sbm.TraditionalUnnormalizedLogLikelihood,
+        sbm.DegreeCorrectedUnnormalizedLogLikelihood,
         sbm.TraditionalMicrocanonicalEntropy,
         sbm.TraditionalMicrocanonicalEntropyDense,
         sbm.DegreeCorrectedMicrocanonicalEntropy,
     ]:
         if objective_function_class in [
-            sbm.DegreeCorrectedUnnormalizedLogLikelyhood,
+            sbm.DegreeCorrectedUnnormalizedLogLikelihood,
             sbm.DegreeCorrectedMicrocanonicalEntropy,
         ]:
             is_degree_corrected = True

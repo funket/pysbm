@@ -14,7 +14,7 @@ from pysbm.sbm.nxpartitiongraphbased import (
     NxPartitionGraphBased,
     NxPartitionGraphBasedHierarchy,
 )
-from pysbm.sbm.objective_functions import TraditionalUnnormalizedLogLikelyhood
+from pysbm.sbm.objective_functions import TraditionalUnnormalizedLogLikelihood
 
 
 # function which are later methods of the classes
@@ -155,7 +155,7 @@ def undirected_test_move_node_with_return_values(self):
 
 
 def undirected_test_split_and_merge(self):
-    """Test spliting and merging of nodes/blocks (undirected)"""
+    """Test splitting and merging of nodes/blocks (undirected)"""
     self.partition.set_from_representation({1: 0, 2: 0, 3: 1, 4: 2})
     # create partition of blocks
     partition = self.test_class(
@@ -552,7 +552,7 @@ def directed_test_move_node_with_return_values(self):
 
 
 def directed_test_split_and_merge(self):
-    """Test spliting and merging of nodes/blocks (directed)"""
+    """Test splitting and merging of nodes/blocks (directed)"""
     self.partition.set_from_representation(
         {0: 0, 1: 0, 2: 0, 3: 1, 4: 2, 5: 3, 6: 3, 7: 4, 8: 5, 9: 5}
     )
@@ -937,23 +937,23 @@ def general_test_move_node_with_remove_block_and_save_neighbor(self):
 
     # old_block = self.partition.get_block_of_node(1)
     self.partition.move_node(1, 0)
-    # create new for comparision
-    comparision_partition = self.test_class(
+    # create new for comparison
+    comparison_partition = self.test_class(
         graph=self.graph,
         calculate_degree_of_blocks=True,
         save_neighbor_edges=True,
         save_neighbor_of_blocks=True,
         weighted_graph=self.is_weighted,
     )
-    comparision_partition.set_from_representation(self.partition.get_representation())
+    comparison_partition.set_from_representation(self.partition.get_representation())
     # be sure that with the set from representation everything was fine
     self.assertEqual(
-        comparision_partition.get_representation(), self.partition.get_representation()
+        comparison_partition.get_representation(), self.partition.get_representation()
     )
     # check old_block is removed from neighbors list
     for block in range(self.partition.B):
         self.assertEqual(
-            comparision_partition.get_neighbors_of_block(block),
+            comparison_partition.get_neighbors_of_block(block),
             self.partition.get_neighbors_of_block(block),
         )
         # check if no greater block is included
@@ -973,23 +973,23 @@ def general_test_move_node_with_remove_block_and_save_neighbor(self):
             break
     # move it away
     self.partition.move_node(node, 0)
-    # create new for comparision
-    comparision_partition = self.test_class(
+    # create new for comparison
+    comparison_partition = self.test_class(
         graph=self.graph,
         calculate_degree_of_blocks=True,
         save_neighbor_edges=True,
         save_neighbor_of_blocks=True,
         weighted_graph=self.is_weighted,
     )
-    comparision_partition.set_from_representation(self.partition.get_representation())
+    comparison_partition.set_from_representation(self.partition.get_representation())
     # be sure that with the set from representation everything was fine
     self.assertEqual(
-        comparision_partition.get_representation(), self.partition.get_representation()
+        comparison_partition.get_representation(), self.partition.get_representation()
     )
     # check old_block is removed from neighbors list
     for block in range(self.partition.B):
         self.assertEqual(
-            comparision_partition.get_neighbors_of_block(block),
+            comparison_partition.get_neighbors_of_block(block),
             self.partition.get_neighbors_of_block(block),
         )
         # check if no greater block is included
@@ -1091,7 +1091,7 @@ def general_test_handle_change_information(self):
         )
         above_partition.handle_change_information(*return_values)
 
-        comparision_partition = NxPartitionGraphBasedHierarchy(
+        comparison_partition = NxPartitionGraphBasedHierarchy(
             save_neighbor_edges=True,
             graph=self.partition.get_partition_as_a_graph(),
             representation={block: 0 for block in range(self.partition.B)},
@@ -1099,7 +1099,7 @@ def general_test_handle_change_information(self):
         )
 
         self.assertTrue(
-            general_test_saved_edges(self, above_partition, comparision_partition)
+            general_test_saved_edges(self, above_partition, comparison_partition)
         )
 
     above_unweighted_partition = NxPartitionGraphBasedHierarchy(
@@ -1311,7 +1311,7 @@ class TestNxHierarchicalPartition(ut.TestCase):
         self.partition.actual_level = 0
         for representation in self.representations:
             self.partition.set_from_representation(representation)
-            # for reach level -1 is one way to acces the number of nodes in the underlying graph
+            # for reach level -1 is one way to access the number of nodes in the underlying graph
             self.assertEqual(
                 self.partition.get_number_of_blocks_in_level(-1), len(self.graph)
             )
@@ -1505,7 +1505,7 @@ class TestNxHierarchicalPartition(ut.TestCase):
                 self._comparator_of_two_partitions(self.partition, partition)
 
                 # test precalc move
-                objective_function = TraditionalUnnormalizedLogLikelyhood(
+                objective_function = TraditionalUnnormalizedLogLikelihood(
                     self.partition.is_graph_directed()
                 )
                 for node in self.partition.get_nodes_iter():
@@ -2293,9 +2293,9 @@ class TestNxHierarchicalPartition(ut.TestCase):
                 )
 
                 # check other things
-                for comparision_level in range(self.partition.max_level):
-                    self.partition.actual_level = comparision_level
-                    other_partition.actual_level = comparision_level
+                for comparison_level in range(self.partition.max_level):
+                    self.partition.actual_level = comparison_level
+                    other_partition.actual_level = comparison_level
                     self._comparator_of_two_partitions(self.partition, other_partition)
 
     def test_no_movable_node_in_hierarchy(self):

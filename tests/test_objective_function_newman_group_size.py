@@ -10,7 +10,7 @@ import networkx as nx
 from pysbm.sbm import PeixotoInference
 from pysbm.sbm.nxpartitiongraphbased import NxPartitionGraphBased
 from pysbm.sbm.objective_function_newman_group_size import *
-from pysbm.sbm.objective_functions import TraditionalUnnormalizedLogLikelyhood
+from pysbm.sbm.objective_functions import TraditionalUnnormalizedLogLikelihood
 from pysbm.sbm.partition import NxPartition
 
 
@@ -310,7 +310,7 @@ class TestNewmanGroupSizeNonDegreeCorrectedUndirected(ut.TestCase):
             )
         )
 
-        self._replace_likelihood = TraditionalUnnormalizedLogLikelyhood(
+        self._replace_likelihood = TraditionalUnnormalizedLogLikelihood(
             is_directed=False
         )
 
@@ -511,7 +511,7 @@ class TestNewmanGroupSizeNonDegreeCorrectedDirected(ut.TestCase):
             )
         )
 
-        self._replace_likelihood = TraditionalUnnormalizedLogLikelyhood(
+        self._replace_likelihood = TraditionalUnnormalizedLogLikelihood(
             is_directed=True
         )
 
@@ -691,7 +691,7 @@ class TestNewmanGroupSizeDegreeCorrectedUndirected(ut.TestCase):
             )
         )
 
-        self._replace_likelihood = TraditionalUnnormalizedLogLikelyhood(
+        self._replace_likelihood = TraditionalUnnormalizedLogLikelihood(
             is_directed=False
         )
 
@@ -868,7 +868,7 @@ class TestNewmanGroupSizeDegreeCorrectedDirected(ut.TestCase):
             )
         )
 
-        self._replace_likelihood = TraditionalUnnormalizedLogLikelyhood(
+        self._replace_likelihood = TraditionalUnnormalizedLogLikelihood(
             is_directed=True
         )
 

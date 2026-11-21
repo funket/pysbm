@@ -482,7 +482,7 @@ class TestDeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmU
             )
         )
 
-    def _general_comparision_single(
+    def _general_comparison_single(
         self,
         delta_function,
         normal_function,
@@ -755,7 +755,7 @@ class TestDeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmU
         for i, partition in enumerate(self.hierarchical_partitions):
             # first classic moves
             for move_number in range(10):
-                self._general_comparision_single(
+                self._general_comparison_single(
                     self.delta_likelihood._calculate_delta_p_adjacency_undirected,
                     self.log_likelihood._calculate_p_adjacency_undirected,
                     partition,
@@ -788,7 +788,7 @@ class TestDeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmU
         for i, partition in enumerate(self.hierarchical_partitions):
             # first classic moves
             for move_number in range(10):
-                self._general_comparision_single(
+                self._general_comparison_single(
                     self.delta_likelihood._calculate_delta_non_degree_corrected_undirected,
                     self.log_likelihood._calculate_non_degree_corrected_undirected,
                     partition,
@@ -849,7 +849,7 @@ class TestDeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmU
         for i, partition in enumerate(self.hierarchical_partitions):
             # first classic moves
             for move_number in range(10):
-                self._general_comparision_single(
+                self._general_comparison_single(
                     self.delta_likelihood._calculate_delta_p_degree_sequence_uniform_undirected,
                     self.log_likelihood._calculate_p_degree_sequence_uniform_undirected,
                     partition,
@@ -904,7 +904,7 @@ class TestDeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmU
         for i, partition in enumerate(self.hierarchical_partitions):
             # first classic moves
             for move_number in range(10):
-                self._general_comparision_single(
+                self._general_comparison_single(
                     self.delta_likelihood._calculate_delta_p_degree_sequence_uniform_hyperprior_undirected,
                     self.log_likelihood._calculate_p_degree_sequence_uniform_hyperprior_undirected,
                     partition,
@@ -961,7 +961,7 @@ class TestDeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmU
             partition.actual_level = 0
             # first classic moves
             for move_number in range(10):
-                self._general_comparision_single(
+                self._general_comparison_single(
                     self.delta_likelihood._calculate_delta_p_edge_counts_hierarchy_undirected,
                     self.log_likelihood._calculate_p_edge_counts_hierarchy_undirected,
                     partition,
@@ -980,7 +980,7 @@ class TestDeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmU
                     partition.actual_level = level
                     # perform moves in the hierarchy
                     for move_number in range(10):
-                        self._general_comparision_single(
+                        self._general_comparison_single(
                             self.delta_likelihood._calculate_delta_p_edge_counts_hierarchy_undirected,
                             self.log_likelihood._calculate_p_edge_counts_hierarchy_undirected,
                             partition,
@@ -1085,7 +1085,7 @@ class TestDeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmU
             partition.actual_level = 0
             # # first classic moves
             for move_number in range(10):
-                self._general_comparision_single(
+                self._general_comparison_single(
                     self.delta_likelihood.calculate_delta_complete_uniform_hyperprior_undirected,
                     self.log_likelihood.calculate_complete_uniform_hyperprior_undirected,
                     partition,
@@ -1103,7 +1103,7 @@ class TestDeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmU
                     partition.actual_level = level
                     # perform moves in the hierarchy
                     for move_number in range(10):
-                        self._general_comparision_single(
+                        self._general_comparison_single(
                             self.delta_likelihood.calculate_delta_complete_uniform_hyperprior_undirected,
                             self.log_likelihood.calculate_complete_uniform_hyperprior_undirected,
                             partition,
@@ -1212,7 +1212,7 @@ class TestDeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmU
             partition.actual_level = 0
             # # first classic moves
             for move_number in range(10):
-                self._general_comparision_single(
+                self._general_comparison_single(
                     self.delta_likelihood.calculate_delta_complete_uniform_undirected,
                     self.log_likelihood.calculate_complete_uniform_undirected,
                     partition,
@@ -1230,7 +1230,7 @@ class TestDeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmU
                     partition.actual_level = level
                     # perform moves in the hierarchy
                     for move_number in range(10):
-                        self._general_comparision_single(
+                        self._general_comparison_single(
                             self.delta_likelihood.calculate_delta_complete_uniform_undirected,
                             self.log_likelihood.calculate_complete_uniform_undirected,
                             partition,
@@ -1337,7 +1337,7 @@ class TestDeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmU
             partition.actual_level = 0
             # # first classic moves
             for move_number in range(10):
-                self._general_comparision_single(
+                self._general_comparison_single(
                     self.delta_likelihood.calculate_delta_complete_non_degree_corrected_undirected,
                     self.log_likelihood.calculate_complete_non_degree_corrected_undirected,
                     partition,
@@ -1355,7 +1355,7 @@ class TestDeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmU
                     partition.actual_level = level
                     # perform moves in the hierarchy
                     for move_number in range(10):
-                        self._general_comparision_single(
+                        self._general_comparison_single(
                             self.delta_likelihood.calculate_delta_complete_non_degree_corrected_undirected,
                             self.log_likelihood.calculate_complete_non_degree_corrected_undirected,
                             partition,
@@ -1690,7 +1690,7 @@ class TestDeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmD
             )
         )
 
-    def _general_comparision_single(
+    def _general_comparison_single(
         self,
         delta_function,
         normal_function,
@@ -1971,7 +1971,7 @@ class TestDeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmD
         for i, partition in enumerate(self.hierarchical_partitions):
             # first classic moves
             for move_number in range(10):
-                self._general_comparision_single(
+                self._general_comparison_single(
                     self.delta_likelihood._calculate_delta_p_adjacency_directed,
                     self.log_likelihood._calculate_p_adjacency_directed,
                     partition,
@@ -2007,7 +2007,7 @@ class TestDeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmD
         for i, partition in enumerate(self.hierarchical_partitions):
             # first classic moves
             for move_number in range(10):
-                self._general_comparision_single(
+                self._general_comparison_single(
                     self.delta_likelihood._calculate_delta_non_degree_corrected_directed,
                     self.log_likelihood._calculate_non_degree_corrected_directed,
                     partition,
@@ -2068,7 +2068,7 @@ class TestDeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmD
         for i, partition in enumerate(self.hierarchical_partitions):
             # first classic moves
             for move_number in range(10):
-                self._general_comparision_single(
+                self._general_comparison_single(
                     self.delta_likelihood._calculate_delta_p_degree_sequence_uniform_directed,
                     self.log_likelihood._calculate_p_degree_sequence_uniform_directed,
                     partition,
@@ -2125,7 +2125,7 @@ class TestDeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmD
         for i, partition in enumerate(self.hierarchical_partitions):
             # first classic moves
             for move_number in range(10):
-                self._general_comparision_single(
+                self._general_comparison_single(
                     self.delta_likelihood._calculate_delta_p_degree_sequence_uniform_hyperprior_directed,
                     self.log_likelihood._calculate_p_degree_sequence_uniform_hyperprior_directed,
                     partition,
@@ -2182,7 +2182,7 @@ class TestDeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmD
             partition.actual_level = 0
             # first classic moves
             for move_number in range(10):
-                self._general_comparision_single(
+                self._general_comparison_single(
                     self.delta_likelihood._calculate_delta_p_edge_counts_hierarchy_directed,
                     self.log_likelihood._calculate_p_edge_counts_hierarchy_directed,
                     partition,
@@ -2201,7 +2201,7 @@ class TestDeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmD
                     partition.actual_level = level
                     # perform moves in the hierarchy
                     for move_number in range(10):
-                        self._general_comparision_single(
+                        self._general_comparison_single(
                             self.delta_likelihood._calculate_delta_p_edge_counts_hierarchy_directed,
                             self.log_likelihood._calculate_p_edge_counts_hierarchy_directed,
                             partition,
@@ -2355,7 +2355,7 @@ class TestDeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmD
             partition.actual_level = 0
             # # first classic moves
             for move_number in range(10):
-                self._general_comparision_single(
+                self._general_comparison_single(
                     self.delta_likelihood.calculate_delta_complete_uniform_hyperprior_directed,
                     self.log_likelihood.calculate_complete_uniform_hyperprior_directed,
                     partition,
@@ -2373,7 +2373,7 @@ class TestDeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmD
                     partition.actual_level = level
                     # perform moves in the hierarchy
                     for move_number in range(10):
-                        self._general_comparision_single(
+                        self._general_comparison_single(
                             self.delta_likelihood.calculate_delta_complete_uniform_hyperprior_directed,
                             self.log_likelihood.calculate_complete_uniform_hyperprior_directed,
                             partition,
@@ -2479,7 +2479,7 @@ class TestDeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmD
             partition.actual_level = 0
             # # first classic moves
             for move_number in range(10):
-                self._general_comparision_single(
+                self._general_comparison_single(
                     self.delta_likelihood.calculate_delta_complete_uniform_directed,
                     self.log_likelihood.calculate_complete_uniform_directed,
                     partition,
@@ -2497,7 +2497,7 @@ class TestDeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmD
                     partition.actual_level = level
                     # perform moves in the hierarchy
                     for move_number in range(10):
-                        self._general_comparision_single(
+                        self._general_comparison_single(
                             self.delta_likelihood.calculate_delta_complete_uniform_directed,
                             self.log_likelihood.calculate_complete_uniform_directed,
                             partition,
@@ -2601,7 +2601,7 @@ class TestDeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmD
             partition.actual_level = 0
             # # first classic moves
             for move_number in range(10):
-                self._general_comparision_single(
+                self._general_comparison_single(
                     self.delta_likelihood.calculate_delta_complete_non_degree_corrected_directed,
                     self.log_likelihood.calculate_complete_non_degree_corrected_directed,
                     partition,
@@ -2619,7 +2619,7 @@ class TestDeltaModelLogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmD
                     partition.actual_level = level
                     # perform moves in the hierarchy
                     for move_number in range(10):
-                        self._general_comparision_single(
+                        self._general_comparison_single(
                             self.delta_likelihood.calculate_delta_complete_non_degree_corrected_directed,
                             self.log_likelihood.calculate_complete_non_degree_corrected_directed,
                             partition,

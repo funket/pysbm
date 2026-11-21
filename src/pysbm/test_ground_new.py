@@ -1034,10 +1034,10 @@ class TestGround:
         with open(file_path, "r", newline="") as csv_file:
             # skip header row
             if is_evaluated_results:
-                formated_header = ",".join(self.NEW_HEADER_LINE_EVALUATED)
+                formatted_header = ",".join(self.NEW_HEADER_LINE_EVALUATED)
             else:
-                formated_header = ",".join(self.NEW_HEADER_LINE)
-            if csv_file.readline()[: len(formated_header)] != formated_header:
+                formatted_header = ",".join(self.NEW_HEADER_LINE)
+            if csv_file.readline()[: len(formatted_header)] != formatted_header:
                 new_format = False
             else:
                 new_format = True

@@ -38,7 +38,7 @@ from .objective_functions import (
     DegreeCorrectedMicrocanonicalEntropy as DegreeCorrectedMicrocanonicalEntropy,
 )
 from .objective_functions import (
-    DegreeCorrectedUnnormalizedLogLikelyhood as DegreeCorrectedUnnormalizedLogLikelyhood,
+    DegreeCorrectedUnnormalizedLogLikelihood as DegreeCorrectedUnnormalizedLogLikelihood,
 )
 from .objective_functions import (
     ObjectiveFunction as ObjectiveFunction,
@@ -47,7 +47,7 @@ from .objective_functions import (
     TraditionalMicrocanonicalEntropy as TraditionalMicrocanonicalEntropy,
 )
 from .objective_functions import (
-    TraditionalUnnormalizedLogLikelyhood as TraditionalUnnormalizedLogLikelyhood,
+    TraditionalUnnormalizedLogLikelihood as TraditionalUnnormalizedLogLikelihood,
 )
 from .partition import *
 from .peixotos_flat_sbm import (

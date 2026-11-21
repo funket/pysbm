@@ -33,10 +33,10 @@ class TestObjectiveFunctions(ut.TestCase):
         self.objective_functions = []
 
         self.objective_functions.append(
-            sbm.TraditionalUnnormalizedLogLikelyhood(is_directed=False)
+            sbm.TraditionalUnnormalizedLogLikelihood(is_directed=False)
         )
         self.objective_functions.append(
-            sbm.DegreeCorrectedUnnormalizedLogLikelyhood(is_directed=False)
+            sbm.DegreeCorrectedUnnormalizedLogLikelihood(is_directed=False)
         )
         self.objective_functions.append(
             sbm.TraditionalMicrocanonicalEntropy(is_directed=False)
@@ -150,7 +150,7 @@ class TestObjectiveFunctions(ut.TestCase):
             )
 
             parameter, reference = inference._precalc_block_merge(block)
-            #            save right parameters for later comparision
+            #            save right parameters for later comparison
             saved_parameter = copy.deepcopy(parameter)
             #            modify general parameters for actual block merge
             saved_data = inference._adjustment_delta_pre(

@@ -167,7 +167,7 @@ class PeixotoInference(Inference):
     _objective_function_classes = (
         TraditionalMicrocanonicalEntropy,
         TraditionalMicrocanonicalEntropyDense,
-        TraditionalUnnormalizedLogLikelyhood,
+        TraditionalUnnormalizedLogLikelihood,
         LogLikelihoodOfHierarchicalMicrocanonicalDegreeCorrectedSbmWrapper,
         LogLikelihoodOfFlatMicrocanonicalDegreeCorrectedSbmWrapper,
         IntegratedCompleteLikelihoodExact,
@@ -2035,7 +2035,7 @@ class SpectralInference(Inference):
         degree = nx.degree(self.graph, weight="weight")
         degree = list(degree)
         degree_list = []
-        # get matrix with entrys of -1 for B' [0][1]
+        # get matrix with entries of -1 for B' [0][1]
         minus_ones = np.zeros((size, size))
         for i in range(len(degree)):
             degree_list.append(degree[i][1] - 1)  # -1 because of D-1
